@@ -231,8 +231,7 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos con descripción y modal flotante
-// ====================
+// Videos (abren en nueva pestaña - estable en GitHub Pages)
 function loadVideos() {
     const list = document.getElementById('cursos-list');
     if (!list) return;
@@ -246,23 +245,41 @@ function loadVideos() {
         card.innerHTML = `
             <h3>${video.title}</h3>
             <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
-            <div class="video-thumbnail" data-url="${video.url}">
-                <img src="${thumbnail}" alt="${video.title}">
-                <div class="play-icon">▶</div>
+            <div style="position:relative; cursor:pointer;" onclick="window.open('${video.url}', '_blank')">
+                <img src="${thumbnail}" style="width:100%; border-radius:15px;">
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:80px; color:white; opacity:0.9; text-shadow:0 0 30px black;">▶</div>
             </div>
         `;
         list.appendChild(card);
     });
 
-    document.querySelectorAll('.video-thumbnail').forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const url = thumb.dataset.url.replace('www.youtube.com', 'www.youtube-nocookie.com');
-            document.getElementById('video-modal-title').textContent = thumb.parentElement.querySelector('h3').textContent;
-            document.getElementById('video-modal-desc').textContent = thumb.parentElement.querySelector('p').textContent;
-            document.getElementById('video-modal-iframe').src = url + '?autoplay=1&rel=0';
-            document.getElementById('video-modal').classList.remove('hidden');
+    // Lista de videos en panel con eliminar
+    const mgmtList = document.getElementById('video-management-list');
+    if (mgmtList) {
+        mgmtList.innerHTML = '';
+        getVideos().forEach((video, index) => {
+            const div = document.createElement('div');
+            div.style = 'background:rgba(255,255,255,0.05); padding:15px; margin:10px 0; border-radius:10px;';
+            div.innerHTML = `
+                <strong>${video.title}</strong><br>
+                <small>${video.description || 'Sin descripción'}</small><br>
+                <button class="delete-video" data-index="${index}" style="background:#c00; color:white; border:none; padding:8px 12px; margin-top:10px; border-radius:6px; cursor:pointer;">Eliminar Video</button>
+            `;
+            mgmtList.appendChild(div);
         });
-    });
+
+        document.querySelectorAll('.delete-video').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                if (confirm('¿Eliminar este video permanentemente?')) {
+                    const videos = getVideos();
+                    videos.splice(index, 1);
+                    saveVideos(videos);
+                    loadVideos();
+                }
+            });
+        });
+    }
 }
 
 document.getElementById('add-video-btn')?.addEventListener('click', () => {
@@ -283,19 +300,6 @@ document.getElementById('add-video-btn')?.addEventListener('click', () => {
     document.getElementById('video-title').value = '';
     document.getElementById('video-url').value = '';
     document.getElementById('video-description').value = '';
-});
-
-// Cerrar modal video
-document.getElementById('close-video-modal')?.addEventListener('click', () => {
-    document.getElementById('video-modal').classList.add('hidden');
-    document.getElementById('video-modal-iframe').src = '';
-});
-
-document.getElementById('video-modal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'video-modal') {
-        document.getElementById('video-modal').classList.add('hidden');
-        document.getElementById('video-modal-iframe').src = '';
-    }
 });
 
 // ====================
