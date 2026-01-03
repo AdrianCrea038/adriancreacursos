@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos Privados | Adiran Reyes Crea</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ff6b00" stroke-width="12"/>
+                    <circle cx="50" cy="50" r="25" fill="#ff6b00"/>
+                </svg>
+                <span>Adiran Reyes Crea</span>
+            </div>
+            <div style="color: #fff; font-size: 18px;">
+                Bienvenido, <span id="welcome-user"></span> | <a href="#" id="logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section animate-on-scroll">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">Cursos Privados - Adiran Reyes Crea</h2>
+            <p>Aquí tienes acceso exclusivo a todos los cursos y videos.</p>
+            <div id="cursos-list" class="grid"></div>
+        </div>
+    </section>
+
+    <!-- Modal flotante para video -->
+    <div id="video-modal" class="modal hidden">
+        <div class="video-modal-content">
+            <span id="close-video-modal" class="close-video">×</span>
+            <h2 id="video-modal-title"></h2>
+            <p id="video-modal-desc"></p>
+            <div class="video-container">
+                <iframe id="video-modal-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Adiran Reyes Crea</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

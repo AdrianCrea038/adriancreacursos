@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adiran Reyes Crea | Diseño Gráfico y Contenido Multimedia</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ff6b00" stroke-width="12"/>
+                    <circle cx="50" cy="50" r="25" fill="#ff6b00"/>
+                </svg>
+                <span>Adiran Reyes Crea</span>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                    <li><a href="#servicios" class="nav-link">Servicios</a></li>
+                    <li><a href="#portafolio" class="nav-link">Portafolio</a></li>
+                    <li><a href="#contacto" class="nav-link">Contáctanos</a></li>
+                    <li><a href="#" id="cursos-link" class="nav-link restricted">Cursos</a></li>
+                    <li><a href="#" id="panel-link" class="nav-link restricted">Panel de Control</a></li>
+                </ul>
+                <div class="menu-toggle">☰</div>
+            </nav>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="hero-shape"></div>
+        <div class="container hero-content">
+            <h1>Crea con impacto</h1>
+            <p>Freelancer especializado en Diseño Gráfico y Contenido Multimedia para Redes Sociales</p>
+            <p class="experience">Más de 16 años transformando ideas en experiencias visuales poderosas</p>
+            <div class="hero-buttons">
+                <a href="#contacto" class="btn-primary">Contáctame</a>
+                <a href="#portafolio" class="btn-secondary">Ver Portafolio →</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img id="hero-img" src="https://unfocussed.com/cdn/shop/articles/How_to_Use_Color_Contrasts_for_Impact.png?crop=center&format=jpg&height=1200&v=1734760004&width=2400" alt="Diseño creativo">
+        </div>
+    </section>
+
+    <section id="servicios" class="section animate-on-scroll">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">Servicios</h2>
+            <div class="grid">
+                <div class="card animate-on-scroll animate-left">
+                    <img src="https://media.istockphoto.com/id/1191609321/photo/graphic-designer-drawing-sketches-logo-design.jpg?s=612x612&w=0&k=20&c=UOJSXYUWaPwMa3urhbzmY7yuDiQUeKYIAMb08bNk2Sk=" alt="Branding">
+                    <h3>Branding & Logos</h3>
+                    <p>Identidades visuales únicas y memorables para tu marca.</p>
+                </div>
+                <div class="card animate-on-scroll">
+                    <img src="https://www.shutterstock.com/image-photo/graphic-designer-work-on-computer-260nw-2314265707.jpg" alt="Redes Sociales">
+                    <h3>Contenido para Redes Sociales</h3>
+                    <p>Posts, stories, reels y campañas atractivas que conectan con tu audiencia.</p>
+                </div>
+                <div class="card animate-on-scroll animate-right">
+                    <img src="https://lh7-us.googleusercontent.com/docsz/AD_4nXcK6v2ZvLzYaeX_jAI5Xm2hr92vliEJ7yxMkNAV1oXsbzvUoN6QEd2NG93F_MXTvEBYqY1lCrXe1fqxj7IioNlK_fNg-QHWYPA8EFqmAwty6CpCmB6GFPUR9uReKOv8dsoMGSuXcG6uJQHdl9A8uhB7egHD?key=T8EEiQpJSDDje_5Gtkwhnw" alt="Multimedia">
+                    <h3>Motion Graphics & Video</h3>
+                    <p>Animaciones profesionales y edición de video de alto impacto.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portafolio" class="section animate-on-scroll">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">Portafolio</h2>
+            <div id="public-portafolio" class="grid portfolio-grid">
+                <!-- Los trabajos se cargan automáticamente desde localStorage -->
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="section contact animate-on-scroll">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">Contáctanos</h2>
+            <p>¿Listo para elevar tu presencia digital? Escríbeme y empecemos tu proyecto.</p>
+            <form class="contact-form">
+                <input type="text" placeholder="Tu Nombre" required>
+                <input type="email" placeholder="Tu Email" required>
+                <textarea placeholder="Tu Mensaje" rows="6" required></textarea>
+                <button type="submit" class="btn-primary">Enviar Mensaje</button>
+            </form>
+            <p class="contact-info">O envíame un email directo: <a href="mailto:tuemail@ejemplo.com">tuemail@ejemplo.com</a></p>
+        </div>
+    </section>
+
+    <footer class="footer animate-on-scroll">
+        <div class="container">
+            <p>&copy; 2026 Adiran Reyes Crea. Todos los derechos reservados.</p>
+            <p>Diseño Gráfico • Contenido Multimedia • Más de 16 años de experiencia</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Login -->
+    <div id="login-modal" class="modal hidden">
+        <div class="login-box">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" width="60" height="60">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ff6b00" stroke-width="12"/>
+                    <circle cx="50" cy="50" r="25" fill="#ff6b00"/>
+                </svg>
+            </div>
+            <h2>Acceso Restringido</h2>
+            <p>Ingresa tus credenciales para continuar</p>
+            <input type="text" id="username" placeholder="Usuario">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button id="login-btn">Entrar</button>
+            <button id="cancel-login">Cancelar</button>
+            <p class="hint">Prueba: <strong>admin / admin123</strong></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

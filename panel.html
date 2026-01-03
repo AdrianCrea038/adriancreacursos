@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control | Adiran Reyes Crea</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ff6b00" stroke-width="12"/>
+                    <circle cx="50" cy="50" r="25" fill="#ff6b00"/>
+                </svg>
+                <span>Adiran Reyes Crea</span>
+            </div>
+            <div style="color: #fff; font-size: 18px;">
+                Bienvenido Admin | <a href="#" id="logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section animate-on-scroll">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">Panel de Administración - Adiran Reyes Crea</h2>
+
+            <!-- Gestionar Usuarios -->
+            <div class="admin-section animate-on-scroll">
+                <h3>Gestionar Usuarios</h3>
+                
+                <div class="user-creation">
+                    <h4>Crear Nuevo Usuario</h4>
+                    <input type="text" id="new-username" placeholder="Nombre de usuario">
+                    <input type="password" id="new-password" placeholder="Contraseña">
+                    <label>Permisos de Acceso (Ctrl/Cmd para seleccionar varios):</label>
+                    <select id="new-permisos" multiple size="5">
+                        <option value="cursos">Acceso a Cursos</option>
+                        <option value="portafolio">Acceso a Portafolio Privado</option>
+                        <option value="estadisticas">Acceso a Estadísticas</option>
+                        <option value="configuracion">Acceso a Configuración</option>
+                        <option value="descargas">Acceso a Descargas</option>
+                    </select>
+                    <button id="add-user-btn">Crear Usuario</button>
+                </div>
+
+                <div class="user-list">
+                    <h4>Lista de Usuarios Existentes</h4>
+                    <ul id="users-list"></ul>
+                </div>
+            </div>
+
+            <!-- Agregar Video de Curso -->
+            <div class="admin-section animate-on-scroll">
+                <h3>Agregar Video a Cursos</h3>
+                <input type="text" id="video-title" placeholder="Título del video">
+                <input type="text" id="video-url" placeholder="URL embed de YouTube (ej: https://www.youtube.com/embed/ABC123)">
+                <textarea id="video-description" placeholder="Descripción del video (opcional)" rows="4"></textarea>
+                <button id="add-video-btn">Agregar Video</button>
+            </div>
+
+            <!-- Lista de videos con eliminar -->
+            <div class="admin-section animate-on-scroll">
+                <h3>Videos Actuales en Cursos</h3>
+                <div id="video-management-list"></div>
+            </div>
+
+            <!-- Cambiar Imagen de Inicio -->
+            <div class="admin-section animate-on-scroll">
+                <h3>Cambiar Imagen de Inicio (Hero)</h3>
+                <input type="text" id="hero-url" placeholder="URL de la imagen (opcional)">
+                <input type="file" id="hero-file" accept="image/*">
+                <button id="change-hero-btn">Aplicar Nueva Imagen</button>
+            </div>
+
+            <!-- Subir Trabajos al Portafolio -->
+            <div class="admin-section animate-on-scroll">
+                <h3>Subir Nuevos Trabajos al Portafolio</h3>
+                <input type="text" id="portafolio-title" placeholder="Título del trabajo">
+                <input type="text" id="portafolio-url" placeholder="URL de la imagen (opcional)">
+                <input type="file" id="portafolio-file" accept="image/*">
+                <button id="add-portafolio-btn">Agregar Trabajo</button>
+
+                <div class="portafolio-list">
+                    <h4>Trabajos Actualmente en Portafolio</h4>
+                    <div id="portafolio-list" class="grid"></div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Adiran Reyes Crea. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
