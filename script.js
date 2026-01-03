@@ -231,93 +231,103 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - Ahora embebidos directamente en la página
+// Videos - Embebidos + Mensaje si no hay videos
 // ====================
 function loadVideos() {
     const list = document.getElementById('cursos-list');
-    if (!list) return;
-    list.innerHTML = '';
-
-    getVideos().forEach(video => {
-        const card = document.createElement('div');
-        card.className = 'card animate-on-scroll';
-
-        card.innerHTML = `
-            <h3>${video.title}</h3>
-            <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
-            
-            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000; border-radius:15px; margin-top:10px;">
-                <iframe 
-                    src="${video.url}?rel=0&modestbranding=1" 
-                    style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                    title="${video.title}"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-            </div>
-        `;
-        list.appendChild(card);
-    });
-
-    // Lista de videos en el panel con botón eliminar
     const mgmtList = document.getElementById('video-management-list');
-    if (mgmtList) {
-        mgmtList.innerHTML = '';
-        getVideos().forEach((video, index) => {
-            const div = document.createElement('div');
-            div.style = 'background:rgba(255,255,255,0.05); padding:15px; margin:10px 0; border-radius:10px;';
-            div.innerHTML = `
-                <strong>${video.title}</strong><br>
-                <small style="opacity:0.7;">${video.url}</small><br>
-                <small>${video.description || 'Sin descripción'}</small><br>
-                <button class="delete-video" data-index="${index}" style="background:#c00; color:white; border:none; padding:8px 16px; margin-top:10px; border-radius:6px; cursor:pointer;">Eliminar Video</button>
-            `;
-            mgmtList.appendChild(div);
-        });
 
-        document.querySelectorAll('.delete-video').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.dataset.index);
-                if (confirm('¿Eliminar este video permanentemente?')) {
-                    const videos = getVideos();
-                    videos.splice(index, 1);
-                    saveVideos(videos);
-                    loadVideos();
-                }
+    // En página de cursos
+    if (list) {
+        const videos = getVideos();
+        if (videos.length === 0) {
+            list.innerHTML = '<p style="text-align:center; grid-column:1/-1; font-size:20px; opacity:0.7;">No hay cursos agregados todavía.</p>';
+        } else {
+            list.innerHTML = '';
+            videos.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'card animate-on-scroll';
+                card.innerHTML = `
+                    <h3>${video.title}</h3>
+                    <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
+                    <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000; border-radius:15px;">
+                        <iframe 
+                            src="${video.url}?rel=0&modestbranding=1" 
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                            title="${video.title}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                `;
+                list.appendChild(card);
             });
-        });
+        }
+    }
+
+    // En panel de administración
+    if (mgmtList) {
+        const videos = getVideos();
+        mgmtList.innerHTML = '';
+        if (videos.length === 0) {
+            mgmtList.innerHTML = '<p style="text-align:center; opacity:0.7;">No hay videos agregados aún.</p>';
+        } else {
+            videos.forEach((video, index) => {
+                const div = document.createElement('div');
+                div.style = 'background:rgba(255,255,255,0.05); padding:15px; margin:10px 0; border-radius:10px;';
+                div.innerHTML = `
+                    <strong>${video.title}</strong><br>
+                    <small style="opacity:0.7; word-break:break-all;">${video.url}</small><br>
+                    <small>${video.description || 'Sin descripción'}</small><br>
+                    <button class="delete-video" data-index="${index}" style="background:#c00; color:white; border:none; padding:8px 16px; margin-top:10px; border-radius:6px; cursor:pointer;">Eliminar Video</button>
+                `;
+                mgmtList.appendChild(div);
+            });
+
+            document.querySelectorAll('.delete-video').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    if (confirm('¿Eliminar este video permanentemente?')) {
+                        const videos = getVideos();
+                        videos.splice(index, 1);
+                        saveVideos(videos);
+                        loadVideos();
+                    }
+                });
+            });
+        }
     }
 }
 
 document.getElementById('add-video-btn')?.addEventListener('click', () => {
     const title = document.getElementById('video-title')?.value.trim();
     const url = document.getElementById('video-url')?.value.trim();
-    const description = document.getElementById('video-description')?.value.trim() || '';
+    const description = document.getElementById('video-description')?.value.trim();
 
     if (!title || !url) {
-        alert('Completa título y URL');
+        alert('Completa al menos el título y la URL');
         return;
     }
 
-    // Validación básica: debe contener /embed/
     if (!url.includes('/embed/')) {
-        alert('Por favor usa la URL de incrustación (embed). Ejemplo: https://www.youtube.com/embed/ABC123');
+        alert('⚠️ Usa la URL de incrustación (embed). Ve a YouTube → Compartir → Insertar → Copia la URL que empieza con https://www.youtube.com/embed/');
         return;
     }
 
     const videos = getVideos();
-    videos.push({ title, url, description });
+    videos.push({ title, url, description: description || '' });
     saveVideos(videos);
     loadVideos();
-    alert('Video agregado correctamente');
+    alert('¡Video agregado correctamente!');
+    
     document.getElementById('video-title').value = '';
     document.getElementById('video-url').value = '';
     document.getElementById('video-description').value = '';
 });
 
 // ====================
-// Portafolio y hero
+// Portafolio y hero (sin cambios)
 // ====================
 function loadPortafolios() {
     const container = document.getElementById('portafolio-list') || document.getElementById('public-portafolio');
@@ -348,9 +358,6 @@ document.getElementById('add-portafolio-btn')?.addEventListener('click', () => {
 
     if (url) {
         portafolios.push({ title, src: url });
-        savePortafolios(portafolios);
-        loadPortafolios();
-        alert('Trabajo agregado');
     } else if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -360,9 +367,15 @@ document.getElementById('add-portafolio-btn')?.addEventListener('click', () => {
             alert('Trabajo subido');
         };
         reader.readAsDataURL(file);
+        return;
     } else {
         alert('Ingresa URL o archivo');
+        return;
     }
+
+    savePortafolios(portafolios);
+    loadPortafolios();
+    alert('Trabajo agregado');
 
     document.getElementById('portafolio-title').value = '';
     document.getElementById('portafolio-url').value = '';
@@ -373,32 +386,34 @@ document.getElementById('change-hero-btn')?.addEventListener('click', () => {
     const url = document.getElementById('hero-url')?.value.trim();
     const file = document.getElementById('hero-file')?.files[0];
 
-    if (url) {
-        saveHeroImg(url);
-        alert('Imagen de inicio actualizada');
-    } else if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            saveHeroImg(e.target.result);
-            alert('Imagen de inicio subida');
-        };
-        reader.readAsDataURL(file);
+    if (url || file) {
+        if (url) {
+            saveHeroImg(url);
+            alert('Imagen de inicio actualizada');
+        } else {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                saveHeroImg(e.target.result);
+                alert('Imagen de inicio subida');
+            };
+            reader.readAsDataURL(file);
+        }
+        document.getElementById('hero-url').value = '';
+        document.getElementById('hero-file').value = '';
     } else {
         alert('Ingresa URL o archivo');
     }
-    document.getElementById('hero-url').value = '';
-    document.getElementById('hero-file').value = '';
 });
 
 // ====================
-// Cargar todo al iniciar
+// Cargar todo
 // ====================
 loadAdminPanel();
 loadPortafolios();
 loadVideos();
 
 // ====================
-// Animaciones y efectos
+// Animaciones
 // ====================
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
