@@ -121,7 +121,6 @@ if (currentPage === 'index.html') {
     const heroImg = document.getElementById('hero-img');
     if (heroImg) heroImg.src = getHeroImg();
 
-    // Cargar portafolio público
     const publicPortafolio = document.getElementById('public-portafolio');
     if (publicPortafolio) {
         publicPortafolio.innerHTML = '';
@@ -231,13 +230,12 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - Embebidos + Mensaje si no hay videos
+// Videos - SOLUCIÓN FINAL CON ORIGIN PARA LOCAL
 // ====================
 function loadVideos() {
     const list = document.getElementById('cursos-list');
     const mgmtList = document.getElementById('video-management-list');
 
-    // En página de cursos
     if (list) {
         const videos = getVideos();
         if (videos.length === 0) {
@@ -247,17 +245,20 @@ function loadVideos() {
             videos.forEach(video => {
                 const card = document.createElement('div');
                 card.className = 'card animate-on-scroll';
+                // Agregamos ?origin para forzar el referrer en local
+                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + '?rel=0&modestbranding=1&origin=' + encodeURIComponent(window.location.origin);
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
                     <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000; border-radius:15px;">
                         <iframe 
-                            src="${video.url}?rel=0&modestbranding=1" 
+                            src="${embedUrl}" 
                             style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
                             title="${video.title}"
                             frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin">
                         </iframe>
                     </div>
                 `;
@@ -266,7 +267,6 @@ function loadVideos() {
         }
     }
 
-    // En panel de administración
     if (mgmtList) {
         const videos = getVideos();
         mgmtList.innerHTML = '';
@@ -327,7 +327,7 @@ document.getElementById('add-video-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Portafolio y hero (sin cambios)
+// Portafolio y hero
 // ====================
 function loadPortafolios() {
     const container = document.getElementById('portafolio-list') || document.getElementById('public-portafolio');
