@@ -271,6 +271,7 @@ function loadVideos() {
 
     if (list) {
         const videos = getVideos();
+        console.debug('loadVideos() - videos from getVideos():', videos);
         if (videos.length === 0) {
             list.innerHTML = '<p style="text-align:center; grid-column:1/-1; font-size:20px; opacity:0.7;">No hay cursos agregados todavía.</p>';
         } else {
@@ -280,6 +281,7 @@ function loadVideos() {
                 card.className = 'card animate-on-scroll';
                 const embedBase = toEmbedUrl(video.url) || video.url;
                 const embedUrl = embedBase + '?rel=0&modestbranding=1';
+                console.debug('loadVideos() - video:', video.title, 'embedUrl:', embedUrl);
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
