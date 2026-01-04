@@ -230,20 +230,14 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - SOLUCIÓN 100% ESTABLE
+// Videos - SOLUCIÓN FINAL PARA GITHUB PAGES Y PRODUCCIÓN
 // ====================
 function loadVideos() {
     const list = document.getElementById('cursos-list');
     const mgmtList = document.getElementById('video-management-list');
 
-    // Determinamos un origin válido
-    let originParam = '';
-    try {
-        originParam = '&origin=' + encodeURIComponent(window.location.origin);
-    } catch (e) {
-        // Si falla (por ejemplo en file://), usamos localhost como fallback
-        originParam = '&origin=http://localhost';
-    }
+    // Origin real del sitio (funciona en GitHub Pages y cualquier hosting)
+    const originParam = window.location.origin ? '?origin=' + encodeURIComponent(window.location.origin) : '';
 
     if (list) {
         const videos = getVideos();
@@ -254,7 +248,8 @@ function loadVideos() {
             videos.forEach(video => {
                 const card = document.createElement('div');
                 card.className = 'card animate-on-scroll';
-                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + '?rel=0&modestbranding=1' + originParam;
+                // IMPORTANTE: origin como PRIMER parámetro
+                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + originParam + '&rel=0&modestbranding=1';
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
@@ -276,7 +271,6 @@ function loadVideos() {
         }
     }
 
-    // Lista en panel (solo texto, sin cambios)
     if (mgmtList) {
         const videos = getVideos();
         mgmtList.innerHTML = '';
@@ -337,7 +331,7 @@ document.getElementById('add-video-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Portafolio y hero (sin cambios)
+// Portafolio y hero
 // ====================
 function loadPortafolios() {
     const container = document.getElementById('portafolio-list') || document.getElementById('public-portafolio');
