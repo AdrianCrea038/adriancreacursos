@@ -230,14 +230,11 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - SOLUCIÓN FINAL PARA GITHUB PAGES Y PRODUCCIÓN
+// Videos - VERSIÓN FINAL QUE FUNCIONA (sin origin ni lazy)
 // ====================
 function loadVideos() {
     const list = document.getElementById('cursos-list');
     const mgmtList = document.getElementById('video-management-list');
-
-    // Origin real del sitio (funciona en GitHub Pages y cualquier hosting)
-    const originParam = window.location.origin ? '?origin=' + encodeURIComponent(window.location.origin) : '';
 
     if (list) {
         const videos = getVideos();
@@ -248,8 +245,7 @@ function loadVideos() {
             videos.forEach(video => {
                 const card = document.createElement('div');
                 card.className = 'card animate-on-scroll';
-                // IMPORTANTE: origin como PRIMER parámetro
-                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + originParam + '&rel=0&modestbranding=1';
+                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + '?rel=0&modestbranding=1';
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
@@ -261,8 +257,7 @@ function loadVideos() {
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            loading="lazy">
+                            referrerpolicy="strict-origin-when-cross-origin">
                         </iframe>
                     </div>
                 `;
