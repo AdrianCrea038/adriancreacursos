@@ -17,7 +17,16 @@ function saveUsers(users) {
 }
 
 function getVideos() {
-    return JSON.parse(localStorage.getItem('videos')) || [];
+    const stored = JSON.parse(localStorage.getItem('videos')) || null;
+    if (stored && Array.isArray(stored) && stored.length > 0) return stored;
+    // Video de ejemplo por defecto (se usará solo si no hay videos guardados)
+    return [
+        {
+            title: 'Video de ejemplo: Introducción',
+            url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+            description: 'Este es un video de demostración. Reemplázalo desde el panel de administración.'
+        }
+    ];
 }
 
 function saveVideos(videos) {
@@ -230,8 +239,32 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - VERSIÓN FINAL QUE FUNCIONA EN GITHUB PAGES
-// ====================
+// Videos - CONFIGURACIÓN QUE FUNCIONA EN 2026 (nocookie + referrerpolicy)
+// Helper: convierte varias formas de URL de YouTube a la URL de embed (nocookie)
+// Acepta: https://www.youtube.com/watch?v=ID, https://youtu.be/ID, https://www.youtube.com/embed/ID, o solo el ID
+// Retorna null si no reconoce un ID válido
+function toEmbedUrl(url) {
+    if (!url) return null;
+    url = url.trim();
+    try {
+        const embedMatch = url.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+        if (embedMatch) return 'https://www.youtube-nocookie.com/embed/' + embedMatch[1];
+
+        const vMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+        if (vMatch) return 'https://www.youtube-nocookie.com/embed/' + vMatch[1];
+
+        const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+        if (shortMatch) return 'https://www.youtube-nocookie.com/embed/' + shortMatch[1];
+
+        const idOnly = url.match(/^([a-zA-Z0-9_-]{11})$/);
+        if (idOnly) return 'https://www.youtube-nocookie.com/embed/' + idOnly[1];
+
+        return null;
+    } catch (e) {
+        return null;
+    }
+}
+
 function loadVideos() {
     const list = document.getElementById('cursos-list');
     const mgmtList = document.getElementById('video-management-list');
@@ -245,8 +278,8 @@ function loadVideos() {
             videos.forEach(video => {
                 const card = document.createElement('div');
                 card.className = 'card animate-on-scroll';
-                // Usamos el dominio normal de YouTube para máxima compatibilidad
-                const embedUrl = video.url.replace('youtube-nocookie.com', 'youtube.com') + '?rel=0&modestbranding=1';
+                const embedBase = toEmbedUrl(video.url) || video.url;
+                const embedUrl = embedBase + '?rel=0&modestbranding=1';
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
@@ -310,13 +343,14 @@ document.getElementById('add-video-btn')?.addEventListener('click', () => {
         return;
     }
 
-    if (!url.includes('/embed/')) {
-        alert('⚠️ Usa la URL de incrustación (embed). Ve a YouTube → Compartir → Insertar → Copia la URL que empieza con https://www.youtube.com/embed/');
+    const embed = toEmbedUrl(url);
+    if (!embed) {
+        alert('⚠️ URL de YouTube no válida. Usa la URL de Compartir/Insertar o pega el enlace corto (youtu.be) o el ID del video.');
         return;
     }
 
     const videos = getVideos();
-    videos.push({ title, url, description: description || '' });
+    videos.push({ title, url: embed, description: description || '' });
     saveVideos(videos);
     loadVideos();
     alert('¡Video agregado correctamente!');
