@@ -230,11 +230,20 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - SOLUCIÓN FINAL CON ORIGIN PARA LOCAL
+// Videos - SOLUCIÓN 100% ESTABLE
 // ====================
 function loadVideos() {
     const list = document.getElementById('cursos-list');
     const mgmtList = document.getElementById('video-management-list');
+
+    // Determinamos un origin válido
+    let originParam = '';
+    try {
+        originParam = '&origin=' + encodeURIComponent(window.location.origin);
+    } catch (e) {
+        // Si falla (por ejemplo en file://), usamos localhost como fallback
+        originParam = '&origin=http://localhost';
+    }
 
     if (list) {
         const videos = getVideos();
@@ -245,8 +254,7 @@ function loadVideos() {
             videos.forEach(video => {
                 const card = document.createElement('div');
                 card.className = 'card animate-on-scroll';
-                // Agregamos ?origin para forzar el referrer en local
-                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + '?rel=0&modestbranding=1&origin=' + encodeURIComponent(window.location.origin);
+                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + '?rel=0&modestbranding=1' + originParam;
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
@@ -258,7 +266,8 @@ function loadVideos() {
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen
-                            referrerpolicy="strict-origin-when-cross-origin">
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            loading="lazy">
                         </iframe>
                     </div>
                 `;
@@ -267,6 +276,7 @@ function loadVideos() {
         }
     }
 
+    // Lista en panel (solo texto, sin cambios)
     if (mgmtList) {
         const videos = getVideos();
         mgmtList.innerHTML = '';
@@ -327,7 +337,7 @@ document.getElementById('add-video-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Portafolio y hero
+// Portafolio y hero (sin cambios)
 // ====================
 function loadPortafolios() {
     const container = document.getElementById('portafolio-list') || document.getElementById('public-portafolio');
@@ -406,11 +416,13 @@ document.getElementById('change-hero-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Cargar todo
+// Cargar todo cuando el DOM esté listo
 // ====================
-loadAdminPanel();
-loadPortafolios();
-loadVideos();
+document.addEventListener('DOMContentLoaded', () => {
+    loadAdminPanel();
+    loadPortafolios();
+    loadVideos();
+});
 
 // ====================
 // Animaciones
