@@ -230,7 +230,7 @@ document.getElementById('add-user-btn')?.addEventListener('click', () => {
 });
 
 // ====================
-// Videos - VERSIÓN FINAL QUE FUNCIONA (sin origin ni lazy)
+// Videos - VERSIÓN FINAL QUE FUNCIONA EN GITHUB PAGES
 // ====================
 function loadVideos() {
     const list = document.getElementById('cursos-list');
@@ -245,7 +245,8 @@ function loadVideos() {
             videos.forEach(video => {
                 const card = document.createElement('div');
                 card.className = 'card animate-on-scroll';
-                const embedUrl = video.url.replace('youtube.com', 'youtube-nocookie.com') + '?rel=0&modestbranding=1';
+                // Usamos el dominio normal de YouTube para máxima compatibilidad
+                const embedUrl = video.url.replace('youtube-nocookie.com', 'youtube.com') + '?rel=0&modestbranding=1';
                 card.innerHTML = `
                     <h3>${video.title}</h3>
                     <p style="opacity:0.8; margin:15px 0;">${video.description || 'Sin descripción'}</p>
