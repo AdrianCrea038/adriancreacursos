@@ -12,10 +12,7 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <svg viewBox="0 0 100 100" width="50" height="50">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ff6b00" stroke-width="12"/>
-                    <circle cx="50" cy="50" r="25" fill="#ff6b00"/>
-                </svg>
+                <img src="IMG/Logo-adria--crea.png" alt="Adiran Reyes Crea Logo" style="height: 50px; width: auto; object-fit: contain;">
                 <span>Adiran Reyes Crea</span>
             </div>
             <div style="color: #fff; font-size: 18px;">
@@ -30,68 +27,105 @@
 
     <section class="section animate-on-scroll">
         <div class="container">
-            <h2 class="section-title animate-on-scroll">Panel de Administración - Adiran Reyes Crea</h2>
+            <h2 class="section-title animate-on-scroll">Panel de Administración</h2>
 
-            <!-- Gestionar Usuarios -->
+            <!-- ============ SECCIÓN 1: GESTIÓN DE USUARIOS ============ -->
             <div class="admin-section animate-on-scroll">
-                <h3>Gestionar Usuarios</h3>
+                <h3 style="margin-top:0;">Gestionar Usuarios</h3>
                 
                 <div class="user-creation">
-                    <h4>Crear Nuevo Usuario</h4>
-                    <input type="text" id="new-username" placeholder="Nombre de usuario">
-                    <input type="password" id="new-password" placeholder="Contraseña">
-                    <label>Permisos de Acceso (Ctrl/Cmd para seleccionar varios):</label>
-                    <select id="new-permisos" multiple size="5">
+                    <h4 style="margin-top:0; font-size:14px;">Crear Nuevo Usuario</h4>
+                    <input type="text" id="new-username" placeholder="Nombre de usuario" style="padding:6px; font-size:13px;">
+                    <input type="password" id="new-password" placeholder="Contraseña" style="padding:6px; font-size:13px;">
+                    <label style="font-size:12px; display:block; margin:8px 0 4px 0;">Permisos de Acceso:</label>
+                    <select id="new-permisos" multiple size="4" style="font-size:12px;">
                         <option value="cursos">Acceso a Cursos</option>
                         <option value="portafolio">Acceso a Portafolio Privado</option>
                         <option value="estadisticas">Acceso a Estadísticas</option>
                         <option value="configuracion">Acceso a Configuración</option>
                         <option value="descargas">Acceso a Descargas</option>
                     </select>
-                    <button id="add-user-btn">Crear Usuario</button>
+                    <label style="font-size:12px; display:block; margin:8px 0 4px 0;">Asignar Playlists:</label>
+                    <div id="new-user-playlists" style="display:grid; gap:6px; margin-bottom:8px; max-height:120px; overflow-y:auto; padding:8px; background:rgba(255,107,0,0.05); border-radius:4px;"></div>
+                    <button id="add-user-btn" style="padding:6px 12px; font-size:12px;">Crear Usuario</button>
                 </div>
 
                 <div class="user-list">
-                    <h4>Lista de Usuarios Existentes</h4>
-                    <ul id="users-list"></ul>
+                    <h4 style="margin-top:15px; font-size:14px;">Usuarios Existentes</h4>
+                    <ul id="users-list" style="font-size:12px;"></ul>
                 </div>
             </div>
 
-            <!-- Agregar Video de Curso -->
+            <!-- ============ SECCIÓN 2: GESTIÓN DE VIDEOS Y PLAYLISTS ============ -->
+            
+            <!-- Crear Playlist -->
             <div class="admin-section animate-on-scroll">
-                <h3>Agregar Video a Cursos</h3>
-                <input type="text" id="video-title" placeholder="Título del video">
-                <input type="text" id="video-url" placeholder="URL de YouTube (watch, share, embed o solo ID)">
-                <small style="opacity:0.7; display:block; margin:8px 0;">Pega el enlace normal de YouTube (https://youtu.be/ID o https://www.youtube.com/watch?v=ID) o el ID; se convertirá automáticamente a modo embed privado.</small>
-                <textarea id="video-description" placeholder="Descripción del video (opcional)" rows="4"></textarea>
-                <button id="add-video-btn">Agregar Video</button>
+                <h3 style="margin-top:0;">Playlists de Videos</h3>
+                
+                <div style="display:grid; grid-template-columns:1fr auto; gap:8px; margin-bottom:12px;">
+                    <input type="text" id="new-playlist-name" placeholder="Nombre de playlist" style="padding:6px; font-size:13px;">
+                    <button id="create-playlist-btn" style="padding:6px 12px; font-size:12px;">Crear</button>
+                </div>
+
+                <div id="playlists-list" style="display:grid; gap:10px;"></div>
             </div>
 
-            <!-- Lista de videos con eliminar -->
+            <!-- Agregar Video -->
             <div class="admin-section animate-on-scroll">
-                <h3>Videos Actuales en Cursos</h3>
-                <div id="video-management-list"></div>
+                <h3 style="margin-top:0;">Agregar Video a Cursos</h3>
+                <input type="text" id="video-title" placeholder="Título del video" style="padding:6px; font-size:13px;">
+                <input type="text" id="video-url" placeholder="URL de YouTube" style="padding:6px; font-size:13px;">
+                <small style="opacity:0.7; display:block; margin:6px 0; font-size:11px;">https://youtu.be/ID o https://www.youtube.com/watch?v=ID</small>
+                <textarea id="video-description" placeholder="Descripción (opcional)" rows="2" style="padding:6px; font-size:13px;"></textarea>
+                <label style="font-size:12px; display:block; margin:6px 0 4px 0;">Playlist:</label>
+                <select id="video-playlist-select" style="width:100%; padding:6px; margin-bottom:8px; font-size:13px;">
+                    <option value="">-- Sin playlist --</option>
+                </select>
+                <button id="add-video-btn" style="padding:6px 12px; font-size:12px;">Agregar Video</button>
             </div>
 
+            <!-- Videos Actuales -->
+            <div class="admin-section animate-on-scroll">
+                <h3 style="margin-top:0;">Videos Actuales</h3>
+                <p style="font-size:11px; opacity:0.7; margin-bottom:10px;">Agregar a playlist o eliminar</p>
+                <div id="video-management-list" style="display:grid; gap:10px;"></div>
+            </div>
+
+            <!-- Asignar Playlists a Usuarios -->
+            <div class="admin-section animate-on-scroll">
+                <h3 style="margin-top:0;">Acceso a Playlists por Usuario</h3>
+                <label style="font-size:12px; display:block; margin-bottom:6px;">Usuario:</label>
+                <select id="user-select" style="width:100%; padding:6px; margin-bottom:10px; font-size:13px;">
+                    <option value="">-- Selecciona usuario --</option>
+                </select>
+                <div id="user-playlists-info" style="display:none; margin-bottom:10px; padding:10px; background:rgba(255,107,0,0.1); border-radius:6px;">
+                    <h4 style="margin:0 0 8px 0; font-size:13px; color:#ff6b00;">Playlists:</h4>
+                    <div id="user-playlist-checkboxes" style="display:grid; gap:6px;"></div>
+                </div>
+                <button id="assign-playlists-btn" style="display:none; padding:6px 12px; font-size:12px;">Guardar Acceso</button>
+            </div>
+
+            <!-- ============ SECCIÓN 3: OTROS (HERO E IMAGEN) ============ -->
+            
             <!-- Cambiar Imagen de Inicio -->
             <div class="admin-section animate-on-scroll">
-                <h3>Cambiar Imagen de Inicio (Hero)</h3>
-                <input type="text" id="hero-url" placeholder="URL de la imagen (opcional)">
-                <input type="file" id="hero-file" accept="image/*">
-                <button id="change-hero-btn">Aplicar Nueva Imagen</button>
+                <h3 style="margin-top:0;">Cambiar Imagen de Inicio</h3>
+                <input type="text" id="hero-url" placeholder="URL de imagen" style="padding:6px; font-size:13px;">
+                <input type="file" id="hero-file" accept="image/*" style="padding:6px; font-size:13px;">
+                <button id="change-hero-btn" style="padding:6px 12px; font-size:12px;">Aplicar</button>
             </div>
 
             <!-- Subir Trabajos al Portafolio -->
             <div class="admin-section animate-on-scroll">
-                <h3>Subir Nuevos Trabajos al Portafolio</h3>
-                <input type="text" id="portafolio-title" placeholder="Título del trabajo">
-                <input type="text" id="portafolio-url" placeholder="URL de la imagen (opcional)">
-                <input type="file" id="portafolio-file" accept="image/*">
-                <button id="add-portafolio-btn">Agregar Trabajo</button>
+                <h3 style="margin-top:0;">Portafolio</h3>
+                <input type="text" id="portafolio-title" placeholder="Título del trabajo" style="padding:6px; font-size:13px;">
+                <input type="text" id="portafolio-url" placeholder="URL de imagen" style="padding:6px; font-size:13px;">
+                <input type="file" id="portafolio-file" accept="image/*" style="padding:6px; font-size:13px;">
+                <button id="add-portafolio-btn" style="padding:6px 12px; font-size:12px;">Agregar Trabajo</button>
 
-                <div class="portafolio-list">
-                    <h4>Trabajos Actualmente en Portafolio</h4>
-                    <div id="portafolio-list" class="grid"></div>
+                <div style="margin-top:12px;">
+                    <h4 style="margin:0 0 8px 0; font-size:13px;">Trabajos en Portafolio</h4>
+                    <div id="portafolio-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:8px;"></div>
                 </div>
             </div>
 

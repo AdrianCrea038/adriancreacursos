@@ -12,11 +12,8 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <svg viewBox="0 0 100 100" width="50" height="50">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ff6b00" stroke-width="12"/>
-                    <circle cx="50" cy="50" r="25" fill="#ff6b00"/>
-                </svg>
-                <span>Adiran Reyes Crea</span>
+                <img src="IMG/Logo-adria--crea.png" alt="Adiran Reyes Crea Logo" style="height: 50px; width: auto; object-fit: contain;">
+                <span></span>
             </div>
             <nav class="nav">
                 <ul class="nav-list">
@@ -24,8 +21,9 @@
                     <li><a href="#servicios" class="nav-link">Servicios</a></li>
                     <li><a href="#portafolio" class="nav-link">Portafolio</a></li>
                     <li><a href="#contacto" class="nav-link">Contáctanos</a></li>
-                    <li><a href="#" id="cursos-link" class="nav-link restricted">Cursos</a></li>
-                    <li><a href="#" id="panel-link" class="nav-link restricted">Panel de Control</a></li>
+                    <li><a href="cursos.html" id="cursos-link" class="nav-link restricted">Cursos</a></li>
+                    <li><a href="panel.html" id="panel-link" class="nav-link restricted">Panel de Control</a></li>
+                    <li><a href="#" id="logout-btn" class="nav-link" style="color:#ff4444; display:none;">Cerrar Sesión</a></li>
                 </ul>
                 <div class="menu-toggle">☰</div>
             </nav>
@@ -35,9 +33,9 @@
     <section id="inicio" class="hero">
         <div class="hero-shape"></div>
         <div class="container hero-content">
-            <h1>Crea con impacto</h1>
+            <h1>Adrian Reyes Crea</h1>
             <p>Freelancer especializado en Diseño Gráfico y Contenido Multimedia para Redes Sociales</p>
-            <p class="experience">Más de 16 años transformando ideas en experiencias visuales poderosas</p>
+            <p class="experience">Con más de 16 años transformando ideas en experiencias visuales poderosas</p>
             <div class="hero-buttons">
                 <a href="#contacto" class="btn-primary">Contáctame</a>
                 <a href="#portafolio" class="btn-secondary">Ver Portafolio →</a>
@@ -82,14 +80,10 @@
     <section id="contacto" class="section contact animate-on-scroll">
         <div class="container">
             <h2 class="section-title animate-on-scroll">Contáctanos</h2>
-            <p>¿Listo para elevar tu presencia digital? Escríbeme y empecemos tu proyecto.</p>
-            <form class="contact-form">
-                <input type="text" placeholder="Tu Nombre" required>
-                <input type="email" placeholder="Tu Email" required>
-                <textarea placeholder="Tu Mensaje" rows="6" required></textarea>
-                <button type="submit" class="btn-primary">Enviar Mensaje</button>
-            </form>
-            <p class="contact-info">O envíame un email directo: <a href="mailto:tuemail@ejemplo.com">tuemail@ejemplo.com</a></p>
+            <p>Sígueme en mis redes sociales y conectemos</p>
+            <div id="social-media-container" class="social-media-grid">
+                <!-- Se cargará dinámicamente desde script.js -->
+            </div>
         </div>
     </section>
 
