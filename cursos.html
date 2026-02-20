@@ -345,11 +345,18 @@ window.filterCourses = function(cat, btn) {
   renderCourses(filtered);
 };
 
-// Intentar Firebase
+// ─── CONFIGURACIÓN FIREBASE ───────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAkrDAE44YRJefO-Bs8CCdrsOGzJ1dnS80",
+  authDomain: "cursos-adrian-crea.firebaseapp.com",
+  projectId: "cursos-adrian-crea",
+  storageBucket: "cursos-adrian-crea.firebasestorage.app",
+  messagingSenderId: "1054676254470",
+  appId: "1:1054676254470:web:c68c00c3e3cd7a2d73a887"
+};
+
 try {
-  const cfg = JSON.parse(localStorage.getItem('fb_config') || '{}');
-  if (!cfg.apiKey || !cfg.projectId) throw new Error('No config');
-  const app = initializeApp(cfg, 'cursos_frontend');
+  const app = initializeApp(FIREBASE_CONFIG);
   const db  = getFirestore(app);
 
   onSnapshot(
@@ -363,7 +370,8 @@ try {
     }
   );
 } catch(e) {
-  document.getElementById('coursesGrid').innerHTML = `<div class="empty-state"><i class="fas fa-cloud-upload-alt"></i><p>Conecta Firebase desde el <a href="admin.html" style="color:var(--green-neon)">panel admin</a> para mostrar cursos aquí.</p></div>`;
+  console.error('Firebase error:', e);
+  document.getElementById('coursesGrid').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Error al conectar con Firebase.<br>Revisa la consola del navegador (F12).</p></div>`;
 }
 </script>
 
