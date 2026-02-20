@@ -1133,8 +1133,8 @@ section { padding: 100px 5%; }
 
     <div class="about-visual reveal-left">
       <div class="about-ring"></div>
-      <div class="about-img-wrap">
-        <div class="about-img-placeholder">
+      <div class="about-img-wrap" id="aboutImgWrap">
+        <div class="about-img-placeholder" id="aboutImgPlaceholder">
           <i class="fas fa-user-circle"></i>
           <span>Tu foto aquí</span>
         </div>
@@ -1429,6 +1429,8 @@ onSnapshot(collection(db, 'site_content'), snap => {
       set('about-m1-num',      data.m1num);  set('about-m1-label', data.m1label);
       set('about-m2-num',      data.m2num);  set('about-m2-label', data.m2label);
       set('about-m3-num',      data.m3num);  set('about-m3-label', data.m3label);
+      // Foto de perfil guardada en sección about
+      if(data.img) applyAboutPhoto(data.img);
     }
 
     if(s === 'contact'){
@@ -1447,8 +1449,46 @@ onSnapshot(collection(db, 'site_content'), snap => {
       if(data.ig){ attr('link-ig', 'href', `https://instagram.com/${data.ig}`); set('ig-handle', '@'+data.ig); }
       if(data.tt){ attr('link-tt', 'href', `https://tiktok.com/@${data.tt}`); set('tt-handle', '@'+data.tt); }
     }
+
+    if(s === 'images'){
+      // Foto de fondo del Hero
+      if(data.hero){
+        const heroPhoto = document.getElementById('heroPhoto');
+        if(heroPhoto){
+          heroPhoto.style.backgroundImage = `url('${data.hero}')`;
+          heroPhoto.classList.add('loaded');
+        }
+      }
+      // Foto de perfil (About)
+      if(data.about) applyAboutPhoto(data.about);
+      // Logo (nav)
+      if(data.logo){
+        const logoIcons = document.querySelectorAll('.nav-logo-icon, .footer-logo-icon');
+        logoIcons.forEach(el => {
+          el.innerHTML = `<img src="${data.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`;
+        });
+      }
+    }
   });
 }, err => console.warn('Firebase index:', err.message));
+
+function applyAboutPhoto(url){
+  const wrap = document.getElementById('aboutImgWrap');
+  const placeholder = document.getElementById('aboutImgPlaceholder');
+  if(!wrap || !url) return;
+  // Check if img already exists
+  let img = wrap.querySelector('img.about-real-photo');
+  if(!img){
+    img = document.createElement('img');
+    img.className = 'about-real-photo';
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:1';
+    wrap.style.position = 'relative';
+    wrap.appendChild(img);
+  }
+  img.src = url;
+  img.onerror = () => img.remove();
+  if(placeholder) placeholder.style.display = 'none';
+}
 </script>
 
 </body>

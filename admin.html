@@ -317,6 +317,7 @@ function togglePass(inputId, btn){
       <a class="nav-item" id="nav-projects" onclick="navigate('pageProjects')"><i class="fas fa-layer-group"></i> Proyectos</a>
       <div class="nav-section-label">Educación</div>
       <a class="nav-item" id="nav-courses" onclick="navigate('pageCourses')"><i class="fas fa-graduation-cap"></i> Cursos <span class="badge" id="coursesBadge">0</span></a>
+      <a class="nav-item" id="nav-playlists" onclick="navigate('pagePlaylists')"><i class="fas fa-list-ul"></i> Playlists</a>
       <div class="nav-section-label" id="nav-admin-label" style="display:none">Administración</div>
       <a class="nav-item" id="nav-users" onclick="navigate('pageUsers')" style="display:none"><i class="fas fa-users"></i> Usuarios</a>
       <a class="nav-item" id="nav-settings" onclick="navigate('pageSettings')"><i class="fas fa-sliders-h"></i> Configuración</a>
@@ -369,6 +370,7 @@ function togglePass(inputId, btn){
     <div class="page-content" id="page-pageHome">
       <div class="section-tabs">
         <button class="section-tab active" onclick="switchSubTab(this,'home-hero')">Hero / Banner</button>
+        <button class="section-tab" onclick="switchSubTab(this,'home-images')">🖼️ Imágenes</button>
         <button class="section-tab" onclick="switchSubTab(this,'home-meta')">SEO / Meta</button>
       </div>
       <div class="page-section-editor active" id="home-hero">
@@ -387,6 +389,36 @@ function togglePass(inputId, btn){
             </div>
             <div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--gray-400);margin-top:4px">
               <i class="fas fa-info-circle" style="color:var(--green-neon)"></i> Los campos vacíos conservarán el texto actual del sitio. Rellena solo lo que quieras cambiar.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page-section-editor" id="home-images">
+        <div class="panel-section">
+          <div class="panel-header"><h3><i class="fas fa-cloud-upload-alt"></i> Imágenes del Sitio (Cloudinary)</h3><button class="btn btn-sm btn-primary" onclick="saveSection('images')"><i class="fas fa-save"></i> Guardar en Firebase</button></div>
+          <div class="panel-body">
+            <div style="background:rgba(61,61,255,0.07);border:1px solid rgba(61,61,255,0.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;font-size:12.5px;color:var(--gray-400);line-height:1.7">
+              <i class="fas fa-lightbulb" style="color:#FFAA00;margin-right:6px"></i>
+              <strong style="color:white">Cómo usar Cloudinary:</strong> Entra a <strong style="color:var(--blue-light)">cloudinary.com</strong> → Media Library → sube tu imagen → clic en la imagen → "Copy URL". Pega la URL aquí.
+            </div>
+            <div class="field-group">
+              <label class="field-label"><i class="fas fa-mountain" style="color:var(--blue-glow)"></i> Foto de fondo del Hero (foto principal)</label>
+              <input type="url" class="field-input" id="img-hero" placeholder="https://res.cloudinary.com/tu-cuenta/image/upload/v.../foto.jpg">
+              <div style="font-size:11px;color:var(--gray-600);margin-top:5px">Se muestra como fondo en el banner principal de la página de inicio. Recomendado: 1920×1080px.</div>
+            </div>
+            <div class="field-group" style="margin-top:16px">
+              <label class="field-label"><i class="fas fa-user-circle" style="color:var(--green-neon)"></i> Foto de perfil (sección Acerca de)</label>
+              <input type="url" class="field-input" id="img-about" placeholder="https://res.cloudinary.com/tu-cuenta/image/upload/v.../perfil.jpg">
+              <div style="font-size:11px;color:var(--gray-600);margin-top:5px">Foto que aparece en la sección "Acerca de Nosotros". Recomendado: cuadrada, mínimo 600×600px.</div>
+            </div>
+            <div class="field-group" style="margin-top:16px">
+              <label class="field-label"><i class="fas fa-layer-group" style="color:#FFB347"></i> Logo del sitio (barra de navegación)</label>
+              <input type="url" class="field-input" id="img-logo" placeholder="https://res.cloudinary.com/tu-cuenta/image/upload/v.../logo.png">
+              <div style="font-size:11px;color:var(--gray-600);margin-top:5px">Opcional — si se deja vacío se usará el ícono de rayo por defecto. Recomendado: PNG transparente.</div>
+            </div>
+            <!-- Preview strip -->
+            <div id="imgPreviewStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)">
+              <div style="font-size:12px;color:var(--gray-500);width:100%;margin-bottom:4px"><i class="fas fa-eye"></i> Vista previa</div>
             </div>
           </div>
         </div>
@@ -423,6 +455,11 @@ function togglePass(inputId, btn){
           <div class="field-row">
             <div class="field-group"><label class="field-label">Métrica 3 (número)</label><input type="text" class="field-input" id="about-m3-num" placeholder="100%"></div>
             <div class="field-group"><label class="field-label">Métrica 3 (etiqueta)</label><input type="text" class="field-input" id="about-m3-label" placeholder="Pasión"></div>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:20px;padding-top:20px">
+            <label class="field-label"><i class="fas fa-user-circle" style="color:var(--green-neon)"></i> Foto de perfil (Cloudinary URL)</label>
+            <input type="url" class="field-input" id="about-img" placeholder="https://res.cloudinary.com/tu-cuenta/image/upload/...">
+            <div style="font-size:11px;color:var(--gray-600);margin-top:5px">Se muestra en la sección "Acerca de Nosotros". También puedes actualizarla desde <strong style="color:var(--gray-400)">Inicio → Imágenes</strong>.</div>
           </div>
         </div>
       </div>
@@ -474,6 +511,42 @@ function togglePass(inputId, btn){
         <button class="btn btn-primary" onclick="openModal('modalCourse')"><i class="fas fa-plus"></i> Nuevo Curso</button>
       </div>
       <div class="panel-section"><div class="panel-body" style="padding:0"><table class="data-table"><thead><tr><th>Curso</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="coursesBody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--gray-400)"><i class="fas fa-spinner fa-spin"></i> Cargando desde Firebase...</td></tr></tbody></table></div></div>
+    </div>
+
+    <!-- PLAYLISTS -->
+    <div class="page-content" id="page-pagePlaylists">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div><h2 style="font-size:20px;font-weight:800">Playlists de Cursos</h2><p style="color:var(--gray-400);font-size:13px;margin-top:3px">Gestiona los videos de cada curso</p></div>
+        <button class="btn btn-primary" id="btnAddVideo" onclick="openAddVideo()" style="display:none"><i class="fas fa-plus"></i> Agregar Video</button>
+      </div>
+      <!-- Course selector -->
+      <div style="margin-bottom:20px">
+        <label class="field-label" style="margin-bottom:8px;display:block">Selecciona un curso para ver/editar su playlist</label>
+        <select class="field-select" id="playlistCourseSelect" onchange="loadAdminPlaylist()" style="max-width:420px">
+          <option value="">— Elige un curso —</option>
+        </select>
+      </div>
+      <!-- Playlist content -->
+      <div id="playlistAdminContent" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div id="playlistAdminTitle" style="font-size:15px;font-weight:700;color:var(--white)"></div>
+          <div style="display:flex;gap:8px">
+            <select class="field-select" id="plSectionFilter" onchange="filterPlaylistSection()" style="width:180px;font-size:13px">
+              <option value="all">Todas las secciones</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-section"><div class="panel-body" style="padding:0">
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Título del Video</th><th>Sección</th><th>Duración</th><th>URL</th><th>Acciones</th></tr></thead>
+            <tbody id="playlistBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-400)">Cargando...</td></tr></tbody>
+          </table>
+        </div></div>
+      </div>
+      <div id="playlistEmptyMsg" style="text-align:center;padding:60px 20px;color:var(--gray-500)">
+        <i class="fas fa-list-ul" style="font-size:40px;opacity:.25;display:block;margin-bottom:12px"></i>
+        <p>Selecciona un curso para ver su playlist</p>
+      </div>
     </div>
 
     <!-- USUARIOS -->
@@ -537,38 +610,44 @@ function togglePass(inputId, btn){
 </div>
 
 <div class="modal-overlay" id="modalCourse">
-  <div class="modal">
+  <div class="modal" style="max-width:620px">
     <div class="modal-header"><h3><i class="fas fa-graduation-cap" style="color:var(--green-neon);margin-right:8px"></i>Nuevo Curso</h3><button class="modal-close" onclick="closeModal('modalCourse')"><i class="fas fa-times"></i></button></div>
     <div class="modal-body">
       <div class="field-group"><label class="field-label">Título del curso</label><input type="text" class="field-input" id="courseName" placeholder="Ej: Diseño con IA para Creativos"></div>
       <div class="field-row">
         <div class="field-group"><label class="field-label">Categoría</label><select class="field-select" id="courseCat"><option value="ai">🤖 AI</option><option value="psd">🎨 PSD</option><option value="video">🎬 Video</option><option value="general">📚 General</option></select></div>
-        <div class="field-group"><label class="field-label">Precio (USD)</label><input type="number" class="field-input" id="coursePrice" placeholder="29.99" min="0" step="0.01"></div>
+        <div class="field-group"><label class="field-label">Estado</label><select class="field-select" id="courseStatus"><option value="published">Publicado</option><option value="draft">Borrador</option><option value="coming">Próximamente</option></select></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Precio</label><input type="number" class="field-input" id="coursePrice" placeholder="29.99" min="0" step="0.01"></div>
+        <div class="field-group">
+          <label class="field-label">Moneda</label>
+          <input type="text" class="field-input" id="courseCurrency" placeholder="USD, HNL, MXN, EUR..." maxlength="10">
+          <div style="font-size:11px;color:var(--gray-600);margin-top:4px">Escribe la moneda manualmente: USD, HNL, MXN, EUR, etc.</div>
+        </div>
       </div>
       <div class="field-group"><label class="field-label">Descripción</label><textarea class="field-textarea" id="courseDesc" placeholder="¿Qué aprenderán los estudiantes?"></textarea></div>
       <div class="field-row">
-        <div class="field-group"><label class="field-label">Duración</label><input type="text" class="field-input" id="courseDur" placeholder="Ej: 8 horas"></div>
+        <div class="field-group"><label class="field-label">Duración total</label><input type="text" class="field-input" id="courseDur" placeholder="Ej: 8 horas"></div>
         <div class="field-group"><label class="field-label">Nivel</label><select class="field-select" id="courseLevel"><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzado</option></select></div>
       </div>
-      <div class="field-group"><label class="field-label">Lecciones</label><input type="number" class="field-input" id="courseLessons" placeholder="30" min="1"></div>
+      <div class="field-group"><label class="field-label">Número de lecciones</label><input type="number" class="field-input" id="courseLessons" placeholder="30" min="1"></div>
       <div class="field-group">
-        <label class="field-label"><i class="fas fa-image" style="color:var(--green-neon)"></i> URL de imagen de portada (Cloudinary)</label>
+        <label class="field-label"><i class="fas fa-image" style="color:var(--green-neon)"></i> URL imagen de portada (Cloudinary)</label>
         <input type="url" class="field-input" id="courseImageUrl" placeholder="https://res.cloudinary.com/tu-cuenta/image/upload/...">
-        <div style="font-size:11px;color:var(--gray-600);margin-top:6px"><i class="fas fa-info-circle"></i> Sube tu imagen a <strong style="color:var(--gray-400)">cloudinary.com</strong> → copia la URL y pégala aquí</div>
+        <div style="font-size:11px;color:var(--gray-600);margin-top:4px"><i class="fas fa-info-circle"></i> Sube a <strong style="color:var(--gray-400)">cloudinary.com</strong> → copia URL → pega aquí</div>
       </div>
       <div class="field-group">
-        <label class="field-label"><i class="fas fa-video" style="color:var(--blue-light)"></i> URL de video de presentación (Cloudinary u otro)</label>
-        <input type="url" class="field-input" id="courseVideoUrl" placeholder="https://res.cloudinary.com/tu-cuenta/video/upload/...">
-        <div style="font-size:11px;color:var(--gray-600);margin-top:6px"><i class="fas fa-info-circle"></i> También puedes usar YouTube: <strong style="color:var(--gray-400)">https://youtube.com/watch?v=...</strong></div>
+        <label class="field-label"><i class="fas fa-video" style="color:var(--blue-light)"></i> URL video de presentación (opcional)</label>
+        <input type="url" class="field-input" id="courseVideoUrl" placeholder="YouTube o Cloudinary video URL">
       </div>
-      <div class="field-group"><label class="field-label">Estado</label><select class="field-select" id="courseStatus"><option value="published">Publicado</option><option value="draft">Borrador</option><option value="coming">Próximamente</option></select></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalCourse')">Cancelar</button><button class="btn btn-primary" onclick="addCourse()"><i class="fas fa-check"></i> Crear Curso</button></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modalUser">
-  <div class="modal">
+  <div class="modal" style="max-width:580px">
     <div class="modal-header"><h3><i class="fas fa-user-plus" style="color:var(--green-neon);margin-right:8px"></i>Nuevo Usuario</h3><button class="modal-close" onclick="closeModal('modalUser')"><i class="fas fa-times"></i></button></div>
     <div class="modal-body">
       <div class="field-row">
@@ -587,11 +666,20 @@ function togglePass(inputId, btn){
       </div>
       <div class="field-group">
         <label class="field-label">Nivel de acceso</label>
-        <select class="field-select" id="userRole">
+        <select class="field-select" id="userRole" onchange="togglePlaylistAccess('userPlaylistWrap',this.value)">
           <option value="courses">📚 Solo Cursos</option>
           <option value="editor">✏️ Editor</option>
           <option value="admin">⚙️ Administrador</option>
         </select>
+      </div>
+      <div id="userPlaylistWrap">
+        <div class="field-group">
+          <label class="field-label"><i class="fas fa-list-ul" style="color:var(--blue-glow)"></i> Acceso a playlists (cursos)</label>
+          <div id="userPlaylistCheckboxes" style="display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;max-height:180px;overflow-y:auto">
+            <div style="color:var(--gray-500);font-size:13px"><i class="fas fa-spinner fa-spin"></i> Cargando cursos...</div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-600);margin-top:5px"><i class="fas fa-info-circle"></i> Selecciona los cursos a los que este usuario tendrá acceso para ver los videos.</div>
+        </div>
       </div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalUser')">Cancelar</button><button class="btn btn-primary" onclick="addUser()"><i class="fas fa-check"></i> Crear Usuario</button></div>
@@ -600,7 +688,7 @@ function togglePass(inputId, btn){
 
 <!-- MODAL EDITAR USUARIO -->
 <div class="modal-overlay" id="modalEditUser">
-  <div class="modal">
+  <div class="modal" style="max-width:580px">
     <div class="modal-header"><h3><i class="fas fa-user-edit" style="color:var(--green-neon);margin-right:8px"></i>Editar Usuario</h3><button class="modal-close" onclick="closeModal('modalEditUser')"><i class="fas fa-times"></i></button></div>
     <div class="modal-body">
       <input type="hidden" id="editUserId">
@@ -621,7 +709,7 @@ function togglePass(inputId, btn){
       <div class="field-row">
         <div class="field-group">
           <label class="field-label">Nivel de acceso</label>
-          <select class="field-select" id="editUserRole">
+          <select class="field-select" id="editUserRole" onchange="togglePlaylistAccess('editUserPlaylistWrap',this.value)">
             <option value="courses">📚 Solo Cursos</option>
             <option value="editor">✏️ Editor</option>
             <option value="admin">⚙️ Administrador</option>
@@ -635,8 +723,17 @@ function togglePass(inputId, btn){
           </select>
         </div>
       </div>
+      <!-- Playlist access -->
+      <div id="editUserPlaylistWrap">
+        <div class="field-group">
+          <label class="field-label"><i class="fas fa-list-ul" style="color:var(--blue-glow)"></i> Acceso a playlists (cursos)</label>
+          <div id="editUserPlaylistCheckboxes" style="display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;max-height:180px;overflow-y:auto">
+            <div style="color:var(--gray-500);font-size:13px"><i class="fas fa-spinner fa-spin"></i> Cargando cursos...</div>
+          </div>
+        </div>
+      </div>
       <!-- Mostrar contraseña actual -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px">
         <div>
           <div style="font-size:11px;color:var(--gray-600);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Contraseña actual guardada</div>
           <div id="editUserPassDisplay" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gray-400);letter-spacing:2px">••••••••</div>
@@ -645,6 +742,46 @@ function togglePass(inputId, btn){
       </div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalEditUser')">Cancelar</button><button class="btn btn-primary" onclick="saveEditUser()"><i class="fas fa-save"></i> Guardar Cambios</button></div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR/EDITAR VIDEO -->
+<div class="modal-overlay" id="modalVideo">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-header">
+      <h3 id="videoModalTitle"><i class="fas fa-video" style="color:var(--blue-glow);margin-right:8px"></i>Agregar Video</h3>
+      <button class="modal-close" onclick="closeModal('modalVideo')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="videoId">
+      <input type="hidden" id="videoCourseId">
+      <div class="field-group"><label class="field-label">Título del video</label><input type="text" class="field-input" id="videoTitle" placeholder="Ej: Introducción al curso"></div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Sección / Módulo</label>
+          <input type="text" class="field-input" id="videoSection" placeholder="Ej: Módulo 1 · Fundamentos" list="sectionSuggestions">
+          <datalist id="sectionSuggestions"></datalist>
+          <div style="font-size:11px;color:var(--gray-600);margin-top:4px">Agrupa los videos en módulos usando el mismo nombre de sección.</div>
+        </div>
+        <div class="field-group"><label class="field-label">Orden dentro de la sección</label><input type="number" class="field-input" id="videoOrder" placeholder="1" min="1"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label"><i class="fas fa-link" style="color:var(--blue-glow)"></i> URL del video</label>
+        <input type="url" class="field-input" id="videoUrl" placeholder="YouTube o Cloudinary URL">
+        <div style="font-size:11px;color:var(--gray-600);margin-top:4px">
+          YouTube: <span style="color:var(--gray-400)">https://youtube.com/watch?v=...</span><br>
+          Cloudinary: <span style="color:var(--gray-400)">https://res.cloudinary.com/.../video.mp4</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Duración</label><input type="text" class="field-input" id="videoDur" placeholder="Ej: 12:35"></div>
+        <div class="field-group"><label class="field-label">Descripción breve</label><input type="text" class="field-input" id="videoDesc" placeholder="De qué trata este video"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalVideo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveVideo()"><i class="fas fa-save"></i> Guardar Video</button>
+    </div>
   </div>
 </div>
 
@@ -658,7 +795,7 @@ function togglePass(inputId, btn){
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
   getFirestore, collection, doc,
-  addDoc, setDoc, deleteDoc, getDocs, onSnapshot,
+  addDoc, setDoc, updateDoc, deleteDoc, getDocs, onSnapshot,
   serverTimestamp, query, orderBy
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
@@ -686,11 +823,10 @@ try {
   app = initializeApp(FIREBASE_CONFIG);
   db  = getFirestore(app);
   window._db = db;
-  window._fb = { collection, doc, addDoc, setDoc, deleteDoc, getDocs, onSnapshot, serverTimestamp, query, orderBy };
+  window._fb = { collection, doc, addDoc, setDoc, updateDoc, deleteDoc, getDocs, onSnapshot, serverTimestamp, query, orderBy };
   setFbStatus(true, 'Firebase conectado');
 
   // ─── CARGAR DATOS EN TIEMPO REAL ───────────────────────────
-  // Proyectos
   onSnapshot(
     query(collection(db,'projects'), orderBy('createdAt','desc')),
     snap => {
@@ -701,18 +837,17 @@ try {
     err => { console.error('Error proyectos:', err); setFbStatus(false, 'Error: ' + err.code); }
   );
 
-  // Cursos
   onSnapshot(
     query(collection(db,'courses'), orderBy('createdAt','desc')),
     snap => {
       window._courses = snap.docs.map(d => ({id:d.id,...d.data()}));
       renderCourses();
       updateStats();
+      populateCourseSelectors(); // Update playlist course selector & user checkboxes
     },
     err => { console.error('Error cursos:', err); }
   );
 
-  // Usuarios Firebase
   onSnapshot(
     collection(db,'users'),
     snap => {
@@ -721,6 +856,16 @@ try {
       updateStats();
     },
     err => { console.error('Error usuarios:', err); }
+  );
+
+  // Playlists
+  onSnapshot(
+    query(collection(db,'playlists'), orderBy('order','asc')),
+    snap => {
+      window._playlists = snap.docs.map(d => ({id:d.id,...d.data()}));
+      if(window._currentPlaylistCourse) renderAdminPlaylist(window._currentPlaylistCourse);
+    },
+    err => { console.error('Error playlists:', err); }
   );
 
 } catch(e) {
@@ -776,11 +921,15 @@ function doLogin(){
     err.classList.add('show');msg.textContent='Sin acceso al panel';
     setTimeout(()=>err.classList.remove('show'),3000);return;
   }
-  currentUser=found;initApp();
+  currentUser=found;
+  // Guardar sesión para que cursos.html pueda leerla
+  try{ sessionStorage.setItem('ac_user', JSON.stringify(found)); }catch(e){}
+  initApp();
 }
 
 function doLogout(){
   currentUser=null;
+  try{ sessionStorage.removeItem('ac_user'); }catch(e){}
   document.getElementById('appShell').classList.remove('visible');
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('loginUser').value='';
@@ -916,14 +1065,220 @@ function renderCourses(){
       <span style="display:block;font-size:12px;color:var(--gray-400)">${c.dur||'—'} · <span class="badge-pill ${lvlColor[c.level]||'badge-gray'}" style="padding:1px 7px;font-size:10px">${lvlLabel[c.level]||c.level}</span></span></div>
     </div></td>
     <td><span style="font-size:13px">${catLabels[c.cat]||c.cat}</span></td>
-    <td><strong style="font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--green-neon)">$${(c.price||0).toFixed(2)}</strong></td>
+    <td><strong style="font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--green-neon)">${c.price||0} <span style="font-size:11px;font-weight:400;color:var(--gray-500)">${c.currency||'USD'}</span></strong></td>
     <td><span class="badge-pill ${c.status==='published'?'badge-green':c.status==='draft'?'badge-gray':'badge-orange'}">${c.status==='published'?'✓ Publicado':c.status==='draft'?'Borrador':'Próximamente'}</span></td>
     <td><div style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-primary" onclick="goToPlaylist('${c.id}')" title="Gestionar Playlist"><i class="fas fa-list-ul"></i></button>
       <button class="btn btn-sm btn-danger" onclick="deleteCourse('${c.id}')"><i class="fas fa-trash"></i></button>
     </div></td>
   </tr>`).join('');
   document.getElementById('coursesBadge').textContent=window._courses.filter(c=>c.status==='published').length;
 }
+
+// ─── POPULATE COURSE SELECTORS (playlist page + user checkboxes) ───
+function populateCourseSelectors(){
+  const courses = window._courses || [];
+  // Playlist page selector
+  const sel = document.getElementById('playlistCourseSelect');
+  if(sel){
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— Elige un curso —</option>' +
+      courses.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    if(prev) sel.value = prev;
+  }
+  // User playlist checkboxes
+  buildPlaylistCheckboxes('userPlaylistCheckboxes', []);
+}
+
+function buildPlaylistCheckboxes(containerId, selectedIds){
+  const wrap = document.getElementById(containerId);
+  if(!wrap) return;
+  const courses = window._courses || [];
+  if(!courses.length){
+    wrap.innerHTML = '<div style="color:var(--gray-500);font-size:13px">No hay cursos creados aún.</div>';
+    return;
+  }
+  wrap.innerHTML = `
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <input type="checkbox" id="pl-all" value="all" onchange="handleAllPlaylistCheck('${containerId}')"
+        ${selectedIds.includes('all')?'checked':''} style="accent-color:var(--green-neon);width:15px;height:15px">
+      <span style="font-size:13px;font-weight:600;color:var(--green-neon)">✦ Acceso a todos los cursos</span>
+    </label>` +
+    courses.map(c=>`
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 0">
+      <input type="checkbox" class="pl-course-check" value="${c.id}"
+        ${selectedIds.includes('all')||selectedIds.includes(c.id)?'checked':''}
+        style="accent-color:var(--blue-bright);width:15px;height:15px">
+      <span style="font-size:13px">${c.name}</span>
+    </label>`).join('');
+}
+
+window.handleAllPlaylistCheck = function(containerId){
+  const allBox = document.getElementById('pl-all');
+  const boxes  = document.querySelectorAll(`#${containerId} .pl-course-check`);
+  boxes.forEach(b => b.disabled = allBox.checked);
+};
+
+function getSelectedPlaylists(containerId){
+  const allBox = document.getElementById('pl-all');
+  if(allBox?.checked) return ['all'];
+  return [...document.querySelectorAll(`#${containerId} .pl-course-check:checked`)].map(b=>b.value);
+}
+
+window.togglePlaylistAccess = function(wrapId, role){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  wrap.style.display = (role==='courses') ? 'block' : 'none';
+};
+
+// ─── GO TO PLAYLIST PAGE FOR A COURSE ────────────────────────
+function goToPlaylist(courseId){
+  navigate('pagePlaylists');
+  const sel = document.getElementById('playlistCourseSelect');
+  if(sel){ sel.value = courseId; loadAdminPlaylist(); }
+}
+
+// ─── ADMIN PLAYLIST LOAD ──────────────────────────────────────
+window.loadAdminPlaylist = function(){
+  const courseId = document.getElementById('playlistCourseSelect').value;
+  if(!courseId){
+    document.getElementById('playlistAdminContent').style.display='none';
+    document.getElementById('playlistEmptyMsg').style.display='block';
+    document.getElementById('btnAddVideo').style.display='none';
+    return;
+  }
+  window._currentPlaylistCourse = courseId;
+  const course = (window._courses||[]).find(c=>c.id===courseId);
+  document.getElementById('playlistAdminTitle').textContent = course ? `📋 ${course.name}` : '';
+  document.getElementById('playlistAdminContent').style.display='block';
+  document.getElementById('playlistEmptyMsg').style.display='none';
+  document.getElementById('btnAddVideo').style.display='flex';
+  renderAdminPlaylist(courseId);
+};
+
+function renderAdminPlaylist(courseId){
+  const body = document.getElementById('playlistBody');
+  if(!body) return;
+  const all = (window._playlists||[]).filter(v=>v.courseId===courseId);
+  if(!all.length){
+    body.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-400)">Sin videos aún. Agrega el primero.</td></tr>`;
+    return;
+  }
+  // Update section filter
+  const sections = [...new Set(all.map(v=>v.section||'Principal'))];
+  const secSel = document.getElementById('plSectionFilter');
+  if(secSel){
+    secSel.innerHTML = '<option value="all">Todas las secciones</option>' +
+      sections.map(s=>`<option value="${s}">${s}</option>`).join('');
+  }
+  // Update datalist for video modal
+  const dl = document.getElementById('sectionSuggestions');
+  if(dl) dl.innerHTML = sections.map(s=>`<option value="${s}">`).join('');
+
+  let idx=1;
+  body.innerHTML = all.map(v=>`<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-500)">${idx++}</td>
+    <td><strong style="font-size:13px">${v.title||'Sin título'}</strong></td>
+    <td><span style="font-size:12px;background:rgba(26,26,255,0.15);padding:3px 8px;border-radius:100px">${v.section||'—'}</span></td>
+    <td style="font-size:13px;color:var(--gray-400)">${v.dur||'—'}</td>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+      ${v.url?`<a href="${v.url}" target="_blank" style="color:var(--blue-glow);font-size:12px"><i class="fas fa-external-link-alt"></i> Ver</a>`:'<span style="color:var(--gray-600);font-size:12px">Sin URL</span>'}
+    </td>
+    <td><div style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-primary" onclick="editVideo('${v.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteVideo('${v.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+
+window.filterPlaylistSection = function(){
+  const filter = document.getElementById('plSectionFilter').value;
+  const courseId = document.getElementById('playlistCourseSelect').value;
+  if(!courseId) return;
+  const all = (window._playlists||[]).filter(v=>v.courseId===courseId);
+  const body = document.getElementById('playlistBody');
+  const filtered = filter==='all' ? all : all.filter(v=>(v.section||'Principal')===filter);
+  if(!filtered.length){ body.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-400)">Sin videos en esta sección.</td></tr>`; return; }
+  let idx=1;
+  body.innerHTML = filtered.map(v=>`<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-500)">${idx++}</td>
+    <td><strong style="font-size:13px">${v.title||'Sin título'}</strong></td>
+    <td><span style="font-size:12px;background:rgba(26,26,255,0.15);padding:3px 8px;border-radius:100px">${v.section||'—'}</span></td>
+    <td style="font-size:13px;color:var(--gray-400)">${v.dur||'—'}</td>
+    <td>${v.url?`<a href="${v.url}" target="_blank" style="color:var(--blue-glow);font-size:12px"><i class="fas fa-external-link-alt"></i> Ver</a>`:'<span style="color:var(--gray-600);font-size:12px">Sin URL</span>'}</td>
+    <td><div style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-primary" onclick="editVideo('${v.id}')"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteVideo('${v.id}')"><i class="fas fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+};
+
+// ─── OPEN ADD VIDEO MODAL ─────────────────────────────────────
+window.openAddVideo = function(){
+  const courseId = document.getElementById('playlistCourseSelect').value;
+  if(!courseId){ showToast('error','Error','Selecciona un curso primero'); return; }
+  document.getElementById('videoModalTitle').innerHTML = '<i class="fas fa-video" style="color:var(--blue-glow);margin-right:8px"></i>Agregar Video';
+  document.getElementById('videoId').value = '';
+  document.getElementById('videoCourseId').value = courseId;
+  ['videoTitle','videoSection','videoUrl','videoDur','videoDesc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('videoOrder').value = ((window._playlists||[]).filter(v=>v.courseId===courseId).length + 1);
+  openModal('modalVideo');
+};
+
+window.editVideo = function(videoId){
+  const v = (window._playlists||[]).find(x=>x.id===videoId);
+  if(!v) return;
+  document.getElementById('videoModalTitle').innerHTML = '<i class="fas fa-edit" style="color:var(--green-neon);margin-right:8px"></i>Editar Video';
+  document.getElementById('videoId').value      = v.id;
+  document.getElementById('videoCourseId').value= v.courseId||'';
+  document.getElementById('videoTitle').value   = v.title||'';
+  document.getElementById('videoSection').value = v.section||'';
+  document.getElementById('videoOrder').value   = v.order||1;
+  document.getElementById('videoUrl').value     = v.url||'';
+  document.getElementById('videoDur').value     = v.dur||'';
+  document.getElementById('videoDesc').value    = v.desc||'';
+  openModal('modalVideo');
+};
+
+window.saveVideo = async function(){
+  const title    = document.getElementById('videoTitle').value.trim();
+  const courseId = document.getElementById('videoCourseId').value;
+  const editId   = document.getElementById('videoId').value;
+  if(!title){ showToast('error','Error','El título es requerido'); return; }
+  if(!courseId){ showToast('error','Error','Sin curso asignado'); return; }
+  const data = {
+    courseId,
+    title,
+    section:  document.getElementById('videoSection').value.trim() || 'Sección 1',
+    order:    parseInt(document.getElementById('videoOrder').value)||1,
+    url:      document.getElementById('videoUrl').value.trim(),
+    dur:      document.getElementById('videoDur').value.trim(),
+    desc:     document.getElementById('videoDesc').value.trim(),
+  };
+  if(!window._db){ showToast('error','Sin Firebase','No hay conexión'); return; }
+  const {collection,doc,addDoc,setDoc,serverTimestamp}=window._fb;
+  try{
+    if(editId){
+      await setDoc(doc(window._db,'playlists',editId), data, {merge:true});
+      showToast('success','Video actualizado','Guardado ✓');
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(window._db,'playlists'), data);
+      showToast('success','Video agregado','Guardado en Firebase ✓');
+    }
+    closeModal('modalVideo');
+  } catch(e){ showToast('error','Error Firebase',e.message); }
+};
+
+window.deleteVideo = async function(videoId){
+  if(!confirm('¿Eliminar este video de la playlist?')) return;
+  if(!window._db) return;
+  const {doc,deleteDoc}=window._fb;
+  try{
+    await deleteDoc(doc(window._db,'playlists',videoId));
+    showToast('info','Video eliminado','Eliminado de Firebase');
+  }catch(e){ showToast('error','Error Firebase',e.message); }
+};
 
 // ─── RENDER USUARIOS ──────────────────────────────────────────
 window._usersMap = {}; // mapa id→usuario para edición segura
@@ -999,8 +1354,9 @@ async function addCourse(){
   const name=document.getElementById('courseName').value.trim();
   if(!name){showToast('error','Error','El título del curso es requerido');return;}
   const data={
-    name,cat:document.getElementById('courseCat').value,
+    name, cat:document.getElementById('courseCat').value,
     price:parseFloat(document.getElementById('coursePrice').value)||0,
+    currency:(document.getElementById('courseCurrency').value.trim().toUpperCase()||'USD'),
     level:document.getElementById('courseLevel').value,
     dur:document.getElementById('courseDur').value||'—',
     lessons:parseInt(document.getElementById('courseLessons').value)||0,
@@ -1020,10 +1376,10 @@ async function addCourse(){
   } else {
     data.id=Date.now().toString();data.createdAt=new Date();
     window._courses.unshift(data);renderCourses();updateStats();
-    showToast('info','Curso creado','(Sin Firebase — no se guardará al recargar)');
+    showToast('info','Curso creado','(Sin Firebase)');
   }
   closeModal('modalCourse');
-  ['courseName','coursePrice','courseDur','courseDesc','courseLessons','courseImageUrl','courseVideoUrl'].forEach(id=>document.getElementById(id).value='');
+  ['courseName','coursePrice','courseCurrency','courseDur','courseDesc','courseLessons','courseImageUrl','courseVideoUrl'].forEach(id=>document.getElementById(id).value='');
 }
 
 async function deleteCourse(id){
@@ -1047,10 +1403,13 @@ async function addUser(){
   const login=document.getElementById('userLogin').value.trim();
   const pass=document.getElementById('userPass').value;
   const email=document.getElementById('userEmail').value.trim();
+  const role=document.getElementById('userRole').value;
   if(!name||!login||!pass){showToast('error','Error','Nombre, usuario y contraseña son requeridos');return;}
   const allU=[...DB.users,...window._users];
   if(allU.find(u=>u.login===login)){showToast('error','Error','Ese nombre de usuario ya existe');return;}
-  const data={name,login,pass,email,role:document.getElementById('userRole').value,active:true,createdAt:null};
+  // Get selected playlists
+  const playlists = (role === 'courses') ? getSelectedPlaylists('userPlaylistCheckboxes') : [];
+  const data={name,login,pass,email,role,playlists,active:true,createdAt:null};
   if(window._db){
     try{
       const {addDoc,collection,serverTimestamp}=window._fb;
@@ -1107,6 +1466,10 @@ function openEditUser(id){
   document.getElementById('editUserPassDisplay').style.color = '';
   document.getElementById('btnRevealPass').innerHTML = '<i class="fas fa-eye"></i> Ver';
   _editingPassPlain = u.pass || '';
+  // Cargar playlists con las asignadas marcadas
+  buildPlaylistCheckboxes('editUserPlaylistCheckboxes', u.playlists || []);
+  // Mostrar/ocultar selector de playlists según rol
+  togglePlaylistAccess('editUserPlaylistWrap', u.role || 'courses');
   openModal('modalEditUser');
 }
 
@@ -1137,13 +1500,19 @@ async function saveEditUser(){
 
   const updates = { name, login, email, role, active };
   if(newPass) updates.pass = newPass;
+  // Guardar playlists asignadas
+  if(role === 'courses'){
+    updates.playlists = getSelectedPlaylists('editUserPlaylistCheckboxes');
+  } else {
+    updates.playlists = ['all'];
+  }
 
   if(window._db){
     try{
       const {doc, setDoc} = window._fb;
       await setDoc(doc(window._db,'users',id), updates, {merge:true});
       showToast('success','Usuario actualizado',`@${login} guardado en Firebase ✓`);
-      if(newPass) _editingPassPlain = newPass; // actualizar vista local
+      if(newPass) _editingPassPlain = newPass;
     }catch(e){showToast('error','Error Firebase',e.message);return;}
   } else {
     const u = window._users.find(u=>u.id===id);
@@ -1178,6 +1547,7 @@ async function saveSection(section){
       m1num:     v('about-m1-num'),  m1label: v('about-m1-label'),
       m2num:     v('about-m2-num'),  m2label: v('about-m2-label'),
       m3num:     v('about-m3-num'),  m3label: v('about-m3-label'),
+      img:       v('about-img'),
     };
   } else if(section === 'contact'){
     data = {
@@ -1188,6 +1558,14 @@ async function saveSection(section){
       ig:    v('contact-ig'),
       tt:    v('contact-tt'),
     };
+  } else if(section === 'images'){
+    data = {
+      hero:  v('img-hero'),
+      about: v('img-about'),
+      logo:  v('img-logo'),
+    };
+    // Mostrar preview
+    updateImgPreviews();
   }
 
   // Eliminar campos vacíos para no sobreescribir con nada
@@ -1204,6 +1582,29 @@ async function saveSection(section){
   } catch(e){
     showToast('error','Error al guardar', e.message);
   }
+}
+
+// Vista previa de imágenes en admin
+function updateImgPreviews(){
+  const strip = document.getElementById('imgPreviewStrip');
+  if(!strip) return;
+  const imgs = [
+    {id:'img-hero', label:'Hero (fondo)'},
+    {id:'img-about', label:'Foto perfil'},
+    {id:'img-logo', label:'Logo'},
+  ];
+  let html = '<div style="font-size:12px;color:var(--gray-500);width:100%;margin-bottom:4px"><i class="fas fa-eye"></i> Vista previa</div>';
+  imgs.forEach(({id, label}) => {
+    const url = v(id);
+    if(url){
+      html += `<div style="text-align:center">
+        <img src="${url}" style="width:100px;height:70px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.1)" 
+             onerror="this.style.display='none'">
+        <div style="font-size:10px;color:var(--gray-600);margin-top:4px">${label}</div>
+      </div>`;
+    }
+  });
+  strip.innerHTML = html;
 }
 
 function v(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
@@ -1227,10 +1628,19 @@ function loadSiteContent(){
         fill('about-m1-num', data.m1num); fill('about-m1-label', data.m1label);
         fill('about-m2-num', data.m2num); fill('about-m2-label', data.m2label);
         fill('about-m3-num', data.m3num); fill('about-m3-label', data.m3label);
+        fill('about-img', data.img);
       } else if(s === 'contact'){
         fill('contact-sub', data.sub);   fill('contact-wa', data.wa);
         fill('contact-wa-msg', data.waMsg); fill('contact-fb', data.fb);
         fill('contact-ig', data.ig);     fill('contact-tt', data.tt);
+      } else if(s === 'images'){
+        fill('img-hero', data.hero);
+        fill('img-about', data.about);
+        fill('img-logo', data.logo);
+        // Sync the about-img field too (same image)
+        if(data.about) fill('about-img', data.about);
+        // Show preview
+        setTimeout(updateImgPreviews, 100);
       }
     });
   });
@@ -1255,7 +1665,15 @@ function changePassword(){
 }
 
 // ─── MODALES ──────────────────────────────────────────────────
-function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+  // Initialize user playlist checkboxes when creating new user
+  if(id === 'modalUser'){
+    buildPlaylistCheckboxes('userPlaylistCheckboxes', []);
+    togglePlaylistAccess('userPlaylistWrap', document.getElementById('userRole').value);
+  }
+}
 function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id)}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>closeModal(m.id));});
@@ -1285,8 +1703,12 @@ Object.assign(window,{
   filterProjects,renderProjects,renderCourses,renderUsers,updateStats,
   addProject,deleteProject,addCourse,deleteCourse,addUser,deleteUser,
   openModal,closeModal,showToast,saveSection,saveFirebaseConfig,
-  changePassword,loadFirebaseConfigForm,
-  togglePass,openEditUser,saveEditUser,togglePassDisplay
+  changePassword,loadFirebaseConfigForm,updateImgPreviews,
+  togglePass,openEditUser,saveEditUser,togglePassDisplay,
+  populateCourseSelectors,buildPlaylistCheckboxes,togglePlaylistAccess,
+  getSelectedPlaylists,handleAllPlaylistCheck,
+  loadAdminPlaylist,filterPlaylistSection,openAddVideo,editVideo,saveVideo,deleteVideo,
+  goToPlaylist
 });
 </script>
 </body>
