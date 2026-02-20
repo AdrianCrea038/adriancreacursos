@@ -55,7 +55,6 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
 .mobile-menu a:hover{background:rgba(26,26,255,.12);border-color:rgba(26,26,255,.3);color:var(--white);padding-left:22px}
 .mobile-menu a.active{color:var(--green-neon)}
 .mobile-menu a i{width:20px;text-align:center;color:var(--blue-glow)}
-.mobile-sub-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-500);padding:16px 16px 4px}
 .mobile-login{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));border:none;border-radius:var(--radius-md);color:white;font-family:var(--font-body);font-size:15px;font-weight:700;cursor:pointer;text-decoration:none}
 @media(max-width:1024px){.nav-menu{display:none}.hamburger{display:flex}.btn-nav-login{display:none}}
 
@@ -71,8 +70,6 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
 .page-title{font-family:var(--font-display);font-size:clamp(38px,6vw,72px);font-weight:800;line-height:1.05;letter-spacing:-.03em;margin-bottom:20px}
 .page-title .accent{background:linear-gradient(135deg,var(--blue-glow),var(--green-neon));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .page-subtitle{font-size:clamp(15px,1.6vw,18px);color:var(--gray-300);max-width:520px;margin:0 auto 24px;line-height:1.65}
-
-/* BENEFITS BAR */
 .benefits-bar{display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;margin-bottom:60px;position:relative;z-index:1}
 .benefit-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--gray-300)}
 .benefit-item i{color:var(--green-neon);font-size:14px}
@@ -86,14 +83,10 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
 /* COURSES GRID */
 .courses-section{padding:0 5% 100px}
 .courses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-
-/* COURSE CARD */
 .course-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-xl);overflow:hidden;display:flex;flex-direction:column;transition:all .45s var(--ease-out-expo);position:relative}
 .course-card:hover{transform:translateY(-10px);border-color:rgba(26,26,255,.4);box-shadow:0 24px 72px rgba(26,26,255,.25)}
 .course-card.coming-soon{opacity:.7}
 .course-card.coming-soon:hover{transform:translateY(-4px)}
-
-/* Card image */
 .course-thumb{aspect-ratio:16/9;position:relative;overflow:hidden;background:var(--dark-3);flex-shrink:0}
 .course-thumb-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .course-thumb-bg::before{content:'';position:absolute;inset:0}
@@ -103,48 +96,37 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
 .course-general .course-thumb-bg::before{background:linear-gradient(145deg,rgba(26,26,255,.2),rgba(61,61,255,.1))}
 .course-thumb-icon{font-size:52px;opacity:.25;position:relative;z-index:1;transition:transform .4s var(--ease-out-expo)}
 .course-card:hover .course-thumb-icon{transform:scale(1.1) rotate(-5deg);opacity:.35}
-
-/* Status badge */
+.course-thumb-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .course-status{position:absolute;top:14px;right:14px;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em;z-index:2}
 .status-published{background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.3);color:var(--green-neon)}
 .status-coming{background:rgba(255,170,0,.15);border:1px solid rgba(255,170,0,.3);color:#FFAA00}
-.status-draft{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--gray-300)}
-
-/* Login badge */
-.course-login-badge{position:absolute;top:14px;left:14px;width:32px;height:32px;background:rgba(7,7,26,.8);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--gray-300);z-index:2;transition:all .3s}
-.course-card:hover .course-login-badge{background:rgba(26,26,255,.3);border-color:var(--blue-bright);color:var(--white)}
-
-/* Card body */
-.course-body{padding:24px;display:flex;flex-direction:column;gap:14px;flex:1}
-.course-cat-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500)}
+.course-body{padding:22px 24px;flex:1;display:flex;flex-direction:column;gap:12px}
+.course-cat-tag{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;font-family:var(--font-mono);letter-spacing:.06em;color:var(--gray-500);text-transform:uppercase}
 .course-ai .course-cat-tag{color:var(--blue-glow)}
 .course-psd .course-cat-tag{color:#FFB347}
 .course-video .course-cat-tag{color:#FF8888}
 .course-cat-tag i{font-size:12px}
 .course-title{font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.2;letter-spacing:-.02em}
 .course-desc{font-size:13.5px;color:var(--gray-300);line-height:1.6;flex:1}
-
-/* Meta row */
 .course-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .course-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-500)}
 .course-meta-item i{font-size:11px}
-
-/* Price & CTA */
 .course-footer{padding:0 24px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .course-price{font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:-.03em}
-.course-price-free{color:var(--green-neon)}
 .course-price-paid{background:linear-gradient(135deg,var(--white),var(--blue-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .course-price-coming{font-family:var(--font-mono);font-size:14px;color:#FFAA00;font-weight:600}
 .course-price sub{font-size:13px;font-weight:500;color:var(--gray-500);vertical-align:baseline;-webkit-text-fill-color:var(--gray-500)}
-
 .btn-enroll{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:100px;font-family:var(--font-body);font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .35s var(--ease-out-expo);border:none;flex-shrink:0}
 .btn-enroll-primary{background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));color:white;box-shadow:0 4px 20px rgba(26,26,255,.35)}
 .btn-enroll-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(26,26,255,.5)}
 .btn-enroll-notify{background:rgba(255,170,0,.12);border:1px solid rgba(255,170,0,.3);color:#FFAA00}
 .btn-enroll-notify:hover{background:rgba(255,170,0,.2);transform:translateY(-2px)}
-
-/* Divider line */
 .course-divider{height:1px;background:rgba(255,255,255,.05);margin:0 24px}
+
+/* Empty state */
+.empty-state{text-align:center;padding:80px 20px;color:var(--gray-500);grid-column:1/-1}
+.empty-state i{font-size:48px;margin-bottom:16px;display:block;opacity:.3}
+.empty-state p{font-size:15px;line-height:1.6}
 
 /* LOGIN WALL */
 .login-wall{margin:0 5% 100px;background:linear-gradient(135deg,rgba(26,26,255,.1),rgba(0,255,136,.05));border:1px solid rgba(26,26,255,.25);border-radius:var(--radius-xl);padding:48px 40px;text-align:center;position:relative;overflow:hidden}
@@ -212,15 +194,13 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
     <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
   </div>
 </nav>
+
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html#inicio" onclick="toggleMenu()"><i class="fas fa-home"></i> Inicio</a>
   <a href="index.html#nosotros" onclick="toggleMenu()"><i class="fas fa-user-circle"></i> Acerca de</a>
   <a href="index.html#contacto" onclick="toggleMenu()"><i class="fas fa-envelope"></i> Contáctanos</a>
-  <div class="mobile-sub-label">Proyectos</div>
-  <a href="proyectos.html#ai" onclick="toggleMenu()"><i class="fas fa-robot"></i> AI</a>
-  <a href="proyectos.html#psd" onclick="toggleMenu()"><i class="fas fa-paint-brush"></i> PSD</a>
-  <a href="proyectos.html#video" onclick="toggleMenu()"><i class="fas fa-video"></i> Video</a>
-  <a href="cursos.html" class="active" onclick="toggleMenu()"><i class="fas fa-graduation-cap"></i> Cursos</a>
+  <a href="proyectos.html" onclick="toggleMenu()"><i class="fas fa-layer-group"></i> Proyectos</a>
+  <a href="cursos.html" onclick="toggleMenu()" class="active"><i class="fas fa-graduation-cap"></i> Cursos</a>
   <a href="admin.html" class="mobile-login"><i class="fas fa-user-shield"></i> Acceder / Login</a>
 </div>
 
@@ -229,14 +209,14 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
   <div class="page-hero-bg"></div>
   <div class="page-hero-grid"></div>
   <div class="page-hero-content">
-    <div class="page-eyebrow"><span class="eyebrow-dot"></span> Aprende con Nosotros</div>
-    <h1 class="page-title">Nuestros <span class="accent">Cursos</span></h1>
-    <p class="page-subtitle">Aprende diseño, IA y producción de video con cursos prácticos creados para creativos de todos los niveles.</p>
+    <div class="page-eyebrow"><span class="eyebrow-dot"></span> Formación Online</div>
+    <h1 class="page-title">Aprende a crear cosas<br><span class="accent">increíbles</span></h1>
+    <p class="page-subtitle">Cursos prácticos de diseño con IA, Photoshop y producción de video para creativos de todos los niveles.</p>
     <div class="benefits-bar">
-      <div class="benefit-item"><i class="fas fa-check-circle"></i> Aprende a tu ritmo</div>
       <div class="benefit-item"><i class="fas fa-check-circle"></i> Acceso de por vida</div>
-      <div class="benefit-item"><i class="fas fa-check-circle"></i> Certificado incluido</div>
-      <div class="benefit-item"><i class="fas fa-check-circle"></i> Soporte directo</div>
+      <div class="benefit-item"><i class="fas fa-certificate"></i> Certificado incluido</div>
+      <div class="benefit-item"><i class="fas fa-download"></i> Recursos descargables</div>
+      <div class="benefit-item"><i class="fas fa-headset"></i> Soporte directo</div>
     </div>
     <div class="filter-bar">
       <button class="filter-btn active" onclick="filterCourses('all',this)"><i class="fas fa-th"></i> <span>Todos</span></button>
@@ -247,81 +227,14 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
   </div>
 </div>
 
-<!-- COURSES GRID -->
+<!-- COURSES SECTION -->
 <div class="courses-section">
   <div class="courses-grid" id="coursesGrid">
-
-    <!-- Curso 1: AI -->
-    <div class="course-card course-ai reveal reveal-delay-1" data-cat="ai">
-      <div class="course-thumb">
-        <div class="course-thumb-bg"><i class="fas fa-robot course-thumb-icon"></i></div>
-        <div class="course-status status-published">● Disponible</div>
-        <div class="course-login-badge"><i class="fas fa-lock"></i></div>
-      </div>
-      <div class="course-body">
-        <div class="course-cat-tag"><i class="fas fa-robot"></i> Inteligencia Artificial</div>
-        <h3 class="course-title">Diseño con IA desde Cero</h3>
-        <p class="course-desc">Aprende a crear diseños profesionales usando Midjourney, ChatGPT y otras herramientas de IA. Desde los prompts básicos hasta técnicas avanzadas.</p>
-        <div class="course-meta">
-          <div class="course-meta-item"><i class="fas fa-clock"></i> 8 horas</div>
-          <div class="course-meta-item"><i class="fas fa-signal"></i> Principiante</div>
-          <div class="course-meta-item"><i class="fas fa-play-circle"></i> 24 lecciones</div>
-        </div>
-      </div>
-      <div class="course-divider"></div>
-      <div class="course-footer">
-        <div class="course-price"><span class="course-price-paid">$29.99</span><sub> USD</sub></div>
-        <a href="admin.html" class="btn-enroll btn-enroll-primary"><i class="fas fa-lock"></i> Acceder</a>
-      </div>
+    <!-- Cards se insertan aquí vía Firebase -->
+    <div class="empty-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Cargando cursos desde Firebase...</p>
     </div>
-
-    <!-- Curso 2: PSD -->
-    <div class="course-card course-psd reveal reveal-delay-2" data-cat="psd">
-      <div class="course-thumb">
-        <div class="course-thumb-bg"><i class="fas fa-paint-brush course-thumb-icon"></i></div>
-        <div class="course-status status-published">● Disponible</div>
-        <div class="course-login-badge"><i class="fas fa-lock"></i></div>
-      </div>
-      <div class="course-body">
-        <div class="course-cat-tag"><i class="fas fa-paint-brush"></i> Diseño PSD</div>
-        <h3 class="course-title">Photoshop Avanzado Profesional</h3>
-        <p class="course-desc">Domina las herramientas avanzadas de Photoshop: retoque fotográfico, manipulación de imágenes, composición digital y flujo de trabajo profesional.</p>
-        <div class="course-meta">
-          <div class="course-meta-item"><i class="fas fa-clock"></i> 12 horas</div>
-          <div class="course-meta-item"><i class="fas fa-signal"></i> Intermedio</div>
-          <div class="course-meta-item"><i class="fas fa-play-circle"></i> 36 lecciones</div>
-        </div>
-      </div>
-      <div class="course-divider"></div>
-      <div class="course-footer">
-        <div class="course-price"><span class="course-price-paid">$49.99</span><sub> USD</sub></div>
-        <a href="admin.html" class="btn-enroll btn-enroll-primary"><i class="fas fa-lock"></i> Acceder</a>
-      </div>
-    </div>
-
-    <!-- Curso 3: Video (próximamente) -->
-    <div class="course-card course-video coming-soon reveal reveal-delay-3" data-cat="video">
-      <div class="course-thumb">
-        <div class="course-thumb-bg"><i class="fas fa-video course-thumb-icon"></i></div>
-        <div class="course-status status-coming">⏳ Próximamente</div>
-      </div>
-      <div class="course-body">
-        <div class="course-cat-tag"><i class="fas fa-video"></i> Video &amp; Producción</div>
-        <h3 class="course-title">After Effects para Reels</h3>
-        <p class="course-desc">Crea reels y videos profesionales con After Effects. Aprende motion graphics, transiciones épicas y efectos visuales para dominar las redes sociales.</p>
-        <div class="course-meta">
-          <div class="course-meta-item"><i class="fas fa-clock"></i> 10 horas</div>
-          <div class="course-meta-item"><i class="fas fa-signal"></i> Intermedio</div>
-          <div class="course-meta-item"><i class="fas fa-play-circle"></i> 30 lecciones</div>
-        </div>
-      </div>
-      <div class="course-divider"></div>
-      <div class="course-footer">
-        <div class="course-price course-price-coming">🔔 Próximamente</div>
-        <a href="https://wa.me/50432513558?text=Quiero%20ser%20notificado%20del%20curso%20de%20After%20Effects%20🎬" target="_blank" class="btn-enroll btn-enroll-notify"><i class="fab fa-whatsapp"></i> Notificarme</a>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -354,7 +267,108 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
   </div>
 </footer>
 
+<!-- ============================================================
+     FIREBASE + RENDER
+     ============================================================ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const catIcons = {ai:'fa-robot',psd:'fa-paint-brush',video:'fa-video',general:'fa-book'};
+const catLabels = {ai:'🤖 Inteligencia Artificial',psd:'🎨 Diseño PSD',video:'🎬 Video & Producción',general:'📚 General'};
+const lvlLabel  = {beginner:'Principiante',intermediate:'Intermedio',advanced:'Avanzado'};
+
+let allCourses = [];
+
+function buildCard(c) {
+  const isPublished = c.status === 'published';
+  const isComing    = c.status === 'coming';
+  const catClass = `course-${c.cat||'general'}`;
+  const iconClass = catIcons[c.cat] || 'fa-graduation-cap';
+  const thumb = c.imageUrl
+    ? `<img class="course-thumb-img" src="${c.imageUrl}" alt="${c.name}" loading="lazy">`
+    : `<i class="fas ${iconClass} course-thumb-icon"></i>`;
+  const statusBadge = isPublished
+    ? `<div class="course-status status-published">✓ Disponible</div>`
+    : isComing ? `<div class="course-status status-coming">⏳ Próximamente</div>` : '';
+
+  const price = isPublished
+    ? `<div class="course-price course-price-paid">$${(c.price||0).toFixed(2)}<sub> USD</sub></div>`
+    : isComing ? `<div class="course-price course-price-coming">🔔 Próximamente</div>` : '';
+
+  const cta = isPublished
+    ? `<a href="https://wa.me/50432513558?text=Quiero%20comprar%20el%20curso:%20${encodeURIComponent(c.name)}" target="_blank" class="btn-enroll btn-enroll-primary"><i class="fab fa-whatsapp"></i> Inscribirme</a>`
+    : isComing ? `<a href="https://wa.me/50432513558?text=Quiero%20ser%20notificado%20del%20curso:%20${encodeURIComponent(c.name)}" target="_blank" class="btn-enroll btn-enroll-notify"><i class="fab fa-whatsapp"></i> Notificarme</a>` : '';
+
+  return `
+    <div class="course-card ${catClass} ${isComing?'coming-soon':''} reveal" data-cat="${c.cat||'general'}">
+      <div class="course-thumb">
+        <div class="course-thumb-bg">${thumb}</div>
+        ${statusBadge}
+      </div>
+      <div class="course-body">
+        <div class="course-cat-tag"><i class="fas ${iconClass}"></i> ${catLabels[c.cat]||c.cat}</div>
+        <h3 class="course-title">${c.name}</h3>
+        <p class="course-desc">${c.desc||''}</p>
+        <div class="course-meta">
+          ${c.dur?`<div class="course-meta-item"><i class="fas fa-clock"></i> ${c.dur}</div>`:''}
+          ${c.level?`<div class="course-meta-item"><i class="fas fa-signal"></i> ${lvlLabel[c.level]||c.level}</div>`:''}
+          ${c.lessons?`<div class="course-meta-item"><i class="fas fa-play-circle"></i> ${c.lessons} lecciones</div>`:''}
+        </div>
+      </div>
+      <div class="course-divider"></div>
+      <div class="course-footer">
+        ${price}
+        ${cta}
+      </div>
+    </div>`;
+}
+
+function renderCourses(courses) {
+  const grid = document.getElementById('coursesGrid');
+  if (!courses || courses.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><i class="fas fa-graduation-cap"></i><p>Próximamente nuevos cursos.<br>Escríbenos por <a href="https://wa.me/50432513558" target="_blank" style="color:var(--green-neon)">WhatsApp</a> para más info.</p></div>`;
+    return;
+  }
+  grid.innerHTML = courses.map(c => buildCard(c)).join('');
+  // Reveal observer
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  grid.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+window.filterCourses = function(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const filtered = cat === 'all' ? allCourses : allCourses.filter(c=>c.cat===cat);
+  renderCourses(filtered);
+};
+
+// Intentar Firebase
+try {
+  const cfg = JSON.parse(localStorage.getItem('fb_config') || '{}');
+  if (!cfg.apiKey || !cfg.projectId) throw new Error('No config');
+  const app = initializeApp(cfg, 'cursos_frontend');
+  const db  = getFirestore(app);
+
+  onSnapshot(
+    query(collection(db,'courses'), orderBy('createdAt','desc')),
+    snap => {
+      allCourses = snap.docs.map(d => ({id:d.id,...d.data()})).filter(c => c.status !== 'draft');
+      renderCourses(allCourses);
+    },
+    err => {
+      document.getElementById('coursesGrid').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Error al cargar cursos. Revisa tu configuración de Firebase.</p></div>`;
+    }
+  );
+} catch(e) {
+  document.getElementById('coursesGrid').innerHTML = `<div class="empty-state"><i class="fas fa-cloud-upload-alt"></i><p>Conecta Firebase desde el <a href="admin.html" style="color:var(--green-neon)">panel admin</a> para mostrar cursos aquí.</p></div>`;
+}
+</script>
+
 <script>
+// Cursor
 const cursor=document.getElementById('cursor'),cursorRing=document.getElementById('cursorRing');
 let mx=-100,my=-100,rx=-100,ry=-100;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
@@ -366,19 +380,7 @@ function toggleMenu(){
   document.body.style.overflow=document.getElementById('mobileMenu').classList.contains('open')?'hidden':'';
 }
 
-function filterCourses(cat,btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.course-card').forEach(card=>{
-    if(cat==='all'||card.dataset.cat===cat){
-      card.style.display='flex';
-      setTimeout(()=>{card.style.opacity='1';card.style.transform='';},10);
-    } else {
-      card.style.display='none';
-    }
-  });
-}
-
+// Scroll reveal
 const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
 },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
