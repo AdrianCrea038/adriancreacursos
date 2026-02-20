@@ -343,38 +343,34 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
     <div class="page-content" id="page-pageHome">
       <div class="section-tabs">
         <button class="section-tab active" onclick="switchSubTab(this,'home-hero')">Hero / Banner</button>
-        <button class="section-tab" onclick="switchSubTab(this,'home-cta')">Botones CTA</button>
         <button class="section-tab" onclick="switchSubTab(this,'home-meta')">SEO / Meta</button>
       </div>
       <div class="page-section-editor active" id="home-hero">
         <div class="panel-section">
-          <div class="panel-header"><h3><i class="fas fa-image"></i> Foto Principal (Hero)</h3><button class="btn btn-sm btn-primary" onclick="saveSection('hero')"><i class="fas fa-save"></i> Guardar</button></div>
+          <div class="panel-header"><h3><i class="fas fa-image"></i> Sección Hero (Inicio)</h3><button class="btn btn-sm btn-primary" onclick="saveSection('hero')"><i class="fas fa-save"></i> Guardar en Firebase</button></div>
           <div class="panel-body">
             <div class="field-row">
-              <div class="field-group"><label class="field-label">Título principal</label><input type="text" class="field-input" value="Creatividad Sin Límites"></div>
-              <div class="field-group"><label class="field-label">Subtítulo</label><input type="text" class="field-input" value="Diseño, AI y Cursos Creativos"></div>
+              <div class="field-group"><label class="field-label">Línea 1 del título</label><input type="text" class="field-input" id="hero-line1" placeholder="Creatividad"></div>
+              <div class="field-group"><label class="field-label">Línea 2 del título</label><input type="text" class="field-input" id="hero-line2" placeholder="Sin Límites."></div>
             </div>
-            <div class="field-group"><label class="field-label">Descripción</label><textarea class="field-textarea">Transforma tus ideas en proyectos reales con diseño profesional, inteligencia artificial y cursos especializados.</textarea></div>
-          </div>
-        </div>
-      </div>
-      <div class="page-section-editor" id="home-cta">
-        <div class="panel-section">
-          <div class="panel-header"><h3><i class="fas fa-mouse-pointer"></i> Botones CTA</h3><button class="btn btn-sm btn-primary" onclick="saveSection('cta')"><i class="fas fa-save"></i> Guardar</button></div>
-          <div class="panel-body">
+            <div class="field-group"><label class="field-label">Línea 3 (subtítulo del título)</label><input type="text" class="field-input" id="hero-line3" placeholder="Tu visión, hecha realidad."></div>
+            <div class="field-group"><label class="field-label">Párrafo descriptivo</label><textarea class="field-textarea" id="hero-sub" style="min-height:90px" placeholder="Somos una agencia creativa que combina..."></textarea></div>
             <div class="field-row">
-              <div class="field-group"><label class="field-label">Texto Botón 1</label><input type="text" class="field-input" value="Contáctanos"></div>
-              <div class="field-group"><label class="field-label">Texto Botón 2</label><input type="text" class="field-input" value="Acerca de Nosotros"></div>
+              <div class="field-group"><label class="field-label">Texto Botón 1 (CTA primario)</label><input type="text" class="field-input" id="hero-btn1" placeholder="Contáctanos"></div>
+              <div class="field-group"><label class="field-label">Texto Botón 2 (CTA secundario)</label><input type="text" class="field-input" id="hero-btn2" placeholder="Acerca de Nosotros"></div>
+            </div>
+            <div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--gray-400);margin-top:4px">
+              <i class="fas fa-info-circle" style="color:var(--green-neon)"></i> Los campos vacíos conservarán el texto actual del sitio. Rellena solo lo que quieras cambiar.
             </div>
           </div>
         </div>
       </div>
       <div class="page-section-editor" id="home-meta">
         <div class="panel-section">
-          <div class="panel-header"><h3><i class="fas fa-search"></i> SEO y Metadatos</h3><button class="btn btn-sm btn-primary" onclick="saveSection('meta')"><i class="fas fa-save"></i> Guardar</button></div>
+          <div class="panel-header"><h3><i class="fas fa-search"></i> SEO y Metadatos</h3><button class="btn btn-sm btn-primary" onclick="saveSection('meta')"><i class="fas fa-save"></i> Guardar en Firebase</button></div>
           <div class="panel-body">
-            <div class="field-group"><label class="field-label">Título de la página</label><input type="text" class="field-input" value="Adrian Creativo · Diseño, AI y Cursos"></div>
-            <div class="field-group"><label class="field-label">Meta descripción</label><textarea class="field-textarea" style="min-height:70px">Agencia creativa especializada en diseño, inteligencia artificial y producción de video.</textarea></div>
+            <div class="field-group"><label class="field-label">Título de la página (pestaña del navegador)</label><input type="text" class="field-input" id="meta-title" placeholder="Adrian Creativo · Diseño, AI y Cursos"></div>
+            <div class="field-group"><label class="field-label">Meta descripción (para Google)</label><textarea class="field-textarea" id="meta-desc" style="min-height:70px" placeholder="Agencia creativa especializada en diseño, IA y video."></textarea></div>
           </div>
         </div>
       </div>
@@ -383,10 +379,25 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
     <!-- ACERCA DE -->
     <div class="page-content" id="page-pageAbout">
       <div class="panel-section">
-        <div class="panel-header"><h3><i class="fas fa-user-circle"></i> Acerca de Nosotros</h3><button class="btn btn-sm btn-primary" onclick="saveSection('about')"><i class="fas fa-save"></i> Guardar</button></div>
+        <div class="panel-header"><h3><i class="fas fa-user-circle"></i> Acerca de Nosotros</h3><button class="btn btn-sm btn-primary" onclick="saveSection('about')"><i class="fas fa-save"></i> Guardar en Firebase</button></div>
         <div class="panel-body">
-          <div class="field-group"><label class="field-label">Título</label><input type="text" class="field-input" value="Acerca de Nosotros"></div>
-          <div class="field-group"><label class="field-label">Descripción principal</label><textarea class="field-textarea" style="min-height:140px">Somos una agencia creativa digital especializada en diseño gráfico, inteligencia artificial aplicada al diseño y producción de video.</textarea></div>
+          <div class="field-group"><label class="field-label">Descripción principal</label><textarea class="field-textarea" id="about-desc" style="min-height:140px" placeholder="Somos una agencia creativa digital especializada en..."></textarea></div>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Años de experiencia (badge)</label><input type="text" class="field-input" id="about-years" placeholder="3+"></div>
+            <div class="field-group"><label class="field-label">Etiqueta del badge</label><input type="text" class="field-input" id="about-years-label" placeholder="Años de experiencia"></div>
+          </div>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Métrica 1 (número)</label><input type="text" class="field-input" id="about-m1-num" placeholder="50+"></div>
+            <div class="field-group"><label class="field-label">Métrica 1 (etiqueta)</label><input type="text" class="field-input" id="about-m1-label" placeholder="Proyectos"></div>
+          </div>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Métrica 2 (número)</label><input type="text" class="field-input" id="about-m2-num" placeholder="3"></div>
+            <div class="field-group"><label class="field-label">Métrica 2 (etiqueta)</label><input type="text" class="field-input" id="about-m2-label" placeholder="Cursos"></div>
+          </div>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Métrica 3 (número)</label><input type="text" class="field-input" id="about-m3-num" placeholder="100%"></div>
+            <div class="field-group"><label class="field-label">Métrica 3 (etiqueta)</label><input type="text" class="field-input" id="about-m3-label" placeholder="Pasión"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -394,19 +405,22 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
     <!-- CONTACTO -->
     <div class="page-content" id="page-pageContact">
       <div class="panel-section">
-        <div class="panel-header"><h3><i class="fas fa-share-alt"></i> Sección Contáctanos</h3><button class="btn btn-sm btn-primary" onclick="saveSection('contact')"><i class="fas fa-save"></i> Guardar</button></div>
+        <div class="panel-header"><h3><i class="fas fa-share-alt"></i> Sección Contáctanos</h3><button class="btn btn-sm btn-primary" onclick="saveSection('contact')"><i class="fas fa-save"></i> Guardar en Firebase</button></div>
         <div class="panel-body">
-          <div class="field-group"><label class="field-label">Título</label><input type="text" class="field-input" value="Contáctanos"></div>
-          <div class="field-group"><label class="field-label">Texto descriptivo</label><textarea class="field-textarea">¿Tienes un proyecto en mente? ¡Hablemos!</textarea></div>
+          <div class="field-group"><label class="field-label">Subtítulo de la sección</label><textarea class="field-textarea" id="contact-sub" style="min-height:60px" placeholder="¿Tienes un proyecto en mente? Estamos disponibles..."></textarea></div>
           <div class="divider"></div>
           <h4 style="font-size:13px;font-weight:700;margin-bottom:16px;color:var(--gray-400);letter-spacing:.08em;text-transform:uppercase">REDES SOCIALES</h4>
           <div class="field-row">
-            <div class="field-group"><label class="field-label"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</label><input type="text" class="field-input" value="+504 3251-3558"></div>
-            <div class="field-group"><label class="field-label"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</label><input type="text" class="field-input" value="AdrianCreativo"></div>
+            <div class="field-group"><label class="field-label"><i class="fab fa-whatsapp" style="color:#25D366"></i> Número WhatsApp</label><input type="text" class="field-input" id="contact-wa" placeholder="50432513558 (solo números, sin +)"></div>
+            <div class="field-group"><label class="field-label">Mensaje WhatsApp</label><input type="text" class="field-input" id="contact-wa-msg" placeholder="¡Hola! Me interesa saber más..."></div>
           </div>
           <div class="field-row">
-            <div class="field-group"><label class="field-label"><i class="fab fa-instagram" style="color:#E4405F"></i> Instagram</label><input type="text" class="field-input" value="@adriancreativo"></div>
-            <div class="field-group"><label class="field-label"><i class="fab fa-tiktok"></i> TikTok</label><input type="text" class="field-input" value="@adriancreativo"></div>
+            <div class="field-group"><label class="field-label"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook (usuario)</label><input type="text" class="field-input" id="contact-fb" placeholder="AdrianCreativo"></div>
+            <div class="field-group"><label class="field-label"><i class="fab fa-instagram" style="color:#E4405F"></i> Instagram (usuario)</label><input type="text" class="field-input" id="contact-ig" placeholder="adriancreativo"></div>
+          </div>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label"><i class="fab fa-tiktok"></i> TikTok (usuario)</label><input type="text" class="field-input" id="contact-tt" placeholder="adriancreativo"></div>
+            <div class="field-group"></div>
           </div>
         </div>
       </div>
@@ -505,6 +519,16 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
         <div class="field-group"><label class="field-label">Nivel</label><select class="field-select" id="courseLevel"><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzado</option></select></div>
       </div>
       <div class="field-group"><label class="field-label">Lecciones</label><input type="number" class="field-input" id="courseLessons" placeholder="30" min="1"></div>
+      <div class="field-group">
+        <label class="field-label"><i class="fas fa-image" style="color:var(--green-neon)"></i> URL de imagen de portada (Cloudinary)</label>
+        <input type="url" class="field-input" id="courseImageUrl" placeholder="https://res.cloudinary.com/tu-cuenta/image/upload/...">
+        <div style="font-size:11px;color:var(--gray-600);margin-top:6px"><i class="fas fa-info-circle"></i> Sube tu imagen a <strong style="color:var(--gray-400)">cloudinary.com</strong> → copia la URL y pégala aquí</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label"><i class="fas fa-video" style="color:var(--blue-light)"></i> URL de video de presentación (Cloudinary u otro)</label>
+        <input type="url" class="field-input" id="courseVideoUrl" placeholder="https://res.cloudinary.com/tu-cuenta/video/upload/...">
+        <div style="font-size:11px;color:var(--gray-600);margin-top:6px"><i class="fas fa-info-circle"></i> También puedes usar YouTube: <strong style="color:var(--gray-400)">https://youtube.com/watch?v=...</strong></div>
+      </div>
       <div class="field-group"><label class="field-label">Estado</label><select class="field-select" id="courseStatus"><option value="published">Publicado</option><option value="draft">Borrador</option><option value="coming">Próximamente</option></select></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalCourse')">Cancelar</button><button class="btn btn-primary" onclick="addCourse()"><i class="fas fa-check"></i> Crear Curso</button></div>
@@ -850,6 +874,8 @@ async function addCourse(){
     lessons:parseInt(document.getElementById('courseLessons').value)||0,
     status:document.getElementById('courseStatus').value,
     desc:document.getElementById('courseDesc').value,
+    imageUrl:document.getElementById('courseImageUrl').value.trim()||'',
+    videoUrl:document.getElementById('courseVideoUrl').value.trim()||'',
     createdAt:null
   };
   if(window._db){
@@ -865,7 +891,7 @@ async function addCourse(){
     showToast('info','Curso creado','(Sin Firebase — no se guardará al recargar)');
   }
   closeModal('modalCourse');
-  ['courseName','coursePrice','courseDur','courseDesc','courseLessons'].forEach(id=>document.getElementById(id).value='');
+  ['courseName','coursePrice','courseDur','courseDesc','courseLessons','courseImageUrl','courseVideoUrl'].forEach(id=>document.getElementById(id).value='');
 }
 
 async function deleteCourse(id){
@@ -923,9 +949,94 @@ async function deleteUser(id){
   }
 }
 
+// ─── GUARDAR SECCIONES EN FIREBASE ───────────────────────────
+async function saveSection(section){
+  if(!window._db){ showToast('error','Sin Firebase','No hay conexión con la base de datos'); return; }
+  const {doc, setDoc} = window._fb;
+  let data = {};
+
+  if(section === 'hero'){
+    data = {
+      line1:   v('hero-line1'),
+      line2:   v('hero-line2'),
+      line3:   v('hero-line3'),
+      sub:     v('hero-sub'),
+      btn1:    v('hero-btn1'),
+      btn2:    v('hero-btn2'),
+    };
+  } else if(section === 'meta'){
+    data = { title: v('meta-title'), desc: v('meta-desc') };
+  } else if(section === 'about'){
+    data = {
+      desc:      v('about-desc'),
+      years:     v('about-years'),
+      yearsLabel:v('about-years-label'),
+      m1num:     v('about-m1-num'),  m1label: v('about-m1-label'),
+      m2num:     v('about-m2-num'),  m2label: v('about-m2-label'),
+      m3num:     v('about-m3-num'),  m3label: v('about-m3-label'),
+    };
+  } else if(section === 'contact'){
+    data = {
+      sub:   v('contact-sub'),
+      wa:    v('contact-wa'),
+      waMsg: v('contact-wa-msg'),
+      fb:    v('contact-fb'),
+      ig:    v('contact-ig'),
+      tt:    v('contact-tt'),
+    };
+  }
+
+  // Eliminar campos vacíos para no sobreescribir con nada
+  Object.keys(data).forEach(k => { if(!data[k]) delete data[k]; });
+
+  if(Object.keys(data).length === 0){
+    showToast('info','Sin cambios','No hay campos rellenos para guardar');
+    return;
+  }
+
+  try {
+    await setDoc(doc(window._db, 'site_content', section), data, { merge: true });
+    showToast('success','¡Guardado!','Los cambios se guardaron en Firebase. El sitio se actualizará automáticamente ✓');
+  } catch(e){
+    showToast('error','Error al guardar', e.message);
+  }
+}
+
+function v(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+
+// ─── CARGAR CONTENIDO GUARDADO EN LOS CAMPOS ─────────────────
+function loadSiteContent(){
+  if(!window._db) return;
+  const {collection, onSnapshot} = window._fb;
+  onSnapshot(collection(window._db,'site_content'), snap => {
+    snap.docs.forEach(d => {
+      const s = d.id, data = d.data();
+      if(s === 'hero'){
+        fill('hero-line1', data.line1); fill('hero-line2', data.line2);
+        fill('hero-line3', data.line3); fill('hero-sub', data.sub);
+        fill('hero-btn1', data.btn1);   fill('hero-btn2', data.btn2);
+      } else if(s === 'meta'){
+        fill('meta-title', data.title); fill('meta-desc', data.desc);
+      } else if(s === 'about'){
+        fill('about-desc', data.desc);
+        fill('about-years', data.years); fill('about-years-label', data.yearsLabel);
+        fill('about-m1-num', data.m1num); fill('about-m1-label', data.m1label);
+        fill('about-m2-num', data.m2num); fill('about-m2-label', data.m2label);
+        fill('about-m3-num', data.m3num); fill('about-m3-label', data.m3label);
+      } else if(s === 'contact'){
+        fill('contact-sub', data.sub);   fill('contact-wa', data.wa);
+        fill('contact-wa-msg', data.waMsg); fill('contact-fb', data.fb);
+        fill('contact-ig', data.ig);     fill('contact-tt', data.tt);
+      }
+    });
+  });
+}
+
+function fill(id, val){ const el=document.getElementById(id); if(el && val) el.value = val; }
+
 // ─── FIREBASE CONFIG ──────────────────────────────────────────
 function saveFirebaseConfig(){ showToast('info','Info','Firebase ya está configurado directamente en el código'); }
-function loadFirebaseConfigForm(){}
+function loadFirebaseConfigForm(){ loadSiteContent(); }
 
 function changePassword(){
   const old=document.getElementById('oldPass').value;
@@ -955,8 +1066,6 @@ function showToast(type,title,message){
   container.appendChild(toast);
   setTimeout(()=>{toast.style.animation='toastIn .3s ease reverse';setTimeout(()=>toast.remove(),300);},3500);
 }
-
-function saveSection(s){showToast('success','Guardado','Los cambios se guardaron correctamente');}
 
 // ─── HINT DEMO ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
