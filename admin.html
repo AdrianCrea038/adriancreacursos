@@ -215,6 +215,16 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 .fb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
+/* PASSWORD TOGGLE */
+.pass-wrap{position:relative}
+.pass-wrap .field-input{padding-right:44px}
+.pass-wrap .pass-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;font-size:15px;transition:color .2s;line-height:1}
+.pass-wrap .pass-toggle:hover{color:var(--green-neon)}
+
+/* LOGIN pass toggle (input with left icon) */
+.input-wrap .pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;font-size:14px;transition:color .2s;line-height:1}
+.input-wrap .pass-toggle:hover{color:var(--green-neon)}
+
 /* RESPONSIVE */
 @media(max-width:1024px){:root{--sidebar-w:220px}}
 @media(max-width:768px){
@@ -262,6 +272,7 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
       <div class="input-wrap">
         <input type="password" class="form-input" id="loginPass" placeholder="••••••••" onkeyup="if(event.key==='Enter')doLogin()">
         <i class="fas fa-lock"></i>
+        <button type="button" class="pass-toggle" onclick="togglePass('loginPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
       </div>
     </div>
     <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Acceder al Sistema</button>
@@ -475,10 +486,16 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
       <div class="panel-section" style="max-width:640px">
         <div class="panel-header"><h3><i class="fas fa-lock"></i> Cambiar Contraseña</h3></div>
         <div class="panel-body">
-          <div class="field-group"><label class="field-label">Contraseña actual</label><input type="password" class="field-input" id="oldPass" placeholder="••••••••"></div>
+          <div class="field-group"><label class="field-label">Contraseña actual</label>
+            <div class="pass-wrap"><input type="password" class="field-input" id="oldPass" placeholder="••••••••"><button type="button" class="pass-toggle" onclick="togglePass('oldPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button></div>
+          </div>
           <div class="field-row">
-            <div class="field-group"><label class="field-label">Nueva contraseña</label><input type="password" class="field-input" id="newPass" placeholder="••••••••"></div>
-            <div class="field-group"><label class="field-label">Confirmar nueva</label><input type="password" class="field-input" id="confirmPass" placeholder="••••••••"></div>
+            <div class="field-group"><label class="field-label">Nueva contraseña</label>
+              <div class="pass-wrap"><input type="password" class="field-input" id="newPass" placeholder="••••••••"><button type="button" class="pass-toggle" onclick="togglePass('newPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button></div>
+            </div>
+            <div class="field-group"><label class="field-label">Confirmar nueva</label>
+              <div class="pass-wrap"><input type="password" class="field-input" id="confirmPass" placeholder="••••••••"><button type="button" class="pass-toggle" onclick="togglePass('confirmPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button></div>
+            </div>
           </div>
           <button class="btn btn-primary" onclick="changePassword()"><i class="fas fa-save"></i> Actualizar Contraseña</button>
         </div>
@@ -544,7 +561,13 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
         <div class="field-group"><label class="field-label">Usuario (login)</label><input type="text" class="field-input" id="userLogin" placeholder="usuario123"></div>
       </div>
       <div class="field-row">
-        <div class="field-group"><label class="field-label">Contraseña</label><input type="password" class="field-input" id="userPass" placeholder="••••••••"></div>
+        <div class="field-group">
+          <label class="field-label">Contraseña</label>
+          <div class="pass-wrap">
+            <input type="password" class="field-input" id="userPass" placeholder="••••••••">
+            <button type="button" class="pass-toggle" onclick="togglePass('userPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
         <div class="field-group"><label class="field-label">Correo electrónico</label><input type="email" class="field-input" id="userEmail" placeholder="correo@ejemplo.com"></div>
       </div>
       <div class="field-group">
@@ -557,6 +580,56 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
       </div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalUser')">Cancelar</button><button class="btn btn-primary" onclick="addUser()"><i class="fas fa-check"></i> Crear Usuario</button></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR USUARIO -->
+<div class="modal-overlay" id="modalEditUser">
+  <div class="modal">
+    <div class="modal-header"><h3><i class="fas fa-user-edit" style="color:var(--green-neon);margin-right:8px"></i>Editar Usuario</h3><button class="modal-close" onclick="closeModal('modalEditUser')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editUserId">
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Nombre completo</label><input type="text" class="field-input" id="editUserName" placeholder="Nombre del usuario"></div>
+        <div class="field-group"><label class="field-label">Usuario (login)</label><input type="text" class="field-input" id="editUserLogin" placeholder="usuario123"></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Contraseña <span style="font-size:10px;color:var(--gray-600)">(vacío = no cambiar)</span></label>
+          <div class="pass-wrap">
+            <input type="password" class="field-input" id="editUserPass" placeholder="Nueva contraseña o dejar vacío">
+            <button type="button" class="pass-toggle" onclick="togglePass('editUserPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="field-group"><label class="field-label">Correo electrónico</label><input type="email" class="field-input" id="editUserEmail" placeholder="correo@ejemplo.com"></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Nivel de acceso</label>
+          <select class="field-select" id="editUserRole">
+            <option value="courses">📚 Solo Cursos</option>
+            <option value="editor">✏️ Editor</option>
+            <option value="admin">⚙️ Administrador</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Estado</label>
+          <select class="field-select" id="editUserActive">
+            <option value="true">● Activo</option>
+            <option value="false">● Inactivo</option>
+          </select>
+        </div>
+      </div>
+      <!-- Mostrar contraseña actual -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div>
+          <div style="font-size:11px;color:var(--gray-600);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Contraseña actual guardada</div>
+          <div id="editUserPassDisplay" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gray-400);letter-spacing:2px">••••••••</div>
+        </div>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="togglePassDisplay()" id="btnRevealPass" style="white-space:nowrap"><i class="fas fa-eye"></i> Ver</button>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalEditUser')">Cancelar</button><button class="btn btn-primary" onclick="saveEditUser()"><i class="fas fa-save"></i> Guardar Cambios</button></div>
   </div>
 </div>
 
@@ -701,10 +774,32 @@ function initApp(){
   document.getElementById('sidebarName').textContent=currentUser.name;
   const roleLabels={superadmin:'Superusuario',admin:'Administrador',editor:'Editor',courses:'Solo Cursos'};
   document.getElementById('sidebarRole').textContent=roleLabels[currentUser.role]||'Usuario';
-  const isAdmin=currentUser.role==='superadmin'||currentUser.role==='admin';
-  document.getElementById('nav-users').style.display=isAdmin?'flex':'none';
-  document.getElementById('nav-admin-label').style.display=isAdmin?'block':'none';
-  const qu=document.getElementById('quickUsers');if(qu)qu.style.display=isAdmin?'flex':'none';
+
+  const isAdmin   = currentUser.role==='superadmin'||currentUser.role==='admin';
+  const isEditor  = currentUser.role==='editor';
+  const isCoursesOnly = currentUser.role==='courses';
+
+  // Mostrar/ocultar items de navegación según rol
+  document.getElementById('nav-users').style.display    = isAdmin ? 'flex' : 'none';
+  document.getElementById('nav-admin-label').style.display = isAdmin ? 'block' : 'none';
+  const qu=document.getElementById('quickUsers'); if(qu) qu.style.display=isAdmin?'flex':'none';
+
+  if(isCoursesOnly){
+    // Ocultar todo excepto Cursos
+    ['nav-home','nav-about','nav-contact','nav-projects','nav-settings'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.style.display='none';
+    });
+    document.querySelectorAll('.nav-section-label').forEach(el=>el.style.display='none');
+    // Navegar directamente a Cursos
+    navigate('pageCourses');
+  } else {
+    // Restaurar visibilidad normal
+    ['nav-home','nav-about','nav-contact','nav-projects','nav-settings'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.style.display='flex';
+    });
+    document.querySelectorAll('.nav-section-label').forEach(el=>el.style.display='block');
+  }
+
   // Cargar config Firebase en Settings
   loadFirebaseConfigForm();
   updateStats();
@@ -815,7 +910,12 @@ function renderUsers(){
     </div></td>
     <td><span class="badge-pill ${rColor[u.role]||'badge-gray'}">${rLabel[u.role]||u.role}</span></td>
     <td><span class="badge-pill ${u.active!==false?'badge-green':'badge-red'}">${u.active!==false?'● Activo':'● Inactivo'}</span></td>
-    <td>${u.role!=='superadmin'&&u.id!=='1'?`<button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i></button>`:'<span style="color:var(--gray-600);font-size:12px">Protegido</span>'}</td>
+    <td><div style="display:flex;gap:6px;align-items:center">
+      ${u.role!=='superadmin'&&u.id!=='1'
+        ? `<button class="btn btn-sm btn-primary" onclick="openEditUser('${u.id}',\`${u.name}\`,\`${u.login}\`,\`${u.email||''}\`,\`${u.role}\`,\`${u.pass||''}\`,${u.active!==false})" title="Editar"><i class="fas fa-edit"></i></button>
+           <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>`
+        : '<span style="color:var(--gray-600);font-size:12px">Protegido</span>'}
+    </div></td>
   </tr>`).join('');
 }
 
@@ -947,6 +1047,75 @@ async function deleteUser(id){
     window._users=window._users.filter(u=>u.id!==id);
     renderUsers();updateStats();
   }
+}
+
+// ─── VER / OCULTAR CONTRASEÑA ─────────────────────────────────
+function togglePass(inputId, btn){
+  const input=document.getElementById(inputId);
+  if(!input) return;
+  const isPass = input.type==='password';
+  input.type = isPass ? 'text' : 'password';
+  btn.querySelector('i').className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+
+// ─── EDITAR USUARIO ───────────────────────────────────────────
+let _editingPassPlain = '';
+
+function openEditUser(id, name, login, email, role, pass, active){
+  document.getElementById('editUserId').value   = id;
+  document.getElementById('editUserName').value  = name;
+  document.getElementById('editUserLogin').value = login;
+  document.getElementById('editUserEmail').value = email;
+  document.getElementById('editUserRole').value  = role;
+  document.getElementById('editUserActive').value= String(active);
+  document.getElementById('editUserPass').value  = '';
+  document.getElementById('editUserPassDisplay').textContent = '••••••••';
+  document.getElementById('btnRevealPass').innerHTML = '<i class="fas fa-eye"></i> Ver';
+  _editingPassPlain = pass;
+  openModal('modalEditUser');
+}
+
+function togglePassDisplay(){
+  const display = document.getElementById('editUserPassDisplay');
+  const btn = document.getElementById('btnRevealPass');
+  if(display.textContent === '••••••••'){
+    display.textContent = _editingPassPlain || '(sin contraseña)';
+    display.style.color = 'var(--white)';
+    btn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar';
+  } else {
+    display.textContent = '••••••••';
+    display.style.color = '';
+    btn.innerHTML = '<i class="fas fa-eye"></i> Ver';
+  }
+}
+
+async function saveEditUser(){
+  const id     = document.getElementById('editUserId').value;
+  const name   = document.getElementById('editUserName').value.trim();
+  const login  = document.getElementById('editUserLogin').value.trim();
+  const email  = document.getElementById('editUserEmail').value.trim();
+  const role   = document.getElementById('editUserRole').value;
+  const active = document.getElementById('editUserActive').value === 'true';
+  const newPass= document.getElementById('editUserPass').value.trim();
+
+  if(!name||!login){showToast('error','Error','Nombre y usuario son obligatorios');return;}
+
+  const updates = { name, login, email, role, active };
+  if(newPass) updates.pass = newPass;
+
+  if(window._db){
+    try{
+      const {doc, setDoc} = window._fb;
+      await setDoc(doc(window._db,'users',id), updates, {merge:true});
+      showToast('success','Usuario actualizado',`@${login} guardado en Firebase ✓`);
+      if(newPass) _editingPassPlain = newPass; // actualizar vista local
+    }catch(e){showToast('error','Error Firebase',e.message);return;}
+  } else {
+    const u = window._users.find(u=>u.id===id);
+    if(u){ Object.assign(u, updates); renderUsers(); }
+    showToast('info','Usuario actualizado','(sin Firebase)');
+  }
+  closeModal('modalEditUser');
 }
 
 // ─── GUARDAR SECCIONES EN FIREBASE ───────────────────────────
@@ -1081,7 +1250,8 @@ Object.assign(window,{
   filterProjects,renderProjects,renderCourses,renderUsers,updateStats,
   addProject,deleteProject,addCourse,deleteCourse,addUser,deleteUser,
   openModal,closeModal,showToast,saveSection,saveFirebaseConfig,
-  changePassword,loadFirebaseConfigForm
+  changePassword,loadFirebaseConfigForm,
+  togglePass,openEditUser,saveEditUser,togglePassDisplay
 });
 </script>
 </body>
