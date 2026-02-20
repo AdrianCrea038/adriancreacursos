@@ -221,9 +221,12 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 .pass-wrap .pass-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;font-size:15px;transition:color .2s;line-height:1}
 .pass-wrap .pass-toggle:hover{color:var(--green-neon)}
 
-/* LOGIN pass toggle (input with left icon) */
-.input-wrap .pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;font-size:14px;transition:color .2s;line-height:1}
+/* LOGIN pass toggle — input tiene icono izquierdo, el ojo va a la derecha */
+.input-wrap{position:relative}
+.input-wrap .pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;font-size:14px;transition:color .2s;line-height:1;z-index:2}
 .input-wrap .pass-toggle:hover{color:var(--green-neon)}
+/* Asegurar que el input no quede cubierto por el ojo */
+.input-wrap .form-input{padding-right:46px}
 
 /* RESPONSIVE */
 @media(max-width:1024px){:root{--sidebar-w:220px}}
@@ -245,6 +248,18 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 </style>
 </head>
 <body>
+
+<!-- Función global de toggle contraseña — disponible desde el inicio -->
+<script>
+function togglePass(inputId, btn){
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  const icon = btn.querySelector('i');
+  if(icon) icon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+</script>
 
 <!-- LOGIN -->
 <div id="loginScreen">
@@ -751,8 +766,14 @@ function doLogin(){
     err.classList.add('show');msg.textContent='Usuario o contraseña incorrectos';
     setTimeout(()=>err.classList.remove('show'),3000);return;
   }
-  if(loginTab==='admin'&&found.role!=='superadmin'&&found.role!=='admin'&&found.role!=='editor'){
-    err.classList.add('show');msg.textContent='Sin acceso al panel de administración';
+  // Si la cuenta está inactiva
+  if(found.active===false){
+    err.classList.add('show');msg.textContent='Esta cuenta está desactivada';
+    setTimeout(()=>err.classList.remove('show'),3000);return;
+  }
+  // Tab "admin" requiere rol admin/editor/superadmin
+  if(loginTab==='admin'&&found.role!=='superadmin'&&found.role!=='admin'&&found.role!=='editor'&&found.role!=='courses'){
+    err.classList.add('show');msg.textContent='Sin acceso al panel';
     setTimeout(()=>err.classList.remove('show'),3000);return;
   }
   currentUser=found;initApp();
@@ -818,6 +839,13 @@ const pageLabels={
 };
 
 function navigate(pageId){
+  // Bloquear páginas no permitidas para rol "Solo Cursos"
+  if(currentUser && currentUser.role === 'courses'){
+    if(pageId !== 'pageCourses'){
+      showToast('info','Acceso restringido','Tu cuenta solo tiene acceso a la sección de Cursos.');
+      pageId = 'pageCourses';
+    }
+  }
   document.querySelectorAll('.page-content').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const page=document.getElementById('page-'+pageId);
@@ -898,11 +926,15 @@ function renderCourses(){
 }
 
 // ─── RENDER USUARIOS ──────────────────────────────────────────
+window._usersMap = {}; // mapa id→usuario para edición segura
+
 function renderUsers(){
   const body=document.getElementById('usersBody');
   const rLabel={superadmin:'⭐ Superusuario',admin:'⚙️ Administrador',editor:'✏️ Editor',courses:'📚 Solo Cursos'};
   const rColor={superadmin:'badge-green',admin:'badge-blue',editor:'badge-orange',courses:'badge-gray'};
   const allU=[...DB.users,...window._users.filter(u=>!DB.users.find(d=>d.login===u.login))];
+  // Guardar en mapa para acceso seguro desde onclick
+  allU.forEach(u => { window._usersMap[u.id] = u; });
   body.innerHTML=allU.map(u=>`<tr>
     <td><div style="display:flex;align-items:center;gap:10px">
       <div class="mini-avatar">${u.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
@@ -912,7 +944,7 @@ function renderUsers(){
     <td><span class="badge-pill ${u.active!==false?'badge-green':'badge-red'}">${u.active!==false?'● Activo':'● Inactivo'}</span></td>
     <td><div style="display:flex;gap:6px;align-items:center">
       ${u.role!=='superadmin'&&u.id!=='1'
-        ? `<button class="btn btn-sm btn-primary" onclick="openEditUser('${u.id}',\`${u.name}\`,\`${u.login}\`,\`${u.email||''}\`,\`${u.role}\`,\`${u.pass||''}\`,${u.active!==false})" title="Editar"><i class="fas fa-edit"></i></button>
+        ? `<button class="btn btn-sm btn-primary" onclick="openEditUser('${u.id}')" title="Editar"><i class="fas fa-edit"></i></button>
            <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>`
         : '<span style="color:var(--gray-600);font-size:12px">Protegido</span>'}
     </div></td>
@@ -1050,28 +1082,31 @@ async function deleteUser(id){
 }
 
 // ─── VER / OCULTAR CONTRASEÑA ─────────────────────────────────
-function togglePass(inputId, btn){
-  const input=document.getElementById(inputId);
-  if(!input) return;
-  const isPass = input.type==='password';
-  input.type = isPass ? 'text' : 'password';
-  btn.querySelector('i').className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
-}
+// togglePass está definida globalmente antes del login (script inline)
 
 // ─── EDITAR USUARIO ───────────────────────────────────────────
 let _editingPassPlain = '';
 
-function openEditUser(id, name, login, email, role, pass, active){
-  document.getElementById('editUserId').value   = id;
-  document.getElementById('editUserName').value  = name;
-  document.getElementById('editUserLogin').value = login;
-  document.getElementById('editUserEmail').value = email;
-  document.getElementById('editUserRole').value  = role;
-  document.getElementById('editUserActive').value= String(active);
+function openEditUser(id){
+  const u = window._usersMap[id];
+  if(!u){ showToast('error','Error','No se encontró el usuario'); return; }
+  document.getElementById('editUserId').value    = u.id || id;
+  document.getElementById('editUserName').value  = u.name || '';
+  document.getElementById('editUserLogin').value = u.login || '';
+  document.getElementById('editUserEmail').value = u.email || '';
+  document.getElementById('editUserRole').value  = u.role || 'courses';
+  document.getElementById('editUserActive').value= String(u.active !== false);
   document.getElementById('editUserPass').value  = '';
+  // Resetear icono del ojo del campo nueva contraseña
+  const passInput = document.getElementById('editUserPass');
+  passInput.type = 'password';
+  const passBtn = passInput.parentElement.querySelector('.pass-toggle i');
+  if(passBtn) passBtn.className = 'fas fa-eye';
+  // Mostrar contraseña actual oculta
   document.getElementById('editUserPassDisplay').textContent = '••••••••';
+  document.getElementById('editUserPassDisplay').style.color = '';
   document.getElementById('btnRevealPass').innerHTML = '<i class="fas fa-eye"></i> Ver';
-  _editingPassPlain = pass;
+  _editingPassPlain = u.pass || '';
   openModal('modalEditUser');
 }
 
