@@ -161,6 +161,7 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 .badge-orange{background:rgba(255,170,0,0.15);color:var(--warning)}
 .badge-red{background:rgba(255,68,102,0.15);color:var(--danger)}
 .badge-gray{background:rgba(255,255,255,0.08);color:var(--gray-400)}
+.badge-teal{background:rgba(0,200,180,0.15);color:#00C8B4}
 .mini-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue-royal),var(--green-neon));display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
 
 /* MODAL */
@@ -227,6 +228,11 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 .input-wrap .pass-toggle:hover{color:var(--green-neon)}
 /* Asegurar que el input no quede cubierto por el ojo */
 .input-wrap .form-input{padding-right:46px}
+
+/* USER CATEGORY CARDS */
+.user-cat-card{padding:14px 16px;background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);cursor:pointer;transition:all .25s;user-select:none}
+.user-cat-card:hover{border-color:rgba(107,107,255,0.4);background:rgba(107,107,255,0.07)}
+.user-cat-card.active{border-color:var(--blue-bright);background:rgba(61,61,255,0.12);box-shadow:0 0 0 1px var(--blue-bright)}
 
 /* RESPONSIVE */
 @media(max-width:1024px){:root{--sidebar-w:220px}}
@@ -355,6 +361,14 @@ function togglePass(inputId, btn){
             <button class="btn btn-ghost" id="quickUsers" onclick="navigate('pageUsers')" style="justify-content:flex-start;display:none"><i class="fas fa-user-plus"></i> Crear nuevo usuario</button>
           </div>
         </div>
+        <div class="panel-section">
+          <div class="panel-header"><h3><i class="fas fa-user-clock"></i> Usuarios Recientes</h3><button class="btn btn-sm btn-ghost" id="quickUsersBtn2" onclick="navigate('pageUsers')" style="display:none"><i class="fas fa-arrow-right"></i></button></div>
+          <div class="panel-body" style="padding:0">
+            <div id="dashRecentUsers" style="display:flex;flex-direction:column"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px">
         <div class="panel-section">
           <div class="panel-header"><h3><i class="fas fa-info-circle"></i> Estado del Sitio</h3></div>
           <div class="panel-body">
@@ -555,7 +569,7 @@ function togglePass(inputId, btn){
         <div><h2 style="font-size:20px;font-weight:800">Gestión de Usuarios</h2><p style="color:var(--gray-400);font-size:13px;margin-top:3px">Crea y gestiona niveles de acceso</p></div>
         <button class="btn btn-primary" onclick="openModal('modalUser')"><i class="fas fa-user-plus"></i> Nuevo Usuario</button>
       </div>
-      <div class="panel-section"><div class="panel-body" style="padding:0"><table class="data-table"><thead><tr><th>Usuario</th><th>Rol / Acceso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="usersBody"></tbody></table></div></div>
+      <div class="panel-section"><div class="panel-body" style="padding:0"><table class="data-table"><thead><tr><th>Usuario</th><th>Categoría / Rol</th><th>Estado</th><th>Registrado</th><th>Acciones</th></tr></thead><tbody id="usersBody"></tbody></table></div></div>
     </div>
 
     <!-- CONFIGURACION -->
@@ -647,9 +661,10 @@ function togglePass(inputId, btn){
 </div>
 
 <div class="modal-overlay" id="modalUser">
-  <div class="modal" style="max-width:580px">
+  <div class="modal" style="max-width:620px">
     <div class="modal-header"><h3><i class="fas fa-user-plus" style="color:var(--green-neon);margin-right:8px"></i>Nuevo Usuario</h3><button class="modal-close" onclick="closeModal('modalUser')"><i class="fas fa-times"></i></button></div>
     <div class="modal-body">
+      <!-- Datos básicos -->
       <div class="field-row">
         <div class="field-group"><label class="field-label">Nombre completo</label><input type="text" class="field-input" id="userName" placeholder="Nombre del usuario"></div>
         <div class="field-group"><label class="field-label">Usuario (login)</label><input type="text" class="field-input" id="userLogin" placeholder="usuario123"></div>
@@ -664,21 +679,52 @@ function togglePass(inputId, btn){
         </div>
         <div class="field-group"><label class="field-label">Correo electrónico</label><input type="email" class="field-input" id="userEmail" placeholder="correo@ejemplo.com"></div>
       </div>
-      <div class="field-group">
-        <label class="field-label">Nivel de acceso</label>
-        <select class="field-select" id="userRole" onchange="togglePlaylistAccess('userPlaylistWrap',this.value)">
-          <option value="courses">📚 Solo Cursos</option>
-          <option value="editor">✏️ Editor</option>
-          <option value="admin">⚙️ Administrador</option>
-        </select>
+
+      <!-- Categoría de usuario -->
+      <div class="field-group" style="margin-top:4px">
+        <label class="field-label">Categoría de usuario</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+          <div class="user-cat-card active" id="cat-admin-card" onclick="selectUserCategory('admin')">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <i class="fas fa-shield-alt" style="color:var(--blue-light);font-size:18px"></i>
+              <strong style="font-size:14px">Panel Admin</strong>
+            </div>
+            <p style="font-size:12px;color:var(--gray-400);line-height:1.5">Accede al panel de administración. Tú decides a qué secciones puede entrar.</p>
+          </div>
+          <div class="user-cat-card" id="cat-viewer-card" onclick="selectUserCategory('viewer')">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <i class="fas fa-play-circle" style="color:var(--green-neon);font-size:18px"></i>
+              <strong style="font-size:14px">Estudiante</strong>
+            </div>
+            <p style="font-size:12px;color:var(--gray-400);line-height:1.5">Solo accede a la página de cursos para ver los videos asignados. Sin panel admin.</p>
+          </div>
+        </div>
+        <input type="hidden" id="userCategory" value="admin">
       </div>
-      <div id="userPlaylistWrap">
+
+      <!-- Subcategoría Admin -->
+      <div id="adminSubWrap" style="margin-top:12px">
+        <label class="field-label">Nivel de acceso en el panel</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+          <label class="role-option-row" style="cursor:pointer;display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);transition:border-color .2s">
+            <input type="radio" name="userRole" value="admin" checked style="margin-top:2px;accent-color:var(--blue-bright)">
+            <div><strong style="font-size:13px">⚙️ Administrador</strong><br><span style="font-size:12px;color:var(--gray-500)">Acceso a cursos, proyectos, contenido y configuración. Sin gestión de usuarios.</span></div>
+          </label>
+          <label class="role-option-row" style="cursor:pointer;display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);transition:border-color .2s">
+            <input type="radio" name="userRole" value="editor" style="margin-top:2px;accent-color:var(--blue-bright)">
+            <div><strong style="font-size:13px">✏️ Editor</strong><br><span style="font-size:12px;color:var(--gray-500)">Solo puede editar cursos y proyectos. Sin acceso a configuración ni usuarios.</span></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Subcategoría Estudiante: playlists -->
+      <div id="userPlaylistWrap" style="display:none;margin-top:12px">
         <div class="field-group">
-          <label class="field-label"><i class="fas fa-list-ul" style="color:var(--blue-glow)"></i> Acceso a playlists (cursos)</label>
-          <div id="userPlaylistCheckboxes" style="display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;max-height:180px;overflow-y:auto">
+          <label class="field-label"><i class="fas fa-list-ul" style="color:var(--green-neon)"></i> Playlists a las que tendrá acceso</label>
+          <div id="userPlaylistCheckboxes" style="display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;max-height:200px;overflow-y:auto;margin-top:6px">
             <div style="color:var(--gray-500);font-size:13px"><i class="fas fa-spinner fa-spin"></i> Cargando cursos...</div>
           </div>
-          <div style="font-size:11px;color:var(--gray-600);margin-top:5px"><i class="fas fa-info-circle"></i> Selecciona los cursos a los que este usuario tendrá acceso para ver los videos.</div>
+          <div style="font-size:11px;color:var(--gray-600);margin-top:5px"><i class="fas fa-info-circle"></i> El usuario solo podrá ver los videos de las playlists seleccionadas.</div>
         </div>
       </div>
     </div>
@@ -688,33 +734,17 @@ function togglePass(inputId, btn){
 
 <!-- MODAL EDITAR USUARIO -->
 <div class="modal-overlay" id="modalEditUser">
-  <div class="modal" style="max-width:580px">
+  <div class="modal" style="max-width:620px">
     <div class="modal-header"><h3><i class="fas fa-user-edit" style="color:var(--green-neon);margin-right:8px"></i>Editar Usuario</h3><button class="modal-close" onclick="closeModal('modalEditUser')"><i class="fas fa-times"></i></button></div>
     <div class="modal-body">
       <input type="hidden" id="editUserId">
+      <!-- Datos básicos -->
       <div class="field-row">
         <div class="field-group"><label class="field-label">Nombre completo</label><input type="text" class="field-input" id="editUserName" placeholder="Nombre del usuario"></div>
         <div class="field-group"><label class="field-label">Usuario (login)</label><input type="text" class="field-input" id="editUserLogin" placeholder="usuario123"></div>
       </div>
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Contraseña <span style="font-size:10px;color:var(--gray-600)">(vacío = no cambiar)</span></label>
-          <div class="pass-wrap">
-            <input type="password" class="field-input" id="editUserPass" placeholder="Nueva contraseña o dejar vacío">
-            <button type="button" class="pass-toggle" onclick="togglePass('editUserPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
-          </div>
-        </div>
         <div class="field-group"><label class="field-label">Correo electrónico</label><input type="email" class="field-input" id="editUserEmail" placeholder="correo@ejemplo.com"></div>
-      </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Nivel de acceso</label>
-          <select class="field-select" id="editUserRole" onchange="togglePlaylistAccess('editUserPlaylistWrap',this.value)">
-            <option value="courses">📚 Solo Cursos</option>
-            <option value="editor">✏️ Editor</option>
-            <option value="admin">⚙️ Administrador</option>
-          </select>
-        </div>
         <div class="field-group">
           <label class="field-label">Estado</label>
           <select class="field-select" id="editUserActive">
@@ -723,22 +753,75 @@ function togglePass(inputId, btn){
           </select>
         </div>
       </div>
-      <!-- Playlist access -->
-      <div id="editUserPlaylistWrap">
+
+      <!-- Contraseña -->
+      <div class="field-row">
         <div class="field-group">
-          <label class="field-label"><i class="fas fa-list-ul" style="color:var(--blue-glow)"></i> Acceso a playlists (cursos)</label>
-          <div id="editUserPlaylistCheckboxes" style="display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;max-height:180px;overflow-y:auto">
-            <div style="color:var(--gray-500);font-size:13px"><i class="fas fa-spinner fa-spin"></i> Cargando cursos...</div>
+          <label class="field-label">Nueva contraseña <span style="font-size:10px;color:var(--gray-600)">(vacío = no cambiar)</span></label>
+          <div class="pass-wrap">
+            <input type="password" class="field-input" id="editUserPass" placeholder="Nueva contraseña o dejar vacío">
+            <button type="button" class="pass-toggle" onclick="togglePass('editUserPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Contraseña actual guardada</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="editUserPassDisplay" style="flex:1;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gray-400);letter-spacing:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:10px 12px">••••••••</div>
+            <button type="button" class="btn btn-sm btn-ghost" onclick="togglePassDisplay()" id="btnRevealPass" style="white-space:nowrap;flex-shrink:0"><i class="fas fa-eye"></i> Ver</button>
           </div>
         </div>
       </div>
-      <!-- Mostrar contraseña actual -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px">
-        <div>
-          <div style="font-size:11px;color:var(--gray-600);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Contraseña actual guardada</div>
-          <div id="editUserPassDisplay" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gray-400);letter-spacing:2px">••••••••</div>
+
+      <!-- Categoría -->
+      <div class="field-group" style="margin-top:4px">
+        <label class="field-label">Categoría de usuario</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+          <div class="user-cat-card" id="editCat-admin-card" onclick="selectEditUserCategory('admin')">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <i class="fas fa-shield-alt" style="color:var(--blue-light);font-size:18px"></i>
+              <strong style="font-size:14px">Panel Admin</strong>
+            </div>
+            <p style="font-size:12px;color:var(--gray-400);line-height:1.5">Accede al panel de administración con el nivel de acceso asignado.</p>
+          </div>
+          <div class="user-cat-card" id="editCat-viewer-card" onclick="selectEditUserCategory('viewer')">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <i class="fas fa-play-circle" style="color:var(--green-neon);font-size:18px"></i>
+              <strong style="font-size:14px">Estudiante</strong>
+            </div>
+            <p style="font-size:12px;color:var(--gray-400);line-height:1.5">Solo accede a la página de cursos con las playlists asignadas.</p>
+          </div>
         </div>
-        <button type="button" class="btn btn-sm btn-ghost" onclick="togglePassDisplay()" id="btnRevealPass" style="white-space:nowrap"><i class="fas fa-eye"></i> Ver</button>
+        <input type="hidden" id="editUserCategory" value="admin">
+      </div>
+
+      <!-- Subcategoría Admin -->
+      <div id="editAdminSubWrap" style="margin-top:12px">
+        <label class="field-label">Nivel de acceso en el panel</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+          <label style="cursor:pointer;display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm)">
+            <input type="radio" name="editUserRole" value="admin" style="margin-top:2px;accent-color:var(--blue-bright)">
+            <div><strong style="font-size:13px">⚙️ Administrador</strong><br><span style="font-size:12px;color:var(--gray-500)">Cursos, proyectos, contenido y configuración.</span></div>
+          </label>
+          <label style="cursor:pointer;display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm)">
+            <input type="radio" name="editUserRole" value="editor" style="margin-top:2px;accent-color:var(--blue-bright)">
+            <div><strong style="font-size:13px">✏️ Editor</strong><br><span style="font-size:12px;color:var(--gray-500)">Solo edita cursos y proyectos.</span></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Subcategoría Estudiante: playlists -->
+      <div id="editUserPlaylistWrap" style="display:none;margin-top:12px">
+        <div class="field-group">
+          <label class="field-label"><i class="fas fa-list-ul" style="color:var(--green-neon)"></i> Playlists asignadas</label>
+          <div id="editUserPlaylistCheckboxes" style="display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:12px 14px;max-height:200px;overflow-y:auto;margin-top:6px">
+            <div style="color:var(--gray-500);font-size:13px"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fecha de creación -->
+      <div id="editUserCreatedRow" style="display:none;margin-top:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--gray-500)">
+        <i class="fas fa-calendar-alt" style="color:var(--gray-600);margin-right:6px"></i> Creado el: <span id="editUserCreatedAt" style="color:var(--gray-300)">—</span>
       </div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalEditUser')">Cancelar</button><button class="btn btn-primary" onclick="saveEditUser()"><i class="fas fa-save"></i> Guardar Cambios</button></div>
@@ -1281,29 +1364,53 @@ window.deleteVideo = async function(videoId){
 };
 
 // ─── RENDER USUARIOS ──────────────────────────────────────────
-window._usersMap = {}; // mapa id→usuario para edición segura
+window._usersMap = {};
+
+function formatDate(ts){
+  if(!ts) return '—';
+  try{
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString('es-HN',{day:'2-digit',month:'short',year:'numeric'});
+  }catch(e){return '—';}
+}
+
+function getRoleInfo(role){
+  const map = {
+    superadmin: {label:'⭐ Superusuario', badge:'badge-green', cat:'🛡️ Admin'},
+    admin:      {label:'⚙️ Administrador', badge:'badge-blue',  cat:'🛡️ Admin'},
+    editor:     {label:'✏️ Editor',        badge:'badge-orange', cat:'🛡️ Admin'},
+    courses:    {label:'🎓 Estudiante',    badge:'badge-teal',  cat:'🎓 Cursos'},
+  };
+  return map[role] || {label:role, badge:'badge-gray', cat:'—'};
+}
 
 function renderUsers(){
   const body=document.getElementById('usersBody');
-  const rLabel={superadmin:'⭐ Superusuario',admin:'⚙️ Administrador',editor:'✏️ Editor',courses:'📚 Solo Cursos'};
-  const rColor={superadmin:'badge-green',admin:'badge-blue',editor:'badge-orange',courses:'badge-gray'};
   const allU=[...DB.users,...window._users.filter(u=>!DB.users.find(d=>d.login===u.login))];
-  // Guardar en mapa para acceso seguro desde onclick
   allU.forEach(u => { window._usersMap[u.id] = u; });
-  body.innerHTML=allU.map(u=>`<tr>
-    <td><div style="display:flex;align-items:center;gap:10px">
-      <div class="mini-avatar">${u.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
-      <div><strong style="font-size:14px">${u.name}</strong><span style="display:block;font-size:12px;color:var(--gray-400)">@${u.login} · ${u.email||''}</span></div>
-    </div></td>
-    <td><span class="badge-pill ${rColor[u.role]||'badge-gray'}">${rLabel[u.role]||u.role}</span></td>
-    <td><span class="badge-pill ${u.active!==false?'badge-green':'badge-red'}">${u.active!==false?'● Activo':'● Inactivo'}</span></td>
-    <td><div style="display:flex;gap:6px;align-items:center">
-      ${u.role!=='superadmin'&&u.id!=='1'
-        ? `<button class="btn btn-sm btn-primary" onclick="openEditUser('${u.id}')" title="Editar"><i class="fas fa-edit"></i></button>
-           <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>`
-        : '<span style="color:var(--gray-600);font-size:12px">Protegido</span>'}
-    </div></td>
-  </tr>`).join('');
+  body.innerHTML=allU.map(u=>{
+    const ri = getRoleInfo(u.role);
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="mini-avatar">${u.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+        <div><strong style="font-size:14px">${u.name}</strong><span style="display:block;font-size:12px;color:var(--gray-400)">@${u.login}${u.email?' · '+u.email:''}</span></div>
+      </div></td>
+      <td>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:11px;color:var(--gray-500);font-weight:600">${ri.cat}</span>
+          <span class="badge-pill ${ri.badge}">${ri.label}</span>
+        </div>
+      </td>
+      <td><span class="badge-pill ${u.active!==false?'badge-green':'badge-red'}">${u.active!==false?'● Activo':'● Inactivo'}</span></td>
+      <td style="font-size:12px;color:var(--gray-500);white-space:nowrap">${formatDate(u.createdAt)}</td>
+      <td><div style="display:flex;gap:6px;align-items:center">
+        ${u.role!=='superadmin'&&u.id!=='1'
+          ? `<button class="btn btn-sm btn-primary" onclick="openEditUser('${u.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+             <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>`
+          : '<span style="color:var(--gray-600);font-size:12px">Protegido</span>'}
+      </div></td>
+    </tr>`;
+  }).join('');
 }
 
 // ─── ESTADÍSTICAS ─────────────────────────────────────────────
@@ -1311,6 +1418,32 @@ function updateStats(){
   document.getElementById('statCourses').textContent=window._courses.filter(c=>c.status==='published').length;
   document.getElementById('statUsers').textContent=(DB.users.length + window._users.length);
   document.getElementById('statProjects').textContent=window._projects.filter(p=>p.status==='published').length;
+  // Render recent users widget in dashboard
+  const allU=[...DB.users,...window._users.filter(u=>!DB.users.find(d=>d.login===u.login))];
+  const recent = allU.slice().reverse().slice(0,5);
+  const container = document.getElementById('dashRecentUsers');
+  if(!container) return;
+  if(!recent.length){
+    container.innerHTML='<div style="padding:20px;text-align:center;color:var(--gray-600);font-size:13px">Sin usuarios registrados</div>';
+    return;
+  }
+  container.innerHTML = recent.map(u=>{
+    const ri = getRoleInfo(u.role);
+    const initials = u.name.split(' ').map(n=>n[0]).join('').slice(0,2);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.04)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="mini-avatar" style="width:28px;height:28px;font-size:11px">${initials}</div>
+        <div>
+          <div style="font-size:13px;font-weight:600">${u.name}</div>
+          <div style="font-size:11px;color:var(--gray-500)">@${u.login}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+        <span class="badge-pill ${ri.badge}" style="padding:2px 8px;font-size:11px">${ri.label}</span>
+        <span style="font-size:10px;color:var(--gray-600)">${formatDate(u.createdAt)}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ─── AGREGAR / ELIMINAR PROYECTOS ─────────────────────────────
@@ -1398,32 +1531,74 @@ async function deleteCourse(id){
 }
 
 // ─── AGREGAR / ELIMINAR USUARIOS ──────────────────────────────
+// ─── FUNCIONES DE CATEGORÍA DE USUARIO ───────────────────────
+function selectUserCategory(cat){
+  document.getElementById('userCategory').value = cat;
+  document.getElementById('cat-admin-card').classList.toggle('active', cat==='admin');
+  document.getElementById('cat-viewer-card').classList.toggle('active', cat==='viewer');
+  document.getElementById('adminSubWrap').style.display   = cat==='admin'  ? 'block' : 'none';
+  document.getElementById('userPlaylistWrap').style.display = cat==='viewer' ? 'block' : 'none';
+  if(cat==='viewer') buildPlaylistCheckboxes('userPlaylistCheckboxes', []);
+}
+
+function selectEditUserCategory(cat){
+  document.getElementById('editUserCategory').value = cat;
+  document.getElementById('editCat-admin-card').classList.toggle('active', cat==='admin');
+  document.getElementById('editCat-viewer-card').classList.toggle('active', cat==='viewer');
+  document.getElementById('editAdminSubWrap').style.display   = cat==='admin'  ? 'block' : 'none';
+  document.getElementById('editUserPlaylistWrap').style.display = cat==='viewer' ? 'block' : 'none';
+  if(cat==='viewer') buildPlaylistCheckboxes('editUserPlaylistCheckboxes', window._editingPlaylists||[]);
+}
+
+// Determina la categoría según el rol
+function catFromRole(role){
+  return (role==='admin'||role==='editor'||role==='superadmin') ? 'admin' : 'viewer';
+}
+
+// Determina el rol final a guardar
+function resolveRole(category){
+  if(category === 'admin'){
+    const sel = document.querySelector('input[name="userRole"]:checked');
+    return sel ? sel.value : 'admin';
+  }
+  return 'courses'; // estudiante
+}
+
+function resolveEditRole(category){
+  if(category === 'admin'){
+    const sel = document.querySelector('input[name="editUserRole"]:checked');
+    return sel ? sel.value : 'admin';
+  }
+  return 'courses';
+}
+
 async function addUser(){
-  const name=document.getElementById('userName').value.trim();
-  const login=document.getElementById('userLogin').value.trim();
-  const pass=document.getElementById('userPass').value;
-  const email=document.getElementById('userEmail').value.trim();
-  const role=document.getElementById('userRole').value;
+  const name  = document.getElementById('userName').value.trim();
+  const login = document.getElementById('userLogin').value.trim();
+  const pass  = document.getElementById('userPass').value;
+  const email = document.getElementById('userEmail').value.trim();
+  const cat   = document.getElementById('userCategory').value;
   if(!name||!login||!pass){showToast('error','Error','Nombre, usuario y contraseña son requeridos');return;}
   const allU=[...DB.users,...window._users];
   if(allU.find(u=>u.login===login)){showToast('error','Error','Ese nombre de usuario ya existe');return;}
-  // Get selected playlists
-  const playlists = (role === 'courses') ? getSelectedPlaylists('userPlaylistCheckboxes') : [];
+  const role = resolveRole(cat);
+  const playlists = cat==='viewer' ? getSelectedPlaylists('userPlaylistCheckboxes') : [];
   const data={name,login,pass,email,role,playlists,active:true,createdAt:null};
   if(window._db){
     try{
       const {addDoc,collection,serverTimestamp}=window._fb;
       data.createdAt=serverTimestamp();
       await addDoc(collection(window._db,'users'),data);
-      showToast('success','Usuario creado',`@${login} registrado en Firebase ✓`);
+      showToast('success','Usuario creado',`@${login} registrado ✓`);
     }catch(e){showToast('error','Error Firebase',e.message);return;}
   } else {
-    data.id=Date.now().toString();
+    data.id=Date.now().toString();data.createdAt=new Date().toISOString();
     window._users.push(data);renderUsers();updateStats();
     showToast('info','Usuario creado','(Sin Firebase)');
   }
   closeModal('modalUser');
   ['userName','userLogin','userPass','userEmail'].forEach(id=>document.getElementById(id).value='');
+  selectUserCategory('admin'); // reset
 }
 
 async function deleteUser(id){
@@ -1441,41 +1616,60 @@ async function deleteUser(id){
 }
 
 // ─── VER / OCULTAR CONTRASEÑA ─────────────────────────────────
-// togglePass está definida globalmente antes del login (script inline)
+// togglePass está definida globalmente antes del login
 
 // ─── EDITAR USUARIO ───────────────────────────────────────────
 let _editingPassPlain = '';
+let _editingPlaylists = [];
 
 function openEditUser(id){
   const u = window._usersMap[id];
   if(!u){ showToast('error','Error','No se encontró el usuario'); return; }
-  document.getElementById('editUserId').value    = u.id || id;
-  document.getElementById('editUserName').value  = u.name || '';
-  document.getElementById('editUserLogin').value = u.login || '';
-  document.getElementById('editUserEmail').value = u.email || '';
-  document.getElementById('editUserRole').value  = u.role || 'courses';
-  document.getElementById('editUserActive').value= String(u.active !== false);
-  document.getElementById('editUserPass').value  = '';
-  // Resetear icono del ojo del campo nueva contraseña
+  document.getElementById('editUserId').value     = u.id || id;
+  document.getElementById('editUserName').value   = u.name || '';
+  document.getElementById('editUserLogin').value  = u.login || '';
+  document.getElementById('editUserEmail').value  = u.email || '';
+  document.getElementById('editUserActive').value = String(u.active !== false);
+
+  // Contraseña
   const passInput = document.getElementById('editUserPass');
-  passInput.type = 'password';
-  const passBtn = passInput.parentElement.querySelector('.pass-toggle i');
-  if(passBtn) passBtn.className = 'fas fa-eye';
-  // Mostrar contraseña actual oculta
+  passInput.value = ''; passInput.type = 'password';
+  const passIcon = passInput.parentElement.querySelector('.pass-toggle i');
+  if(passIcon) passIcon.className = 'fas fa-eye';
   document.getElementById('editUserPassDisplay').textContent = '••••••••';
   document.getElementById('editUserPassDisplay').style.color = '';
   document.getElementById('btnRevealPass').innerHTML = '<i class="fas fa-eye"></i> Ver';
   _editingPassPlain = u.pass || '';
-  // Cargar playlists con las asignadas marcadas
-  buildPlaylistCheckboxes('editUserPlaylistCheckboxes', u.playlists || []);
-  // Mostrar/ocultar selector de playlists según rol
-  togglePlaylistAccess('editUserPlaylistWrap', u.role || 'courses');
+
+  // Categoría y rol
+  const cat = catFromRole(u.role);
+  document.getElementById('editUserCategory').value = cat;
+  document.getElementById('editCat-admin-card').classList.toggle('active', cat==='admin');
+  document.getElementById('editCat-viewer-card').classList.toggle('active', cat==='viewer');
+  document.getElementById('editAdminSubWrap').style.display   = cat==='admin'  ? 'block' : 'none';
+  document.getElementById('editUserPlaylistWrap').style.display = cat==='viewer' ? 'block' : 'none';
+  // Seleccionar el radio del rol correcto
+  const roleRadio = document.querySelector(`input[name="editUserRole"][value="${u.role}"]`);
+  if(roleRadio) roleRadio.checked = true;
+
+  // Playlists
+  _editingPlaylists = u.playlists || [];
+  if(cat==='viewer') buildPlaylistCheckboxes('editUserPlaylistCheckboxes', _editingPlaylists);
+
+  // Fecha de creación
+  if(u.createdAt){
+    document.getElementById('editUserCreatedRow').style.display = 'block';
+    document.getElementById('editUserCreatedAt').textContent = formatDate(u.createdAt);
+  } else {
+    document.getElementById('editUserCreatedRow').style.display = 'none';
+  }
+
   openModal('modalEditUser');
 }
 
 function togglePassDisplay(){
   const display = document.getElementById('editUserPassDisplay');
-  const btn = document.getElementById('btnRevealPass');
+  const btn     = document.getElementById('btnRevealPass');
   if(display.textContent === '••••••••'){
     display.textContent = _editingPassPlain || '(sin contraseña)';
     display.style.color = 'var(--white)';
@@ -1492,27 +1686,23 @@ async function saveEditUser(){
   const name   = document.getElementById('editUserName').value.trim();
   const login  = document.getElementById('editUserLogin').value.trim();
   const email  = document.getElementById('editUserEmail').value.trim();
-  const role   = document.getElementById('editUserRole').value;
   const active = document.getElementById('editUserActive').value === 'true';
   const newPass= document.getElementById('editUserPass').value.trim();
+  const cat    = document.getElementById('editUserCategory').value;
 
   if(!name||!login){showToast('error','Error','Nombre y usuario son obligatorios');return;}
 
+  const role = resolveEditRole(cat);
   const updates = { name, login, email, role, active };
   if(newPass) updates.pass = newPass;
-  // Guardar playlists asignadas
-  if(role === 'courses'){
-    updates.playlists = getSelectedPlaylists('editUserPlaylistCheckboxes');
-  } else {
-    updates.playlists = ['all'];
-  }
+  updates.playlists = cat==='viewer' ? getSelectedPlaylists('editUserPlaylistCheckboxes') : [];
 
   if(window._db){
     try{
       const {doc, setDoc} = window._fb;
       await setDoc(doc(window._db,'users',id), updates, {merge:true});
-      showToast('success','Usuario actualizado',`@${login} guardado en Firebase ✓`);
-      if(newPass) _editingPassPlain = newPass;
+      showToast('success','Usuario actualizado',`@${login} guardado ✓`);
+      if(newPass){ _editingPassPlain = newPass; }
     }catch(e){showToast('error','Error Firebase',e.message);return;}
   } else {
     const u = window._users.find(u=>u.id===id);
@@ -1708,7 +1898,8 @@ Object.assign(window,{
   populateCourseSelectors,buildPlaylistCheckboxes,togglePlaylistAccess,
   getSelectedPlaylists,handleAllPlaylistCheck,
   loadAdminPlaylist,filterPlaylistSection,openAddVideo,editVideo,saveVideo,deleteVideo,
-  goToPlaylist
+  goToPlaylist,
+  selectUserCategory,selectEditUserCategory,formatDate,getRoleInfo
 });
 </script>
 </body>
