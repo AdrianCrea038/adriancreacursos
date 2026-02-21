@@ -1040,14 +1040,61 @@ section { padding: 100px 5%; }
   </ul>
 
   <div class="nav-actions">
-    <a href="admin.html" class="btn-nav-login">
-      <i class="fas fa-user-circle"></i> Login
-    </a>
+    <button class="btn-nav-login" onclick="openLoginModal()" style="border:none">
+      <i class="fas fa-lock" style="font-size:12px;opacity:0.7"></i> Acceder
+    </button>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
+
+<!-- Modal de Login Unificado -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(7,7,26,0.92);backdrop-filter:blur(16px);padding:20px">
+  <div style="position:relative;max-width:400px;width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px 36px;box-shadow:0 24px 80px rgba(0,0,0,0.5)">
+    <!-- Close -->
+    <button onclick="closeLoginModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:18px;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'"><i class="fas fa-times"></i></button>
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:50px;height:50px;background:linear-gradient(135deg,#1A1AFF,#00FF88);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;color:#fff"><i class="fas fa-bolt"></i></div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em">Iniciar Sesión</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:4px">Adrian Creativo</div>
+    </div>
+    <!-- Fields -->
+    <div style="margin-bottom:14px">
+      <div style="position:relative;margin-bottom:10px">
+        <i class="fas fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.25);font-size:13px;pointer-events:none"></i>
+        <input type="text" id="idxLoginUser" placeholder="Usuario" autocomplete="username"
+          style="width:100%;padding:12px 14px 12px 40px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;outline:none"
+          onfocus="this.style.borderColor='rgba(26,26,255,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+          onkeyup="if(event.key==='Enter')idxDoLogin()">
+      </div>
+      <div style="position:relative">
+        <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.25);font-size:13px;pointer-events:none"></i>
+        <input type="password" id="idxLoginPass" placeholder="Contraseña" autocomplete="current-password"
+          style="width:100%;padding:12px 46px 12px 40px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;outline:none"
+          onfocus="this.style.borderColor='rgba(26,26,255,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+          onkeyup="if(event.key==='Enter')idxDoLogin()">
+        <button type="button" onclick="idxTogglePass(this)" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:13px;padding:4px;transition:color .2s" onmouseover="this.style.color='#00FF88'" onmouseout="this.style.color='rgba(255,255,255,0.3)'"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <!-- Error -->
+    <div id="idxLoginError" style="display:none;background:rgba(255,68,102,0.1);border:1px solid rgba(255,68,102,0.25);border-radius:10px;padding:9px 12px;font-size:12px;color:#FF7799;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+      <i class="fas fa-exclamation-circle"></i><span id="idxLoginMsg">Usuario o contraseña incorrectos</span>
+    </div>
+    <!-- Button -->
+    <button onclick="idxDoLogin()" id="idxLoginBtn"
+      style="width:100%;padding:13px;background:linear-gradient(135deg,#1A1AFF,#3D3DFF);border:none;border-radius:12px;color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(26,26,255,0.35)"
+      onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 32px rgba(26,26,255,0.55)'"
+      onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(26,26,255,0.35)'">
+      <i class="fas fa-sign-in-alt"></i> Ingresar
+    </button>
+    <!-- Footer note -->
+    <div style="text-align:center;margin-top:16px;font-size:11px;color:rgba(255,255,255,0.2)">
+      ¿Quieres un curso? <a href="https://wa.me/50432513558" target="_blank" style="color:rgba(0,255,136,0.6);text-decoration:none">Contáctanos</a>
+    </div>
+  </div>
+</div>
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
@@ -1059,7 +1106,7 @@ section { padding: 100px 5%; }
   <a href="proyectos.html#psd" onclick="toggleMenu()"><i class="fas fa-paint-brush"></i> Diseño PSD</a>
   <a href="proyectos.html#video" onclick="toggleMenu()"><i class="fas fa-video"></i> Video</a>
   <a href="cursos.html" onclick="toggleMenu()"><i class="fas fa-graduation-cap"></i> Cursos</a>
-  <a href="admin.html" class="mobile-login"><i class="fas fa-user-shield"></i> Acceder / Login</a>
+  <button onclick="toggleMenu();openLoginModal()" class="mobile-login" style="background:none;border:none;cursor:pointer;width:100%;text-align:left;color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;display:flex;align-items:center;gap:10px;padding:14px 24px"><i class="fas fa-lock"></i> Acceder</button>
 </div>
 
 <!-- ================================================
@@ -1388,7 +1435,7 @@ window.addEventListener('scroll', () => {
      ============================================================ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, onSnapshot, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const app = initializeApp({
   apiKey: "AIzaSyAkrDAE44YRJefO-Bs8CCdrsOGzJ1dnS80",
@@ -1399,6 +1446,10 @@ const app = initializeApp({
   appId: "1:1054676254470:web:c68c00c3e3cd7a2d73a887"
 });
 const db = getFirestore(app);
+// Exponer para el login modal (script normal no-module)
+window._idxDb = db;
+window._idxGetDocs = getDocs;
+window._idxCollection = collection;
 
 function set(id, val){ const el=document.getElementById(id); if(el && val) el.textContent = val; }
 function attr(id, attr, val){ const el=document.getElementById(id); if(el && val) el.setAttribute(attr, val); }
@@ -1447,10 +1498,19 @@ onSnapshot(collection(db, 'site_content'), snap => {
       // Redes sociales
       if(data.fb){ attr('link-fb', 'href', `https://facebook.com/${data.fb}`); set('fb-handle', data.fb); }
       if(data.ig){ 
-        const igUrl = data.ig.startsWith('http') ? data.ig : `https://www.instagram.com/${data.ig}/`;
-        const igHandle = data.ig.startsWith('http') ? '@' + data.ig.replace(/.*instagram\.com\//,'').replace('/','') : '@'+data.ig;
-        attr('link-ig', 'href', igUrl); 
-        set('ig-handle', igHandle); 
+        const igRaw = data.ig.trim();
+        // Solo actualizar si es URL completa válida — proteger el link del HTML
+        if(igRaw.startsWith('http')){
+          const igUrl = igRaw.endsWith('/') ? igRaw : igRaw + '/';
+          const igHandle = '@' + igRaw.replace(/.*instagram\.com\//,'').replace(/\//g,'');
+          attr('link-ig', 'href', igUrl); 
+          set('ig-handle', igHandle); 
+        }
+        // Si es solo un handle (no URL), construir con www
+        else if(!igRaw.includes(' ')){
+          attr('link-ig', 'href', `https://www.instagram.com/${igRaw}/`);
+          set('ig-handle', '@'+igRaw);
+        }
       }
       if(data.tt){ attr('link-tt', 'href', `https://tiktok.com/@${data.tt}`); set('tt-handle', '@'+data.tt); }
     }
@@ -1481,7 +1541,6 @@ function applyAboutPhoto(url){
   const wrap = document.getElementById('aboutImgWrap');
   const placeholder = document.getElementById('aboutImgPlaceholder');
   if(!wrap || !url) return;
-  // Check if img already exists
   let img = wrap.querySelector('img.about-real-photo');
   if(!img){
     img = document.createElement('img');
@@ -1493,6 +1552,92 @@ function applyAboutPhoto(url){
   img.src = url;
   img.onerror = () => img.remove();
   if(placeholder) placeholder.style.display = 'none';
+}
+</script>
+
+<script>
+// ── Login modal unificado (index.html) ──────────────────────
+function openLoginModal(){
+  const m = document.getElementById('loginModal');
+  m.style.display = 'flex';
+  setTimeout(()=>document.getElementById('idxLoginUser').focus(), 150);
+}
+function closeLoginModal(){
+  document.getElementById('loginModal').style.display = 'none';
+  document.getElementById('idxLoginUser').value = '';
+  document.getElementById('idxLoginPass').value = '';
+  document.getElementById('idxLoginError').style.display = 'none';
+}
+function idxTogglePass(btn){
+  const input = document.getElementById('idxLoginPass');
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+// Cerrar modal al click fuera
+document.getElementById('loginModal').addEventListener('click', function(e){
+  if(e.target === this) closeLoginModal();
+});
+// Cerrar con Escape
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLoginModal(); });
+
+async function idxDoLogin(){
+  const login = document.getElementById('idxLoginUser').value.trim();
+  const pass  = document.getElementById('idxLoginPass').value;
+  const errDiv = document.getElementById('idxLoginError');
+  const errMsg = document.getElementById('idxLoginMsg');
+  const btn    = document.getElementById('idxLoginBtn');
+  errDiv.style.display = 'none';
+
+  if(!login || !pass){
+    errMsg.textContent = 'Ingresa usuario y contraseña';
+    errDiv.style.display = 'flex'; return;
+  }
+
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+  btn.disabled = true;
+
+  try {
+    // Usar la instancia de Firebase ya inicializada en el módulo ES
+    const fdb = window._idxDb;
+    if(!fdb){ throw new Error('Firebase no disponible'); }
+    
+    const snap = await window._idxGetDocs(window._idxCollection(fdb, 'users'));
+    const allUsers = snap.docs.map(d=>({id:d.id,...d.data()}));
+    
+    // Incluir superadmin local siempre
+    const localAdmin = {id:'1',login:'adrian',pass:'admin123',role:'superadmin',name:'Adrian García',active:true};
+    const found = [localAdmin,...allUsers].find(u=>u.login===login && u.pass===pass);
+
+    if(!found){
+      errMsg.textContent = 'Usuario o contraseña incorrectos';
+      errDiv.style.display = 'flex';
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+      btn.disabled = false; return;
+    }
+    if(found.active === false){
+      errMsg.textContent = 'Tu cuenta está desactivada';
+      errDiv.style.display = 'flex';
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+      btn.disabled = false; return;
+    }
+
+    const role = found.role || 'courses';
+    if(role === 'superadmin' || role === 'admin' || role === 'editor'){
+      // → Panel de administración
+      window.location.href = 'admin.html';
+    } else {
+      // → Página de cursos (estudiante)
+      try { sessionStorage.setItem('ac_user', JSON.stringify(found)); } catch(e){}
+      window.location.href = 'cursos.html';
+    }
+  } catch(e){
+    errMsg.textContent = 'Error de conexión. Intenta de nuevo.';
+    errDiv.style.display = 'flex';
+    console.error('Login error:', e);
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Ingresar';
+    btn.disabled = false;
+  }
 }
 </script>
 

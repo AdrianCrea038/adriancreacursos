@@ -481,9 +481,14 @@ window.logoutUser = logoutUser;
 function hasAccess(course){
   if(!currentUser) return false;
   const role = currentUser.role;
-  if(role==='superadmin'||role==='admin') return true;
+  // Roles de admin siempre tienen acceso
+  if(role==='superadmin'||role==='admin'||role==='editor') return true;
+  // Estudiante: verificar playlists asignadas
   const allowed = currentUser.playlists || [];
-  return allowed.includes('all') || allowed.includes(course.id);
+  if(allowed.includes('all')) return true;
+  // Comparar por ID del curso (puede ser string de Firebase)
+  const courseId = String(course.id||'');
+  return allowed.some(p => String(p) === courseId);
 }
 
 // ── Build card ──
@@ -836,7 +841,6 @@ window.doLwLogin = async function(){
   }
 
   try {
-    // Buscar el usuario en la colección Firebase
     const snap = await getDocs(collection(db, 'users'));
     const found = snap.docs.map(d=>({id:d.id,...d.data()})).find(u=>u.login===login && u.pass===pass);
 
@@ -848,8 +852,7 @@ window.doLwLogin = async function(){
       errMsg.textContent = 'Tu cuenta está desactivada. Contacta al administrador.';
       errDiv.style.display = 'flex'; return;
     }
-    // Solo usuarios con rol 'courses' pueden entrar aquí (estudiantes)
-    // Admins también pueden, pero NO mostramos el panel admin
+
     currentUser = found;
     saveSession(currentUser);
     document.getElementById('loginWall').style.display = 'none';
