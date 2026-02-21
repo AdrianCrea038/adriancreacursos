@@ -596,12 +596,18 @@ window.backToCatalog = function(){
 };
 
 // ── Playlist ──
+const _videoMap = {}; // mapa seguro de videos por ID
+
 function loadPlaylist(courseId){
   document.getElementById('plList').innerHTML =
     `<div style="padding:20px;text-align:center;color:var(--gray-500);font-size:12px"><i class="fas fa-spinner fa-spin"></i></div>`;
 
   onSnapshot(query(collection(db,'playlists'), orderBy('order','asc')), snap=>{
     const videos = snap.docs.map(d=>({id:d.id,...d.data()})).filter(v=>v.courseId===courseId);
+
+    // Guardar en mapa para acceso seguro desde onclick
+    videos.forEach(v => { _videoMap[v.id] = v; });
+
     if(!videos.length){
       document.getElementById('plList').innerHTML =
         `<div style="padding:24px;text-align:center;color:var(--gray-500);font-size:12px"><i class="fas fa-film" style="display:block;font-size:28px;margin-bottom:10px;opacity:.25"></i>Sin videos aún.</div>`;
@@ -626,9 +632,8 @@ function loadPlaylist(courseId){
         const isDone   = watchedIds.has(v.id);
         const icClass  = isActive ? 'fas fa-pause' : isDone ? 'fas fa-check-circle' : 'fas fa-play-circle';
         const extra    = isActive ? 'active' : isDone ? 'pl-item-done' : '';
-        // Encode video data safely
-        const vData = JSON.stringify({id:v.id,title:v.title||'',desc:v.desc||'',url:v.url||''});
-        html += `<div class="pl-item ${extra}" onclick='playVideo(${vData.replace(/'/g,"&#39;")})'>
+        // Usar ID seguro en lugar de datos inline — evita problemas con caracteres especiales
+        html += `<div class="pl-item ${extra}" onclick="playVideoById('${v.id}')">
           <span class="pl-item-num">${idx++}</span>
           <div class="pl-item-info">
             <strong>${v.title||'Video sin título'}</strong>
@@ -658,6 +663,12 @@ function updateProgress(done, total){
   document.getElementById('plFill').style.width  = total ? `${Math.round(done/total*100)}%` : '0%';
 }
 
+// ── Play video by ID (llamado desde onclick seguro) ──
+window.playVideoById = function(videoId){
+  const v = _videoMap[videoId];
+  if(v) playVideo(v);
+};
+
 // ── Play video ──
 window.playVideo = function(v){
   currentVideoId = v.id;
@@ -673,15 +684,31 @@ window.playVideo = function(v){
     return;
   }
 
+  // YouTube: youtube.com/watch?v=ID  |  youtu.be/ID  |  youtube.com/shorts/ID  |  youtube.com/embed/ID
   if(url.includes('youtube.com') || url.includes('youtu.be')){
     let vid = '';
-    if(url.includes('youtu.be/')) vid = url.split('youtu.be/')[1]?.split('?')[0];
-    else if(url.includes('v=')) vid = new URLSearchParams(url.split('?')[1]).get('v');
-    wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-  } else if(url.match(/\.(mp4|webm|mov|ogg)(\?|$)/i)){
+    if(url.includes('/embed/'))       vid = url.split('/embed/')[1]?.split('?')[0];
+    else if(url.includes('/shorts/')) vid = url.split('/shorts/')[1]?.split('?')[0];
+    else if(url.includes('youtu.be/')) vid = url.split('youtu.be/')[1]?.split('?')[0];
+    else if(url.includes('v='))        vid = new URLSearchParams(url.includes('?') ? url.split('?')[1] : '').get('v');
+    if(vid){
+      wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
+    } else {
+      wrap.innerHTML = `<div class="video-placeholder"><i class="fas fa-exclamation-circle" style="font-size:32px;opacity:.5;color:#FF7799"></i><p style="font-size:13px;color:var(--gray-500)">No se pudo extraer el ID de YouTube.<br>URL: ${url}</p></div>`;
+    }
+  // Vimeo
+  } else if(url.includes('vimeo.com')){
+    const vid = url.split('vimeo.com/').pop()?.split('?')[0];
+    wrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${vid}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
+  // Archivo de video directo (mp4, webm, etc.)
+  } else if(url.match(/\.(mp4|webm|mov|ogg|m4v)(\?|$)/i)){
     wrap.innerHTML = `<video src="${url}" controls autoplay style="width:100%;height:100%;position:absolute;inset:0;object-fit:contain;background:#000"></video>`;
+  // Cloudinary video (sin extensión explícita pero con cloudinary en URL)
+  } else if(url.includes('cloudinary.com') && (url.includes('/video/') || url.includes('f_mp4'))){
+    wrap.innerHTML = `<video src="${url}" controls autoplay style="width:100%;height:100%;position:absolute;inset:0;object-fit:contain;background:#000"></video>`;
+  // Cualquier otro iframe
   } else {
-    wrap.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    wrap.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
   }
 
   if(currentCourse) loadPlaylist(currentCourse.id);
