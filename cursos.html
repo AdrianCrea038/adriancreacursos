@@ -559,13 +559,10 @@ window.openPlayer = function(courseId){
   const c = allCourses.find(x=>x.id===courseId);
   if(!c) return;
   if(!currentUser){
-    // No está logueado — mostrar panel de login y scroll a él
-    document.getElementById('loginWall').style.display = 'block';
-    document.getElementById('loginWall').scrollIntoView({behavior:'smooth', block:'center'});
-    // Pulsar el loginWall brevemente para llamar atención
-    const lw = document.getElementById('loginWall');
-    lw.style.boxShadow = '0 0 0 3px rgba(26,26,255,0.6)';
-    setTimeout(()=>{ lw.style.boxShadow = ''; }, 1200);
+    // No está logueado — mostrar modal de login correctamente
+    document.getElementById('loginWall').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(()=>document.getElementById('lwUser')?.focus(), 100);
     return;
   }
   if(!hasAccess(c)){

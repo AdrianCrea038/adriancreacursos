@@ -296,8 +296,9 @@ function togglePass(inputId, btn){
         <button type="button" class="pass-toggle" onclick="togglePass('loginPass',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
       </div>
     </div>
-    <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Acceder al Sistema</button>
+    <button class="btn-login" id="btnLogin" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Acceder al Sistema</button>
     <div class="login-error" id="loginError"><i class="fas fa-exclamation-circle"></i> <span id="loginErrorMsg">Usuario o contraseña incorrectos</span></div>
+    <div id="fbLoadingHint" style="text-align:center;font-size:11px;color:var(--gray-600);margin-top:10px;font-family:'JetBrains Mono',monospace;display:none"><i class="fas fa-circle-notch fa-spin" style="margin-right:5px"></i>Conectando con Firebase…</div>
   </div>
 </div>
 
@@ -935,10 +936,14 @@ try {
     collection(db,'users'),
     snap => {
       window._users = snap.docs.map(d => ({id:d.id,...d.data()}));
+      window._fbUsersReady = true;
+      // Ocultar hint de carga Firebase si login sigue visible
+      const hint = document.getElementById('fbLoadingHint');
+      if(hint) hint.style.display = 'none';
       renderUsers();
       updateStats();
     },
-    err => { console.error('Error usuarios:', err); }
+    err => { console.error('Error usuarios:', err); window._fbUsersReady = true; }
   );
 
   // Playlists
@@ -953,10 +958,19 @@ try {
 
 } catch(e) {
   console.error('Firebase init error:', e);
+  window._fbUsersReady = true; // permitir login con DB local aunque Firebase falle
   setFbStatus(false, 'Error al iniciar Firebase');
 }
 
 window._getConfig = () => FIREBASE_CONFIG;
+
+// Mostrar indicador de carga en login si Firebase tarda más de 800ms
+setTimeout(() => {
+  if(!window._fbUsersReady) {
+    const hint = document.getElementById('fbLoadingHint');
+    if(hint) hint.style.display = 'block';
+  }
+}, 800);
 </script>
 
 <script>
@@ -987,6 +1001,27 @@ function doLogin(){
   const p=document.getElementById('loginPass').value;
   const err=document.getElementById('loginError');
   const msg=document.getElementById('loginErrorMsg');
+
+  // Si Firebase aún no cargó los usuarios, esperar y reintentar una vez
+  if(!window._fbUsersReady && window._db) {
+    const btn = document.getElementById('btnLogin');
+    if(btn){ btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> Conectando…'; }
+    const hint = document.getElementById('fbLoadingHint');
+    if(hint) hint.style.display = 'block';
+    // Esperar hasta 4 segundos a que lleguen los datos de Firebase
+    let waited = 0;
+    const interval = setInterval(() => {
+      waited += 200;
+      if(window._fbUsersReady || waited >= 4000) {
+        clearInterval(interval);
+        if(btn){ btn.disabled=false; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Acceder al Sistema'; }
+        if(hint) hint.style.display = 'none';
+        doLogin(); // reintentar
+      }
+    }, 200);
+    return;
+  }
+
   // Buscar en DB local Y en _users de Firebase
   const allUsers=[...DB.users,...(window._users||[])];
   const found=allUsers.find(x=>x.login===u&&x.pass===p);
@@ -1386,8 +1421,11 @@ function getRoleInfo(role){
 
 function renderUsers(){
   const body=document.getElementById('usersBody');
+  if(!body) return;
   const allU=[...DB.users,...window._users.filter(u=>!DB.users.find(d=>d.login===u.login))];
-  allU.forEach(u => { window._usersMap[u.id] = u; });
+  // Reconstruir el mapa con los IDs correctos
+  window._usersMap = {};
+  allU.forEach(u => { if(u.id) window._usersMap[u.id] = u; });
   body.innerHTML=allU.map(u=>{
     const ri = getRoleInfo(u.role);
     return `<tr>
