@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin · Adrian Reyes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: #0A0A0F;
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid #BFFF00;
+            border-radius: 30px;
+            padding: 50px 40px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .admin-badge {
+            background: rgba(191, 255, 0, 0.1);
+            border: 1px solid rgba(191, 255, 0, 0.3);
+            border-radius: 100px;
+            padding: 8px 16px;
+            color: #BFFF00;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(191, 255, 0, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Rubik', sans-serif;
+            margin-bottom: 15px;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #BFFF00;
+        }
+        .password-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .password-container .input-field {
+            padding-right: 45px;
+            margin-bottom: 0;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .password-toggle:hover {
+            color: #BFFF00;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            border: none;
+            border-radius: 12px;
+            color: #0A0A0F;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+        }
+        .back-link a:hover { color: #BFFF00; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo">Adrian Reyes</div>
+        <div class="admin-badge"><i class="fas fa-shield-alt"></i> Acceso Admin</div>
+        
+        <input type="text" class="input-field" id="adminUser" placeholder="Usuario" value="adrian">
+        
+        <div class="password-container">
+            <input type="password" class="input-field" id="adminPass" placeholder="Contraseña" value="admin123">
+            <button type="button" class="password-toggle" onclick="togglePassword()">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        
+        <button class="login-btn" onclick="iniciarSesionAdmin()"><i class="fas fa-sign-in-alt"></i> Acceder</button>
+        <div class="back-link"><a href="index.html"><i class="fas fa-arrow-left"></i> Volver</a></div>
+    </div>
+    
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('adminPass');
+            const icon = document.querySelector('.password-toggle i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+        
+        function iniciarSesionAdmin() {
+            if (document.getElementById('adminUser').value === 'adrian' && document.getElementById('adminPass').value === 'admin123') {
+                sessionStorage.setItem('admin_logged', 'true');
+                window.location.href = 'index.html?admin=true';
+            } else {
+                alert('❌ Usuario o contraseña incorrectos');
+            }
+        }
+    </script>
+</body>
+</html>

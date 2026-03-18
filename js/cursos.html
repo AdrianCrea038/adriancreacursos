@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Cursos · Adrian Reyes</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* ================================================
+           ESTILOS GENERALES
+        ================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: #0A0A0F;
+            color: white;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ================================================
+           NAVBAR
+        ================================================ */
+        .navbar {
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(191, 255, 0, 0.15);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: #BFFF00;
+            background: rgba(191, 255, 0, 0.1);
+        }
+
+        .nav-links a.active {
+            color: #BFFF00;
+            font-weight: 700;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            color: #0A0A0F;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(191, 255, 0, 0.3);
+            font-family: 'Rubik', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(191, 255, 0, 0.5);
+        }
+
+        /* ================================================
+           HEADER
+        ================================================ */
+        .page-header {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .page-sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ================================================
+           GRID DE PLAYLISTS
+        ================================================ */
+        .playlists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .playlist-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(191, 255, 0, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .playlist-card:hover {
+            transform: translateY(-5px);
+            border-color: #BFFF00;
+            box-shadow: 0 15px 30px rgba(191, 255, 0, 0.15);
+        }
+
+        .playlist-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(145deg, rgba(191, 255, 0, 0.1), rgba(0, 255, 194, 0.05));
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .playlist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .playlist-image i {
+            font-size: 50px;
+            color: rgba(191, 255, 0, 0.3);
+        }
+
+        .playlist-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(191, 255, 0, 0.2);
+        }
+
+        .playlist-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .playlist-header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        .playlist-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            color: #BFFF00;
+            font-size: 12px;
+        }
+
+        .video-list {
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .video-item:hover {
+            background: rgba(191, 255, 0, 0.05);
+        }
+
+        .video-thumbnail {
+            width: 80px;
+            height: 45px;
+            background: #000;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-thumbnail i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .video-info {
+            flex: 1;
+        }
+
+        .video-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .video-info .video-meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* ================================================
+           MENSAJE SIN ACCESO
+        ================================================ */
+        .no-access {
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(191, 255, 0, 0.03);
+            border: 1px dashed rgba(191, 255, 0, 0.3);
+            border-radius: 30px;
+            margin: 40px 0;
+        }
+
+        .no-access i {
+            font-size: 60px;
+            color: #BFFF00;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-access h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .no-access p {
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 25px;
+        }
+
+        .no-access .btn-login {
+            margin: 0 auto;
+            display: inline-block;
+        }
+
+        /* ================================================
+           MODAL DE VIDEO
+        ================================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #1A1A1F;
+            border: 1px solid #BFFF00;
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .video-player-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .video-player-container iframe,
+        .video-player-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ================================================
+           MENÚ DE USUARIO
+        ================================================ */
+        .user-menu {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #1A1A1F;
+            border: 1px solid #BFFF00;
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 1000;
+            min-width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-logout {
+            background: #FF4444;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #FF6666;
+            transform: translateY(-2px);
+        }
+
+        /* ================================================
+           TOAST
+        ================================================ */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1A1A1F;
+            border: 1px solid #BFFF00;
+            border-radius: 12px;
+            padding: 15px 25px;
+            color: white;
+            font-size: 14px;
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .toast i {
+            color: #BFFF00;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ================================================
+           FOOTER
+        ================================================ */
+        .footer {
+            padding: 40px 0 30px;
+            border-top: 1px solid rgba(191, 255, 0, 0.1);
+            margin-top: 60px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+        }
+
+        /* ================================================
+           MODAL LOGIN
+        ================================================ */
+        .modal-field {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(191, 255, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-family: 'Rubik', sans-serif;
+            color: white;
+            font-size: 14px;
+        }
+
+        .modal-field:focus {
+            outline: none;
+            border-color: #BFFF00;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            color: #0A0A0F;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* ================================================
+           RESPONSIVE
+        ================================================ */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .playlists-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="window.location.href='index.html'">Adrian Reyes</div>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="cursos.html" class="active">Cursos</a></li>
+            </ul>
+
+            <button class="btn-login" id="loginBtn" onclick="abrirModalLogin()">
+                <i class="fas fa-user"></i> Iniciar sesión
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Mis Cursos</h1>
+            <p class="page-sub">Explora nuestro contenido educativo</p>
+        </div>
+
+        <div id="contenidoPrincipal"></div>
+    </div>
+
+    <!-- Modal Login -->
+    <div class="modal" id="loginModal">
+        <div class="modal-card" style="max-width: 400px;">
+            <button class="modal-close" onclick="cerrarModal('loginModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="modal-title">Iniciar Sesión</h3>
+            <input type="text" class="modal-field" id="loginUser" placeholder="Usuario">
+            <input type="password" class="modal-field" id="loginPass" placeholder="Contraseña">
+            <button class="modal-btn" onclick="iniciarSesion()">Ingresar</button>
+        </div>
+    </div>
+
+    <!-- Modal Video Player -->
+    <div class="modal" id="videoPlayerModal">
+        <div class="modal-card" style="max-width: 900px;">
+            <button class="modal-close" onclick="cerrarVideoPlayer()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="video-player-container" id="videoPlayerContainer"></div>
+            <h3 id="currentVideoTitle" style="margin-top:20px; color:#BFFF00; text-align:center;"></h3>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2026 Adrian Reyes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ================================================
+        // VARIABLES GLOBALES
+        // ================================================
+        
+        // Cargar datos desde localStorage
+        let playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+        let videos = JSON.parse(localStorage.getItem('videos')) || [];
+        let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+        // Asegurar que existe el admin
+        let adminEncontrado = usuarios.find(u => u.login === 'adrian');
+        if (!adminEncontrado) {
+            usuarios.push({
+                id: 1,
+                nombre: "Adrian Reyes",
+                login: "adrian",
+                pass: "admin123",
+                email: "adrian@adriancreativo.com",
+                rol: "admin",
+                playlists: ['all']
+            });
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        }
+
+        // Usuario actual (puede ser null)
+        let usuarioActual = null;
+        try {
+            const sesion = sessionStorage.getItem('usuario_actual');
+            if (sesion) {
+                usuarioActual = JSON.parse(sesion);
+            }
+        } catch(e) {
+            sessionStorage.removeItem('usuario_actual');
+        }
+
+        // ================================================
+        // FUNCIONES GENERALES
+        // ================================================
+        
+        function mostrarToast(mensaje) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${mensaje}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // ================================================
+        // LOGIN (OPCIONAL)
+        // ================================================
+        
+        function abrirModalLogin() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function iniciarSesion() {
+            const login = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            
+            const usuario = usuarios.find(u => u.login === login && u.pass === pass);
+            
+            if (usuario) {
+                usuarioActual = usuario;
+                sessionStorage.setItem('usuario_actual', JSON.stringify(usuario));
+                cerrarModal('loginModal');
+                actualizarBoton();
+                renderizarContenido();
+                mostrarToast(`✅ Bienvenido ${usuario.nombre}`);
+            } else {
+                alert('❌ Usuario o contraseña incorrectos');
+            }
+        }
+
+        function cerrarSesion() {
+            usuarioActual = null;
+            sessionStorage.removeItem('usuario_actual');
+            actualizarBoton();
+            renderizarContenido();
+            mostrarToast('👋 Sesión cerrada');
+        }
+
+        function actualizarBoton() {
+            const btn = document.getElementById('loginBtn');
+            if (usuarioActual) {
+                btn.innerHTML = `<i class="fas fa-user-check"></i> ${usuarioActual.nombre}`;
+                btn.onclick = mostrarMenu;
+            } else {
+                btn.innerHTML = '<i class="fas fa-user"></i> Iniciar sesión';
+                btn.onclick = abrirModalLogin;
+            }
+        }
+
+        function mostrarMenu() {
+            const menuExistente = document.querySelector('.user-menu');
+            if (menuExistente) menuExistente.remove();
+
+            const menu = document.createElement('div');
+            menu.className = 'user-menu';
+            menu.innerHTML = `
+                <p style="color:#BFFF00; margin-bottom:10px;"><strong>${usuarioActual.nombre}</strong></p>
+                <p style="color:rgba(255,255,255,0.5); margin-bottom:15px;">@${usuarioActual.login}</p>
+                <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesión</button>
+            `;
+            document.body.appendChild(menu);
+
+            setTimeout(() => {
+                document.addEventListener('click', function cerrar(e) {
+                    if (!menu.contains(e.target) && !e.target.closest('#loginBtn')) {
+                        menu.remove();
+                        document.removeEventListener('click', cerrar);
+                    }
+                });
+            }, 100);
+        }
+
+        // ================================================
+        // MOSTRAR CONTENIDO (SIEMPRE VISIBLE)
+        // ================================================
+        
+        function renderizarContenido() {
+            const container = document.getElementById('contenidoPrincipal');
+            
+            // SIEMPRE mostrar playlists, esté o no logueado
+            if (playlists.length === 0) {
+                container.innerHTML = `
+                    <div class="no-access">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Próximamente cursos disponibles</h3>
+                        <p>Estamos preparando contenido para ti</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Si el usuario está logueado y tiene playlists asignadas, filtrar
+            let playlistsAMostrar = playlists;
+            
+            if (usuarioActual && usuarioActual.playlists) {
+                if (!usuarioActual.playlists.includes('all')) {
+                    playlistsAMostrar = playlists.filter(p => 
+                        usuarioActual.playlists.includes(p.id)
+                    );
+                }
+            }
+
+            if (playlistsAMostrar.length === 0) {
+                container.innerHTML = `
+                    <div class="no-access">
+                        <i class="fas fa-lock"></i>
+                        <h3>No tienes acceso a estos cursos</h3>
+                        <p>Inicia sesión con una cuenta que tenga acceso</p>
+                        <button class="btn-login" onclick="abrirModalLogin()" style="margin-top:20px;">Iniciar sesión</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="playlists-grid">';
+            
+            playlistsAMostrar.forEach(playlist => {
+                const videosPlaylist = videos.filter(v => v.playlistId === playlist.id);
+                
+                let videosHtml = '';
+                if (videosPlaylist.length === 0) {
+                    videosHtml = '<p style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">Próximamente videos</p>';
+                } else {
+                    videosPlaylist.forEach(video => {
+                        // Generar thumbnail de YouTube si no hay
+                        let thumbnail = video.thumbnail;
+                        if (!thumbnail && video.tipo === 'youtube') {
+                            const match = video.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                            const videoId = match ? match[1] : '';
+                            thumbnail = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                        } else if (!thumbnail) {
+                            thumbnail = 'https://images.unsplash.com/photo-1574717024453-354056af4e7f?w=320&h=180&fit=crop';
+                        }
+                        
+                        videosHtml += `
+                            <div class="video-item" onclick="reproducirVideo('${video.id}')">
+                                <div class="video-thumbnail">
+                                    <img src="${thumbnail}" alt="${video.titulo}">
+                                    <i class="fas fa-play-circle"></i>
+                                </div>
+                                <div class="video-info">
+                                    <h4>${video.titulo}</h4>
+                                    <div class="video-meta">
+                                        <span><i class="fas fa-clock"></i> ${video.duracion || '—'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `
+                    <div class="playlist-card">
+                        <div class="playlist-image">
+                            ${playlist.imagen ? 
+                                `<img src="${playlist.imagen}" alt="${playlist.nombre}">` : 
+                                `<i class="fas fa-image"></i>`
+                            }
+                        </div>
+                        <div class="playlist-header">
+                            <h3>${playlist.nombre || 'Sin nombre'}</h3>
+                            <p>${playlist.descripcion || ''}</p>
+                            <div class="playlist-meta">
+                                <span><i class="fas fa-video"></i> ${videosPlaylist.length} videos</span>
+                            </div>
+                        </div>
+                        <div class="video-list">
+                            ${videosHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ================================================
+        // REPRODUCIR VIDEO
+        // ================================================
+        
+        function reproducirVideo(videoId) {
+            const video = videos.find(v => v.id === videoId);
+            if (!video) return;
+
+            const container = document.getElementById('videoPlayerContainer');
+            const titleEl = document.getElementById('currentVideoTitle');
+
+            if (video.tipo === 'youtube') {
+                const match = video.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                const videoId = match ? match[1] : '';
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+            } else if (video.tipo === 'vimeo') {
+                const match = video.url.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/);
+                const videoId = match ? match[1] : '';
+                container.innerHTML = `<iframe src="https://player.vimeo.com/video/${videoId}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+            } else if (video.tipo === 'cloudinary') {
+                container.innerHTML = `<video src="${video.url}" controls autoplay style="width:100%;height:100%;"></video>`;
+            }
+
+            titleEl.textContent = video.titulo;
+            document.getElementById('videoPlayerModal').classList.add('active');
+        }
+
+        function cerrarVideoPlayer() {
+            document.getElementById('videoPlayerModal').classList.remove('active');
+            document.getElementById('videoPlayerContainer').innerHTML = '';
+        }
+
+        // ================================================
+        // INICIALIZACIÓN
+        // ================================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarBoton();
+            renderizarContenido();
+
+            // Cerrar modales con Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
+                }
+            });
+
+            // Exponer funciones globales
+            window.abrirModalLogin = abrirModalLogin;
+            window.iniciarSesion = iniciarSesion;
+            window.cerrarSesion = cerrarSesion;
+            window.reproducirVideo = reproducirVideo;
+            window.cerrarVideoPlayer = cerrarVideoPlayer;
+            window.cerrarModal = cerrarModal;
+        });
+    </script>
+</body>
+</html>

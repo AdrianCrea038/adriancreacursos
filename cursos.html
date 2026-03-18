@@ -1,906 +1,1594 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cursos · Adrian Creativo</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-:root{
-  --blue-royal:#1A1AFF;--blue-bright:#3D3DFF;--blue-glow:#7B7BFF;
-  --green-neon:#00FF88;--green-mid:#00CC6A;
-  --white:#FFF;--gray-200:#C8C8E8;--gray-300:#A0A0C0;--gray-500:#606080;
-  --dark:#07071A;--dark-2:#0C0C24;--dark-3:#12122E;
-  --font-display:'Syne',sans-serif;--font-body:'Instrument Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;
-  --ease:cubic-bezier(0.16,1,0.3,1);
-  --nav-h:68px;--r-sm:8px;--r-md:14px;--r-lg:20px;--r-xl:28px;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:var(--font-body);background:var(--dark);color:var(--white);overflow-x:hidden}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--dark-2)}::-webkit-scrollbar-thumb{background:var(--blue-bright);border-radius:10px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Cursos · Adrian Reyes</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Supabase JS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* ================================================
+           ESTILOS GENERALES
+        ================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:1000;display:flex;align-items:center;padding:0 5%;background:rgba(7,7,26,.9);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06);gap:14px}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
-.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--blue-royal),var(--green-neon));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
-.nav-logo-text{font-family:var(--font-display);font-size:17px;font-weight:700;background:linear-gradient(135deg,#fff 30%,var(--green-neon));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links{display:flex;align-items:center;gap:2px;list-style:none;margin:0 auto}
-.nav-links a{padding:8px 13px;font-size:13.5px;font-weight:500;color:var(--gray-300);text-decoration:none;border-radius:var(--r-sm);transition:color .2s,background .2s}
-.nav-links a:hover,.nav-links a.active-nav{color:#fff;background:rgba(255,255,255,.05)}
-.nav-links a.active-nav{color:var(--green-neon)}
-.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.btn-nav-pill{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .3s var(--ease);border:none}
-.btn-login-pill{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff}
-.btn-login-pill:hover{background:rgba(26,26,255,.25);border-color:var(--blue-bright)}
-@media(max-width:768px){.nav-links{display:none}}
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: #0A0A0F;
+            color: white;
+            line-height: 1.5;
+        }
 
-/* CATALOG HERO */
-.cat-hero{padding:calc(var(--nav-h) + 52px) 5% 44px;position:relative;overflow:hidden;text-align:center}
-.cat-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% -5%,rgba(26,26,255,.45) 0%,transparent 70%);pointer-events:none}
-.cat-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(26,26,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,255,.04) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 70% 65% at 50% 0%,black 20%,transparent 75%)}
-.cat-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(26,26,255,.12);border:1px solid rgba(26,26,255,.3);border-radius:100px;padding:6px 14px 6px 10px;font-size:11px;font-weight:600;font-family:var(--font-mono);letter-spacing:.08em;color:var(--blue-glow);margin-bottom:18px;position:relative;z-index:1}
-.eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--green-neon);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.cat-title{font-family:var(--font-display);font-size:clamp(34px,5vw,62px);font-weight:800;line-height:1.05;letter-spacing:-.03em;margin-bottom:14px;position:relative;z-index:1}
-.cat-title .acc{background:linear-gradient(135deg,var(--blue-glow),var(--green-neon));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cat-sub{font-size:clamp(14px,1.4vw,17px);color:var(--gray-300);max-width:480px;margin:0 auto 32px;line-height:1.65;position:relative;z-index:1}
-.filter-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;position:relative;z-index:1;margin-bottom:8px}
-.filter-btn{display:flex;align-items:center;gap:7px;padding:10px 20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:100px;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--gray-300);cursor:pointer;transition:all .3s var(--ease)}
-.filter-btn:hover{background:rgba(255,255,255,.08);color:#fff}
-.filter-btn.active{background:linear-gradient(135deg,rgba(26,26,255,.3),rgba(0,255,136,.08));border-color:rgba(26,26,255,.45);color:#fff;box-shadow:0 4px 20px rgba(26,26,255,.2)}
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-/* CATALOG GRID */
-.cat-section{padding:40px 5% 72px}
-.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.c-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-xl);overflow:hidden;display:flex;flex-direction:column;transition:all .4s var(--ease)}
-.c-card:hover{transform:translateY(-8px);border-color:rgba(26,26,255,.4);box-shadow:0 20px 60px rgba(26,26,255,.2)}
-.c-thumb{aspect-ratio:16/9;position:relative;overflow:hidden;background:var(--dark-3);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.c-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.c-thumb-icon{font-size:48px;opacity:.2}
-.c-badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:100px;font-size:10px;font-weight:700;font-family:var(--font-mono);z-index:2}
-.badge-pub{background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.3);color:var(--green-neon)}
-.badge-coming{background:rgba(255,170,0,.15);border:1px solid rgba(255,170,0,.3);color:#FFAA00}
-.c-body{padding:20px 22px;flex:1;display:flex;flex-direction:column;gap:10px}
-.c-cat-tag{font-size:11px;font-weight:600;font-family:var(--font-mono);letter-spacing:.06em;color:var(--gray-500);text-transform:uppercase}
-.c-title{font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.2;letter-spacing:-.02em}
-.c-desc{font-size:13px;color:var(--gray-300);line-height:1.6;flex:1}
-.c-meta{display:flex;gap:14px;flex-wrap:wrap}
-.c-meta span{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500)}
-.c-footer{padding:14px 22px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.05);margin:0}
-.c-price{font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:-.03em}
-.price-paid{background:linear-gradient(135deg,#fff,var(--blue-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.price-coming{font-family:var(--font-mono);font-size:13px;color:#FFAA00;font-weight:600}
-.btn-enroll{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .3s var(--ease);border:none;white-space:nowrap}
-.btn-buy{background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));color:#fff;box-shadow:0 4px 16px rgba(26,26,255,.3)}
-.btn-buy:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,26,255,.5)}
-.btn-watch{background:linear-gradient(135deg,rgba(0,255,136,.2),rgba(0,204,106,.08));border:1px solid rgba(0,255,136,.3);color:var(--green-neon)}
-.btn-watch:hover{background:rgba(0,255,136,.3);transform:translateY(-2px)}
-.btn-notify{background:rgba(255,170,0,.1);border:1px solid rgba(255,170,0,.25);color:#FFAA00}
-.empty-state{text-align:center;padding:80px 20px;color:var(--gray-500);grid-column:1/-1}
-.empty-state i{font-size:44px;margin-bottom:14px;display:block;opacity:.3}
+        /* ================================================
+           NAVBAR
+        ================================================ */
+        .navbar {
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(191, 255, 0, 0.15);
+        }
 
-/* LOGIN WALL — pantalla completa bloqueando el catálogo */
-.login-wall{
-  position:fixed;inset:0;z-index:500;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(7,7,26,0.97);
-  backdrop-filter:blur(20px);
-  padding:20px;
-}
-.lw-card{
-  max-width:520px;width:100%;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(26,26,255,0.35);
-  border-radius:var(--r-xl);
-  padding:52px 44px;
-  text-align:center;
-  position:relative;overflow:hidden;
-}
-.lw-card::before{content:'';position:absolute;top:-80px;right:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(26,26,255,.15),transparent 70%);pointer-events:none}
-.lw-card::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,136,.08),transparent 70%);pointer-events:none}
-.lw-icon{width:76px;height:76px;background:linear-gradient(135deg,rgba(26,26,255,.3),rgba(0,255,136,.15));border:1px solid rgba(26,26,255,.4);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue-glow);margin:0 auto 22px;position:relative;z-index:1}
-.lw-title{font-family:var(--font-display);font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px;position:relative;z-index:1}
-.lw-sub{color:var(--gray-300);font-size:14px;line-height:1.7;max-width:380px;margin:0 auto 28px;position:relative;z-index:1}
-.lw-features{display:flex;flex-direction:column;gap:9px;margin-bottom:30px;position:relative;z-index:1;text-align:left}
-.lw-feat{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:var(--gray-200)}
-.lw-feat i{color:var(--green-neon);font-size:13px;width:16px;flex-shrink:0}
-.lw-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
-.btn-lw-main{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));border:none;border-radius:100px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .3s var(--ease);box-shadow:0 4px 20px rgba(26,26,255,.35)}
-.btn-lw-main:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(26,26,255,.55)}
-.btn-lw-wa{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);border-radius:100px;color:#25D366;font-size:14px;font-weight:700;text-decoration:none;transition:all .3s}
-.btn-lw-wa:hover{background:rgba(37,211,102,.18);transform:translateY(-2px)}
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-/* LOGIN FORM en login wall */
-.lw-form{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;position:relative;z-index:1}
-.lw-field-wrap{position:relative}
-.lw-field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:13px;pointer-events:none}
-.lw-field{width:100%;padding:13px 44px 13px 40px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--r-md);color:#fff;font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .2s;text-align:left}
-.lw-field:focus{border-color:rgba(26,26,255,.6);background:rgba(26,26,255,.08)}
-.lw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;padding:4px;font-size:13px;transition:color .2s;line-height:1}
-.lw-eye:hover{color:var(--green-neon)}
-.lw-error{background:rgba(255,68,102,.1);border:1px solid rgba(255,68,102,.25);border-radius:var(--r-sm);padding:9px 12px;font-size:12px;color:#FF7799;display:flex;align-items:center;gap:8px;text-align:left}
-.lw-divider{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:rgba(255,255,255,.2);font-size:12px;position:relative;z-index:1}
-.lw-divider::before,.lw-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
-.lw-divider span{white-space:nowrap}
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
 
-/* VIDEO PLAYER */
-#playerPage{display:none;padding-top:var(--nav-h)}
-.player-layout{display:grid;grid-template-columns:1fr 340px;min-height:calc(100vh - var(--nav-h))}
-.player-main{display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06)}
-.video-sticky{position:sticky;top:var(--nav-h);z-index:10;background:#000}
-.video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000}
-.video-wrap iframe,.video-wrap video{position:absolute;inset:0;width:100%;height:100%;border:none}
-.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--gray-500);background:var(--dark-3)}
-.video-placeholder i{font-size:52px;opacity:.25}
-.video-info-box{padding:22px 28px;border-bottom:1px solid rgba(255,255,255,.06)}
-.video-info-box h2{font-family:var(--font-display);font-size:19px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
-.video-info-box p{font-size:13px;color:var(--gray-300);line-height:1.6}
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
 
-/* VIDEO TABS */
-.v-tabs{display:flex;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.06);background:var(--dark-2)}
-.vtab{padding:13px 18px;font-size:13px;font-weight:600;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;display:flex;align-items:center;gap:7px;margin-bottom:-1px;user-select:none}
-.vtab.active{color:var(--green-neon);border-bottom-color:var(--green-neon)}
-.vtab:hover:not(.active){color:#fff}
-.v-tab-count{background:rgba(26,26,255,.3);border-radius:100px;padding:1px 7px;font-size:10px;margin-left:2px;font-family:var(--font-mono)}
-.tab-panel{display:none;padding:24px 28px;overflow-y:auto;max-height:calc(100vh - var(--nav-h) - 420px);min-height:280px}
-.tab-panel.active{display:block}
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
 
-/* FORUM — diseño mejorado */
-.forum-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)}
-.forum-top h3{font-family:var(--font-display);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
-.btn-new-post{display:flex;align-items:center;gap:7px;padding:9px 18px;background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));border:none;border-radius:100px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .3s var(--ease);box-shadow:0 4px 12px rgba(26,26,255,.3)}
-.btn-new-post:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,26,255,.5)}
-.post-form{background:rgba(26,26,255,.06);border:1px solid rgba(26,26,255,.25);border-radius:var(--r-md);padding:16px;margin-bottom:20px;display:none;animation:slideDown .2s ease}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.post-form.open{display:block}
-.post-form-title{font-size:12px;font-weight:700;color:var(--blue-glow);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.post-textarea{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--r-sm);color:#fff;font-family:var(--font-body);font-size:13.5px;padding:11px 13px;resize:vertical;min-height:90px;outline:none;transition:border-color .2s,background .2s;line-height:1.6}
-.post-textarea:focus{border-color:var(--blue-bright);background:rgba(26,26,255,.08)}
-.post-form-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
-.btn-submit{padding:9px 20px;background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));border:none;border-radius:100px;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 3px 10px rgba(26,26,255,.3)}
-.btn-submit:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(26,26,255,.5)}
-.btn-cancel{padding:9px 16px;background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:100px;color:var(--gray-300);font-size:12.5px;cursor:pointer;transition:all .2s}
-.btn-cancel:hover{background:rgba(255,255,255,.05);color:#fff}
-.forum-list{display:flex;flex-direction:column;gap:16px}
-.f-post{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-md);overflow:hidden;transition:border-color .3s}
-.f-post:hover{border-color:rgba(255,255,255,.12)}
-.f-post-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.05)}
-.f-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue-royal),var(--green-neon));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(26,26,255,.3)}
-.f-meta{flex:1}
-.f-meta strong{display:block;font-size:13px;font-weight:600}
-.f-meta span{font-size:10px;color:var(--gray-500);font-family:var(--font-mono)}
-.f-content{font-size:13.5px;color:var(--gray-200);line-height:1.65}
-.f-actions{display:flex;gap:14px;margin-top:12px}
-.f-content-wrap{padding:14px 16px}
-.f-content{font-size:13.5px;color:var(--gray-200);line-height:1.7}
-.f-actions{display:flex;gap:6px;padding:10px 16px;border-top:1px solid rgba(255,255,255,.05)}
-.f-btn{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:var(--gray-400);font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:100px;font-family:var(--font-body);transition:all .2s}
-.f-btn:hover{color:var(--green-neon);border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.06)}
-.f-replies{margin-top:0;background:rgba(255,255,255,.015);border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;display:flex;flex-direction:column;gap:10px}
-.f-reply{display:flex;gap:10px;align-items:flex-start}
-.f-reply-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue-bright),var(--blue-glow));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.f-reply-bubble{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-sm);padding:9px 12px;flex:1}
-.f-reply-bubble strong{font-size:11px;display:block;margin-bottom:4px;color:var(--blue-glow)}
-.f-reply-bubble p{font-size:13px;color:var(--gray-200);line-height:1.55}
-.f-reply-form{display:none;gap:8px;margin-top:10px;align-items:center}
-.f-reply-form.open{display:flex}
-.f-reply-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:100px;color:#fff;font-family:var(--font-body);font-size:13px;padding:8px 14px;outline:none}
-.f-reply-input:focus{border-color:var(--blue-bright)}
-.btn-send{padding:8px 16px;background:linear-gradient(135deg,var(--blue-royal),var(--blue-bright));border:none;border-radius:100px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,26,255,.3)}
-.forum-empty{text-align:center;padding:60px 20px;color:var(--gray-500)}
-.forum-empty i{font-size:40px;opacity:.2;display:block;margin-bottom:14px}
-.forum-empty p{font-size:13px;line-height:1.7}
+        .nav-links a:hover {
+            color: #BFFF00;
+            background: rgba(191, 255, 0, 0.1);
+        }
 
-/* PLAYLIST SIDEBAR */
-.playlist-side{display:flex;flex-direction:column;background:var(--dark-2);overflow:hidden;border-left:1px solid rgba(255,255,255,.06)}
-.pl-head{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
-.pl-head h3{font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:3px}
-.pl-head p{font-size:11px;color:var(--gray-500)}
-.pl-progress{margin-top:10px}
-.pl-prog-label{font-size:11px;color:var(--gray-500);font-family:var(--font-mono);margin-bottom:5px}
-.pl-prog-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.pl-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue-royal),var(--green-neon));border-radius:2px;transition:width .5s var(--ease)}
-.pl-list{overflow-y:auto;flex:1}
-.pl-list::-webkit-scrollbar{width:3px}
-.pl-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
-.pl-group{border-bottom:1px solid rgba(255,255,255,.04)}
-.pl-group-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;cursor:pointer;user-select:none;transition:background .2s}
-.pl-group-hdr:hover{background:rgba(255,255,255,.03)}
-.pl-group-name{font-size:12px;font-weight:700;color:var(--gray-200);display:flex;align-items:center;gap:7px}
-.pl-group-count{font-family:var(--font-mono);font-size:10px;color:var(--blue-glow);background:rgba(26,26,255,.18);padding:2px 7px;border-radius:100px}
-.pl-group-toggle{color:var(--gray-500);font-size:10px;transition:transform .3s}
-.pl-group.collapsed .pl-group-toggle{transform:rotate(-90deg)}
-.pl-group-body{overflow:hidden;transition:max-height .35s var(--ease)}
-.pl-group.collapsed .pl-group-body{max-height:0!important}
-.pl-item{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;cursor:pointer;transition:background .2s;border-left:3px solid transparent}
-.pl-item:hover{background:rgba(255,255,255,.04)}
-.pl-item.active{background:rgba(26,26,255,.14);border-left-color:var(--green-neon)}
-.pl-item-num{font-family:var(--font-mono);font-size:10px;color:var(--gray-500);min-width:20px;padding-top:2px;flex-shrink:0}
-.pl-item-info{flex:1;min-width:0}
-.pl-item-info strong{font-size:12.5px;font-weight:600;display:block;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-item-info span{font-size:10px;color:var(--gray-500);margin-top:2px;display:block}
-.pl-item-ic{font-size:11px;flex-shrink:0;margin-top:3px;color:var(--gray-500)}
-.pl-item.active .pl-item-ic{color:var(--green-neon);animation:pulse 1.5s infinite}
-.pl-item-done .pl-item-ic{color:var(--green-neon)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.back-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;background:none;border:none;border-top:1px solid rgba(255,255,255,.06);color:var(--gray-300);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;width:100%;transition:color .2s;flex-shrink:0}
-.back-btn:hover{color:#fff}
+        .nav-links a.active {
+            color: #BFFF00;
+            font-weight: 700;
+        }
 
-/* FOOTER */
-.footer{background:var(--dark-2);border-top:1px solid rgba(255,255,255,.06);padding:32px 5% 24px}
-.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.footer-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
-.footer-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--blue-royal),var(--green-neon));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
-.footer-logo-text{font-family:var(--font-display);font-size:15px;font-weight:700}
-.footer-links{display:flex;gap:20px;flex-wrap:wrap}
-.footer-links a{font-size:12px;color:var(--gray-500);text-decoration:none;transition:color .2s}
-.footer-links a:hover{color:#fff}
-.footer-copy{font-size:11px;color:var(--gray-500);font-family:var(--font-mono)}
+        .btn-login {
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            color: #0A0A0F;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(191, 255, 0, 0.3);
+            font-family: 'Rubik', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-/* RESPONSIVE */
-@media(max-width:1024px){.cat-grid{grid-template-columns:repeat(2,1fr)}.player-layout{grid-template-columns:1fr}}
-@media(max-width:767px){.cat-grid{grid-template-columns:1fr}.cat-section{padding:32px 4% 60px}.login-wall{padding:40px 24px;margin:0 4% 60px}.tab-panel{max-height:none}.video-info-box,.v-tabs,.tab-panel{padding-left:16px;padding-right:16px}.playlist-side{border-top:1px solid rgba(255,255,255,.06)}}
-@media(max-width:480px){.cat-grid{grid-template-columns:1fr}.c-footer{flex-direction:column;align-items:flex-start}.btn-enroll{width:100%;justify-content:center}}
-</style>
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(191, 255, 0, 0.5);
+        }
+
+        /* ================================================
+           HEADER
+        ================================================ */
+        .page-header {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .page-sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ================================================
+           CONFIGURACIÓN SUPABASE
+        ================================================ */
+        .supabase-config {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(191, 255, 0, 0.05);
+            border: 1px solid rgba(191,255,0,0.2);
+            border-radius: 12px;
+        }
+
+        .supabase-config h3 {
+            color: #BFFF00;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .supabase-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+        }
+
+        .supabase-field {
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(191, 255, 0, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Rubik', sans-serif;
+            font-size: 13px;
+        }
+
+        .supabase-field:focus {
+            outline: none;
+            border-color: #BFFF00;
+        }
+
+        .btn-supabase {
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            color: #0A0A0F;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .connection-status {
+            margin-top: 10px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FF4444;
+        }
+
+        .status-dot.connected {
+            background: #BFFF00;
+        }
+
+        /* ================================================
+           GRID DE PLAYLISTS
+        ================================================ */
+        .playlists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .playlist-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(191, 255, 0, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .playlist-card:hover {
+            transform: translateY(-5px);
+            border-color: #BFFF00;
+            box-shadow: 0 15px 30px rgba(191, 255, 0, 0.15);
+        }
+
+        .playlist-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(145deg, rgba(191, 255, 0, 0.1), rgba(0, 255, 194, 0.05));
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .playlist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .playlist-image i {
+            font-size: 50px;
+            color: rgba(191, 255, 0, 0.3);
+        }
+
+        .playlist-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(191, 255, 0, 0.2);
+        }
+
+        .playlist-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .playlist-header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .playlist-meta {
+            display: flex;
+            gap: 15px;
+            color: #BFFF00;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+
+        .playlist-price {
+            font-size: 24px;
+            font-weight: 800;
+            color: #BFFF00;
+            margin: 10px 0;
+        }
+
+        .playlist-price small {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 400;
+        }
+
+        /* Barra de progreso */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #BFFF00, #00FFC2);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #BFFF00;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Video list */
+        .video-list {
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(191, 255, 0, 0.05);
+            position: relative;
+        }
+
+        .video-item.watched {
+            opacity: 0.7;
+        }
+
+        .video-item.watched::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            color: #BFFF00;
+            font-size: 14px;
+        }
+
+        .video-item:last-child {
+            border-bottom: none;
+        }
+
+        .video-item:hover {
+            background: rgba(191, 255, 0, 0.05);
+        }
+
+        .video-thumbnail {
+            width: 60px;
+            height: 34px;
+            background: #000;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-thumbnail i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .video-info {
+            flex: 1;
+        }
+
+        .video-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .video-info .video-meta {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Botón de WhatsApp */
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px;
+            text-decoration: none;
+        }
+
+        .btn-whatsapp:hover {
+            background: #20BD5A;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        /* Sección de reseñas */
+        .reviews-section {
+            padding: 20px;
+            border-top: 1px solid rgba(191, 255, 0, 0.2);
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .reviews-header h4 {
+            color: #BFFF00;
+            font-size: 16px;
+        }
+
+        .average-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stars {
+            color: #FFD700;
+        }
+
+        .stars i {
+            margin-right: 2px;
+        }
+
+        .review-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: #BFFF00;
+        }
+
+        .review-date {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .review-stars {
+            color: #FFD700;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .review-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.5;
+        }
+
+        .btn-review {
+            background: rgba(191, 255, 0, 0.1);
+            border: 1px solid rgba(191, 255, 0, 0.3);
+            color: #BFFF00;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-review:hover {
+            background: rgba(191, 255, 0, 0.2);
+        }
+
+        .btn-review i {
+            font-size: 12px;
+        }
+
+        /* Contenedor de botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 15px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            padding: 10px;
+        }
+
+        /* Botón de certificado */
+        .btn-certificate {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .btn-certificate:hover {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-certificate i {
+            font-size: 13px;
+        }
+
+        /* ================================================
+           MENSAJE SIN ACCESO
+        ================================================ */
+        .no-access {
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(191, 255, 0, 0.03);
+            border: 1px dashed rgba(191, 255, 0, 0.3);
+            border-radius: 30px;
+            margin: 40px 0;
+        }
+
+        .no-access i {
+            font-size: 60px;
+            color: #BFFF00;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-access h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .no-access p {
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 25px;
+        }
+
+        .no-access .btn-login {
+            margin: 0 auto;
+            display: inline-block;
+        }
+
+        /* ================================================
+           MODALES
+        ================================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #1A1A1F;
+            border: 1px solid #BFFF00;
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #FF4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #BFFF00, #00FFC2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding-right: 30px;
+        }
+
+        .modal-field {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(191, 255, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-family: 'Rubik', sans-serif;
+            color: white;
+            font-size: 14px;
+        }
+
+        .modal-field:focus {
+            outline: none;
+            border-color: #BFFF00;
+        }
+
+        /* Video player modal */
+        .video-player-modal {
+            max-width: 900px !important;
+        }
+
+        .video-player-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .video-player-container iframe,
+        .video-player-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ================================================
+           MENÚ DE USUARIO
+        ================================================ */
+        .user-menu {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #1A1A1F;
+            border: 1px solid #BFFF00;
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 1000;
+            min-width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .user-menu p {
+            margin-bottom: 10px;
+        }
+
+        .user-menu strong {
+            color: #BFFF00;
+        }
+
+        .btn-logout {
+            background: #FF4444;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #FF6666;
+            transform: translateY(-2px);
+        }
+
+        /* ================================================
+           TOAST
+        ================================================ */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1A1A1F;
+            border: 1px solid #BFFF00;
+            border-radius: 12px;
+            padding: 15px 25px;
+            color: white;
+            font-size: 14px;
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .toast i {
+            color: #BFFF00;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0%); opacity: 1; }
+        }
+
+        /* ================================================
+           FOOTER
+        ================================================ */
+        .footer {
+            padding: 40px 0 30px;
+            border-top: 1px solid rgba(191, 255, 0, 0.1);
+            margin-top: 60px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+        }
+
+        /* ================================================
+           RESPONSIVE
+        ================================================ */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .supabase-inputs {
+                grid-template-columns: 1fr;
+            }
+            .playlists-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .modal-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="window.location.href='index.html'">Adrian Reyes</div>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="cursos.html" class="active">Cursos</a></li>
+            </ul>
 
-<!-- NAV -->
-<nav class="nav">
-  <a href="index.html" class="nav-logo">
-    <div class="nav-logo-icon"><i class="fas fa-bolt"></i></div>
-    <div class="nav-logo-text">Adrian Creativo</div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html#inicio"><i class="fas fa-home"></i> Inicio</a></li>
-    <li><a href="index.html#nosotros">Acerca de</a></li>
-    <li><a href="index.html#contacto">Contacto</a></li>
-    <li><a href="proyectos.html">Proyectos</a></li>
-    <li><a href="cursos.html" class="active-nav"><i class="fas fa-graduation-cap"></i> Cursos</a></li>
-  </ul>
-  <div class="nav-right" id="navRight">
-    <button onclick="window.showLoginWall()" class="btn-nav-pill btn-login-pill" style="border:none;cursor:pointer"><i class="fas fa-user-circle"></i> Iniciar sesión</button>
-  </div>
-</nav>
-
-<!-- ═══════════════════════════════════════
-     CATALOG PAGE
-═══════════════════════════════════════ -->
-<div id="catalogPage">
-  <div class="cat-hero">
-    <div class="cat-hero-bg"></div>
-    <div class="cat-hero-grid"></div>
-    <div class="cat-eyebrow"><span class="eyebrow-dot"></span> Formación Online</div>
-    <h1 class="cat-title">Aprende cosas<br><span class="acc">increíbles</span></h1>
-    <p class="cat-sub">Cursos prácticos de diseño con IA, Photoshop y video para todos los niveles.</p>
-    <div class="filter-bar">
-      <button class="filter-btn active" onclick="filterCourses('all',this)"><i class="fas fa-th"></i> Todos</button>
-      <button class="filter-btn" onclick="filterCourses('ai',this)"><i class="fas fa-robot"></i> AI</button>
-      <button class="filter-btn" onclick="filterCourses('psd',this)"><i class="fas fa-paint-brush"></i> PSD</button>
-      <button class="filter-btn" onclick="filterCourses('video',this)"><i class="fas fa-video"></i> Video</button>
-    </div>
-  </div>
-
-  <div class="cat-section">
-    <div class="cat-grid" id="catalogGrid">
-      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Cargando cursos...</p></div>
-    </div>
-  </div>
-
-  <div class="login-wall" id="loginWall" style="display:none">
-    <div class="lw-card">
-      <div class="lw-icon"><i class="fas fa-graduation-cap"></i></div>
-      <div class="lw-title">Acceso exclusivo<br>para estudiantes</div>
-      <p class="lw-sub">Ingresa con tu cuenta para ver los cursos que adquiriste.</p>
-
-      <!-- Login form integrado -->
-      <div class="lw-form" id="lwLoginForm">
-        <div class="lw-field-wrap">
-          <i class="fas fa-user lw-field-icon"></i>
-          <input type="text" id="lwUser" class="lw-field" placeholder="Usuario" autocomplete="username">
-        </div>
-        <div class="lw-field-wrap">
-          <i class="fas fa-lock lw-field-icon"></i>
-          <input type="password" id="lwPass" class="lw-field" placeholder="Contraseña" autocomplete="current-password" onkeyup="if(event.key==='Enter')window.doLwLogin()">
-          <button type="button" class="lw-eye" onclick="window.toggleLwPass(this)" tabindex="-1"><i class="fas fa-eye"></i></button>
-        </div>
-        <div class="lw-error" id="lwError" style="display:none"><i class="fas fa-exclamation-circle"></i> <span id="lwErrorMsg">Usuario o contraseña incorrectos</span></div>
-        <button class="btn-lw-main" onclick="window.doLwLogin()" style="width:100%;justify-content:center">
-          <i class="fas fa-sign-in-alt"></i> Ingresar
-        </button>
-      </div>
-
-      <div class="lw-divider"><span>¿No tienes acceso?</span></div>
-      <a href="https://wa.me/50432513558?text=Hola!%20quiero%20comprar%20un%20curso" target="_blank" class="btn-lw-wa" style="width:100%;justify-content:center">
-        <i class="fab fa-whatsapp"></i> Quiero adquirir un curso
-      </a>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <a href="index.html" class="footer-logo">
-        <div class="footer-logo-icon"><i class="fas fa-bolt"></i></div>
-        <div class="footer-logo-text">Adrian Creativo</div>
-      </a>
-      <div class="footer-links">
-        <a href="index.html">Inicio</a><a href="index.html#nosotros">Acerca de</a>
-        <a href="index.html#contacto">Contacto</a><a href="proyectos.html">Proyectos</a>
-      </div>
-      <div class="footer-copy">© 2025 Adrian Creativo</div>
-    </div>
-  </footer>
-</div>
-
-<!-- ═══════════════════════════════════════
-     VIDEO PLAYER PAGE
-═══════════════════════════════════════ -->
-<div id="playerPage">
-  <div class="player-layout">
-
-    <!-- LEFT: video + tabs -->
-    <div class="player-main">
-      <div class="video-sticky">
-        <div class="video-wrap" id="videoWrap">
-          <div class="video-placeholder">
-            <i class="fas fa-play-circle"></i>
-            <p style="font-size:14px;color:var(--gray-500)">Selecciona un video de la playlist</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="video-info-box">
-        <h2 id="vTitle">Bienvenido al curso</h2>
-        <p id="vDesc"></p>
-      </div>
-
-      <div class="v-tabs">
-        <div class="vtab active" onclick="switchTab('tabInfo',this)"><i class="fas fa-info-circle"></i> Información</div>
-        <div class="vtab" onclick="switchTab('tabForum',this)">
-          <i class="fas fa-comments"></i> Foro
-          <span class="v-tab-count" id="forumCount">0</span>
-        </div>
-      </div>
-
-      <!-- Info Tab -->
-      <div class="tab-panel active" id="tabInfo">
-        <div id="courseInfoContent" style="color:var(--gray-300);font-size:14px;line-height:1.7">
-          <p>Selecciona un video de la lista para comenzar.</p>
-        </div>
-      </div>
-
-      <!-- Forum Tab -->
-      <div class="tab-panel" id="tabForum">
-        <div class="forum-top">
-          <h3><i class="fas fa-comments" style="color:var(--blue-glow)"></i> Foro del Curso <span class="v-tab-count" id="forumCount2">0</span></h3>
-          <button class="btn-new-post" onclick="togglePostForm()"><i class="fas fa-plus"></i> Nueva pregunta</button>
-        </div>
-
-        <div class="post-form" id="postForm">
-          <div class="post-form-title"><i class="fas fa-pen"></i> Nueva publicación</div>
-          <textarea class="post-textarea" id="postContent" placeholder="Escribe tu pregunta o comentario... El foro es el lugar para aprender juntos 🙌"></textarea>
-          <div class="post-form-btns">
-            <button class="btn-cancel" onclick="togglePostForm()"><i class="fas fa-times"></i> Cancelar</button>
-            <button class="btn-submit" onclick="submitPost()"><i class="fas fa-paper-plane"></i> Publicar</button>
-          </div>
-        </div>
-
-        <div class="forum-list" id="forumList">
-          <div class="forum-empty" id="forumEmpty">
-            <i class="fas fa-comments"></i>
-            <p>El foro está vacío por ahora.<br>¡Sé el primero en hacer una pregunta! 🚀</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT: playlist sidebar -->
-    <div class="playlist-side">
-      <div class="pl-head">
-        <h3 id="plCourseName">Cargando...</h3>
-        <p id="plCat"></p>
-        <div class="pl-progress">
-          <div class="pl-prog-label"><span id="plDone">0</span> / <span id="plTotal">0</span> completados</div>
-          <div class="pl-prog-bar"><div class="pl-prog-fill" id="plFill" style="width:0%"></div></div>
-        </div>
-      </div>
-      <div class="pl-list" id="plList">
-        <div style="padding:20px;text-align:center;color:var(--gray-500);font-size:12px"><i class="fas fa-spinner fa-spin"></i></div>
-      </div>
-      <button class="back-btn" onclick="backToCatalog()"><i class="fas fa-arrow-left"></i> Volver al catálogo</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- FIREBASE + LOGIC -->
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs,
-  onSnapshot, query, orderBy, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-const FBCFG = {
-  apiKey:"AIzaSyAkrDAE44YRJefO-Bs8CCdrsOGzJ1dnS80",
-  authDomain:"cursos-adrian-crea.firebaseapp.com",
-  projectId:"cursos-adrian-crea",
-  storageBucket:"cursos-adrian-crea.firebasestorage.app",
-  messagingSenderId:"1054676254470",
-  appId:"1:1054676254470:web:c68c00c3e3cd7a2d73a887"
-};
-const db = getFirestore(initializeApp(FBCFG));
-
-// ── State ──
-let allCourses = [], currentUser = null, currentCourse = null, currentVideoId = null;
-let watchedIds = new Set(), forumUnsub = null;
-const catIcons  = {ai:'fa-robot',psd:'fa-paint-brush',video:'fa-video',general:'fa-book'};
-const catLabels = {ai:'🤖 AI',psd:'🎨 PSD',video:'🎬 Video',general:'📚 General'};
-const lvlLabel  = {beginner:'Principiante',intermediate:'Intermedio',advanced:'Avanzado'};
-
-// ── Session ──
-function loadSession(){
-  try{ 
-    const r = sessionStorage.getItem('ac_user'); 
-    if(r) currentUser = JSON.parse(r); 
-  }catch(e){}
-}
-function saveSession(u){ try{ sessionStorage.setItem('ac_user', JSON.stringify(u)); }catch(e){} }
-
-function updateNav(){
-  const el = document.getElementById('navRight');
-  if(currentUser){
-    el.innerHTML = `<span style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:13px;color:var(--green-neon);font-weight:600"><i class="fas fa-user-check"></i> ${currentUser.name.split(' ')[0]}</span>
-      <button id="btnLogout" style="padding:7px 14px;background:rgba(255,68,102,.12);border:1px solid rgba(255,68,102,.25);border-radius:100px;color:#FF7799;font-size:12px;font-weight:600;cursor:pointer">
-        <i class="fas fa-sign-out-alt"></i> Salir</button></span>`;
-    document.getElementById('btnLogout').onclick = logoutUser;
-    // Ocultar login wall — desbloquear catálogo
-    document.getElementById('loginWall').style.display = 'none';
-    document.body.style.overflow = '';
-  } else {
-    el.innerHTML = `<button onclick="window.showLoginWall()" class="btn-nav-pill btn-login-pill" style="border:none;cursor:pointer"><i class="fas fa-user-circle"></i> Iniciar sesión</button>`;
-    // Mostrar login wall bloqueando toda la página
-    document.getElementById('loginWall').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
-  // Re-render catalog to show/hide access buttons correctly
-  if(allCourses.length) renderCatalog(allCourses);
-}
-
-function logoutUser(){
-  sessionStorage.removeItem('ac_user');
-  currentUser = null;
-  backToCatalog();
-  updateNav();
-}
-window.logoutUser = logoutUser;
-
-// ── Access check ──
-function hasAccess(course){
-  if(!currentUser) return false;
-  const role = currentUser.role;
-  // Roles de admin siempre tienen acceso
-  if(role==='superadmin'||role==='admin'||role==='editor') return true;
-  // Estudiante: verificar playlists asignadas
-  const allowed = currentUser.playlists || [];
-  if(allowed.includes('all')) return true;
-  // Comparar por ID del curso (puede ser string de Firebase)
-  const courseId = String(course.id||'');
-  return allowed.some(p => String(p) === courseId);
-}
-
-// ── Build card ──
-function buildCard(c){
-  const isPub  = c.status==='published';
-  const isCome = c.status==='coming';
-  const icon   = catIcons[c.cat]||'fa-graduation-cap';
-  const access = hasAccess(c);
-
-  const thumb = c.imageUrl
-    ? `<img src="${c.imageUrl}" alt="${c.name}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
-    : `<i class="fas ${icon} c-thumb-icon"></i>`;
-
-  const badge = isPub ? `<div class="c-badge badge-pub">✓ Disponible</div>`
-    : isCome ? `<div class="c-badge badge-coming">⏳ Próximamente</div>` : '';
-
-  const cur = c.currency || 'USD';
-  const price = isPub
-    ? `<div class="c-price price-paid">${c.price||0} <span style="font-size:13px;font-weight:400;-webkit-text-fill-color:var(--gray-500)">${cur}</span></div>`
-    : isCome ? `<div class="c-price price-coming">🔔 Próximamente</div>` : '';
-
-  let cta = '';
-  if(isPub){
-    if(access){
-      cta = `<button class="btn-enroll btn-watch" onclick="openPlayer('${c.id}')"><i class="fas fa-play"></i> Ver Curso</button>`;
-    } else if(currentUser){
-      // Logueado pero sin acceso a este curso específico
-      cta = `<a href="https://wa.me/50432513558?text=Quiero%20comprar:%20${encodeURIComponent(c.name)}" target="_blank" class="btn-enroll btn-buy"><i class="fab fa-whatsapp"></i> Inscribirme</a>`;
-    } else {
-      // No logueado
-      cta = `<button class="btn-enroll" onclick="openPlayer('${c.id}')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:var(--gray-300)"><i class="fas fa-lock"></i> Ver Curso</button>`;
-    }
-  } else if(isCome){
-    cta = `<a href="https://wa.me/50432513558?text=Notificarme%20del%20curso:%20${encodeURIComponent(c.name)}" target="_blank" class="btn-enroll btn-notify"><i class="fab fa-whatsapp"></i> Notificarme</a>`;
-  }
-
-  return `<div class="c-card" data-cat="${c.cat||'general'}">
-    <div class="c-thumb">${thumb}${badge}</div>
-    <div class="c-body">
-      <div class="c-cat-tag">${catLabels[c.cat]||c.cat}</div>
-      <h3 class="c-title">${c.name}</h3>
-      <p class="c-desc">${c.desc||''}</p>
-      <div class="c-meta">
-        ${c.dur?`<span><i class="fas fa-clock"></i>${c.dur}</span>`:''}
-        ${c.level?`<span><i class="fas fa-signal"></i>${lvlLabel[c.level]||c.level}</span>`:''}
-        ${c.lessons?`<span><i class="fas fa-play-circle"></i>${c.lessons} videos</span>`:''}
-      </div>
-    </div>
-    <div class="c-footer">${price}${cta}</div>
-  </div>`;
-}
-
-function renderCatalog(courses){
-  const g = document.getElementById('catalogGrid');
-  g.innerHTML = courses.length
-    ? courses.map(buildCard).join('')
-    : `<div class="empty-state"><i class="fas fa-graduation-cap"></i><p>Próximamente nuevos cursos.</p></div>`;
-}
-
-window.filterCourses = function(cat, btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn?.classList.add('active');
-  renderCatalog(cat==='all' ? allCourses : allCourses.filter(c=>c.cat===cat));
-};
-
-// ── Open player ──
-window.openPlayer = function(courseId){
-  const c = allCourses.find(x=>x.id===courseId);
-  if(!c) return;
-  if(!currentUser){
-    // No está logueado — mostrar modal de login correctamente
-    document.getElementById('loginWall').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    setTimeout(()=>document.getElementById('lwUser')?.focus(), 100);
-    return;
-  }
-  if(!hasAccess(c)){
-    // Logueado pero sin acceso a este curso
-    alert('No tienes acceso a este curso. Contacta a Adrian para adquirirlo.');
-    return;
-  }
-  currentCourse = c;
-  watchedIds = new Set();
-  document.getElementById('catalogPage').style.display = 'none';
-  document.getElementById('playerPage').style.display  = 'block';
-  document.getElementById('plCourseName').textContent  = c.name;
-  document.getElementById('plCat').textContent         = catLabels[c.cat]||c.cat;
-  document.getElementById('courseInfoContent').innerHTML =
-    `<p>${c.desc||''}</p>${c.dur?`<p style="margin-top:12px"><i class="fas fa-clock" style="color:var(--blue-glow);margin-right:6px"></i>${c.dur}</p>`:''}`;
-  loadPlaylist(courseId);
-  loadForum(courseId);
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-
-window.backToCatalog = function(){
-  if(forumUnsub){ forumUnsub(); forumUnsub = null; }
-  currentCourse = null; currentVideoId = null;
-  document.getElementById('playerPage').style.display  = 'none';
-  document.getElementById('catalogPage').style.display = 'block';
-  document.getElementById('videoWrap').innerHTML = `<div class="video-placeholder"><i class="fas fa-play-circle"></i><p style="font-size:14px;color:var(--gray-500)">Selecciona un video</p></div>`;
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-
-// ── Playlist ──
-const _videoMap = {}; // mapa seguro de videos por ID
-
-function loadPlaylist(courseId){
-  document.getElementById('plList').innerHTML =
-    `<div style="padding:20px;text-align:center;color:var(--gray-500);font-size:12px"><i class="fas fa-spinner fa-spin"></i></div>`;
-
-  onSnapshot(query(collection(db,'playlists'), orderBy('order','asc')), snap=>{
-    const videos = snap.docs.map(d=>({id:d.id,...d.data()})).filter(v=>v.courseId===courseId);
-
-    // Guardar en mapa para acceso seguro desde onclick
-    videos.forEach(v => { _videoMap[v.id] = v; });
-
-    if(!videos.length){
-      document.getElementById('plList').innerHTML =
-        `<div style="padding:24px;text-align:center;color:var(--gray-500);font-size:12px"><i class="fas fa-film" style="display:block;font-size:28px;margin-bottom:10px;opacity:.25"></i>Sin videos aún.</div>`;
-      updateProgress(0,0); return;
-    }
-
-    // Group by section
-    const sections = {};
-    videos.forEach(v=>{ const s=v.section||'Sección 1'; if(!sections[s]) sections[s]=[]; sections[s].push(v); });
-
-    let html='', idx=1;
-    Object.entries(sections).forEach(([sec,vids],si)=>{
-      const gid = `plg-${si}`;
-      html += `<div class="pl-group" id="${gid}">
-        <div class="pl-group-hdr" onclick="togglePlGroup('${gid}')">
-          <div class="pl-group-name">${sec}<span class="pl-group-count">${vids.length}</span></div>
-          <i class="fas fa-chevron-down pl-group-toggle"></i>
-        </div>
-        <div class="pl-group-body" style="max-height:9999px">`;
-      vids.forEach(v=>{
-        const isActive = currentVideoId===v.id;
-        const isDone   = watchedIds.has(v.id);
-        const icClass  = isActive ? 'fas fa-pause' : isDone ? 'fas fa-check-circle' : 'fas fa-play-circle';
-        const extra    = isActive ? 'active' : isDone ? 'pl-item-done' : '';
-        // Usar ID seguro en lugar de datos inline — evita problemas con caracteres especiales
-        html += `<div class="pl-item ${extra}" onclick="playVideoById('${v.id}')">
-          <span class="pl-item-num">${idx++}</span>
-          <div class="pl-item-info">
-            <strong>${v.title||'Video sin título'}</strong>
-            ${v.dur?`<span><i class="fas fa-clock" style="margin-right:3px"></i>${v.dur}</span>`:''}
-          </div>
-          <i class="${icClass} pl-item-ic"></i>
-        </div>`;
-      });
-      html += `</div></div>`;
-    });
-
-    document.getElementById('plList').innerHTML = html;
-    updateProgress(watchedIds.size, videos.length);
-
-    // Autoplay first video
-    if(!currentVideoId && videos.length) playVideo(videos[0]);
-  });
-}
-
-window.togglePlGroup = function(id){
-  document.getElementById(id)?.classList.toggle('collapsed');
-};
-
-function updateProgress(done, total){
-  document.getElementById('plDone').textContent = done;
-  document.getElementById('plTotal').textContent = total;
-  document.getElementById('plFill').style.width  = total ? `${Math.round(done/total*100)}%` : '0%';
-}
-
-// ── Play video by ID (llamado desde onclick seguro) ──
-window.playVideoById = function(videoId){
-  const v = _videoMap[videoId];
-  if(v) playVideo(v);
-};
-
-// ── Play video ──
-window.playVideo = function(v){
-  currentVideoId = v.id;
-  watchedIds.add(v.id);
-  document.getElementById('vTitle').textContent = v.title||'';
-  document.getElementById('vDesc').textContent  = v.desc||'';
-
-  const wrap = document.getElementById('videoWrap');
-  const url  = (v.url||'').trim();
-
-  if(!url){
-    wrap.innerHTML = `<div class="video-placeholder"><i class="fas fa-video" style="font-size:48px;opacity:.25"></i><p style="font-size:14px;color:var(--gray-500)">Este video no tiene URL asignada aún.</p></div>`;
-    return;
-  }
-
-  // YouTube: youtube.com/watch?v=ID  |  youtu.be/ID  |  youtube.com/shorts/ID  |  youtube.com/embed/ID
-  if(url.includes('youtube.com') || url.includes('youtu.be')){
-    let vid = '';
-    if(url.includes('/embed/'))       vid = url.split('/embed/')[1]?.split('?')[0];
-    else if(url.includes('/shorts/')) vid = url.split('/shorts/')[1]?.split('?')[0];
-    else if(url.includes('youtu.be/')) vid = url.split('youtu.be/')[1]?.split('?')[0];
-    else if(url.includes('v='))        vid = new URLSearchParams(url.includes('?') ? url.split('?')[1] : '').get('v');
-    if(vid){
-      wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
-    } else {
-      wrap.innerHTML = `<div class="video-placeholder"><i class="fas fa-exclamation-circle" style="font-size:32px;opacity:.5;color:#FF7799"></i><p style="font-size:13px;color:var(--gray-500)">No se pudo extraer el ID de YouTube.<br>URL: ${url}</p></div>`;
-    }
-  // Vimeo
-  } else if(url.includes('vimeo.com')){
-    const vid = url.split('vimeo.com/').pop()?.split('?')[0];
-    wrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${vid}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
-  // Archivo de video directo (mp4, webm, etc.)
-  } else if(url.match(/\.(mp4|webm|mov|ogg|m4v)(\?|$)/i)){
-    wrap.innerHTML = `<video src="${url}" controls autoplay style="width:100%;height:100%;position:absolute;inset:0;object-fit:contain;background:#000"></video>`;
-  // Cloudinary video (sin extensión explícita pero con cloudinary en URL)
-  } else if(url.includes('cloudinary.com') && (url.includes('/video/') || url.includes('f_mp4'))){
-    wrap.innerHTML = `<video src="${url}" controls autoplay style="width:100%;height:100%;position:absolute;inset:0;object-fit:contain;background:#000"></video>`;
-  // Cualquier otro iframe
-  } else {
-    wrap.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
-  }
-
-  if(currentCourse) loadPlaylist(currentCourse.id);
-};
-
-// ── Tab switch ──
-window.switchTab = function(tabId, btn){
-  document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(tabId)?.classList.add('active');
-};
-
-// ── Forum ──
-window.togglePostForm = function(){
-  document.getElementById('postForm').classList.toggle('open');
-  if(document.getElementById('postForm').classList.contains('open'))
-    document.getElementById('postContent').focus();
-};
-
-window.submitPost = async function(){
-  if(!currentUser){ alert('Debes iniciar sesión para publicar.'); return; }
-  if(!currentCourse) return;
-  const content = document.getElementById('postContent').value.trim();
-  if(!content) return;
-  try{
-    await addDoc(collection(db,'forum'),{
-      courseId:currentCourse.id, authorId:currentUser.id||currentUser.login,
-      authorName:currentUser.name, content, createdAt:serverTimestamp(), replies:[]
-    });
-    document.getElementById('postContent').value = '';
-    document.getElementById('postForm').classList.remove('open');
-  }catch(e){ alert('Error: '+e.message); }
-};
-
-window.toggleReplyForm = function(pid){
-  document.getElementById('rf-'+pid)?.classList.toggle('open');
-};
-
-window.submitReply = async function(pid){
-  if(!currentUser){ alert('Debes iniciar sesión.'); return; }
-  const input = document.getElementById('ri-'+pid);
-  const text  = input?.value.trim();
-  if(!text) return;
-  try{
-    const ref  = doc(db,'forum',pid);
-    const snap = await getDoc(ref);
-    if(!snap.exists()) return;
-    const replies = [...(snap.data().replies||[]), {
-      authorId:currentUser.id||currentUser.login, authorName:currentUser.name,
-      content:text, createdAt:new Date().toISOString()
-    }];
-    await setDoc(ref,{replies},{merge:true});
-    input.value='';
-    document.getElementById('rf-'+pid)?.classList.remove('open');
-  }catch(e){ alert('Error: '+e.message); }
-};
-
-function loadForum(courseId){
-  if(forumUnsub){ forumUnsub(); forumUnsub=null; }
-  const listEl  = document.getElementById('forumList');
-  const emptyEl = document.getElementById('forumEmpty');
-  const countEl = document.getElementById('forumCount');
-  const countEl2= document.getElementById('forumCount2');
-
-  forumUnsub = onSnapshot(
-    query(collection(db,'forum'), orderBy('createdAt','desc')),
-    snap=>{
-      const posts = snap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.courseId===courseId);
-      const count = posts.length;
-      if(countEl) countEl.textContent = count;
-      if(countEl2) countEl2.textContent = count;
-      emptyEl.style.display = count ? 'none' : 'block';
-      listEl.querySelectorAll('.f-post').forEach(el=>el.remove());
-      posts.forEach(p=>{
-        const ini  = (p.authorName||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-        const date = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('es-HN',{day:'numeric',month:'short',year:'numeric'}) : 'Ahora';
-        const rCount = (p.replies||[]).length;
-        const rHtml = (p.replies||[]).map(r=>{
-          const ri=(r.authorName||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-          return `<div class="f-reply">
-            <div class="f-reply-av">${ri}</div>
-            <div class="f-reply-bubble">
-              <strong>${r.authorName}</strong>
-              <p>${r.content}</p>
-            </div>
-          </div>`;
-        }).join('');
-        const el=document.createElement('div');
-        el.className='f-post'; el.id='fp-'+p.id;
-        el.innerHTML=`
-          <div class="f-post-head">
-            <div class="f-avatar">${ini}</div>
-            <div class="f-meta">
-              <strong>${p.authorName}</strong>
-              <span><i class="fas fa-clock" style="margin-right:3px"></i>${date}</span>
-            </div>
-          </div>
-          <div class="f-content-wrap">
-            <div class="f-content">${p.content}</div>
-          </div>
-          <div class="f-actions">
-            <button class="f-btn" onclick="toggleReplyForm('${p.id}')">
-              <i class="fas fa-reply"></i> Responder
+            <button class="btn-login" id="loginBtn" onclick="abrirModalLogin()">
+                <i class="fas fa-user"></i> Iniciar sesión
             </button>
-            ${rCount?`<span class="f-btn" style="cursor:default;pointer-events:none"><i class="fas fa-comments"></i> ${rCount} respuesta${rCount!==1?'s':''}</span>`:''}
-          </div>
-          ${rHtml?`<div class="f-replies">${rHtml}</div>`:''}
-          <div class="f-reply-form" id="rf-${p.id}" style="padding:10px 16px">
-            <input class="f-reply-input" id="ri-${p.id}" placeholder="Escribe tu respuesta..."
-              onkeydown="if(event.key==='Enter')submitReply('${p.id}')">
-            <button class="btn-send" onclick="submitReply('${p.id}')"><i class="fas fa-paper-plane"></i></button>
-          </div>`;
-        listEl.appendChild(el);
-      });
-    }
-  );
-}
+        </div>
+    </nav>
 
-// ── Load courses ──
-onSnapshot(
-  query(collection(db,'courses'), orderBy('createdAt','desc')),
-  snap=>{
-    allCourses = snap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.status!=='draft');
-    renderCatalog(allCourses);
-  }
-);
+    <div class="container">
+        <!-- Configuración de Supabase -->
+        <div class="supabase-config">
+            <h3><i class="fas fa-cloud"></i> Conectar a Supabase</h3>
+            <div class="supabase-inputs">
+                <input type="text" class="supabase-field" id="supabaseUrl" placeholder="URL de Supabase" value="https://egrepsiyopylqjoxocly.supabase.co">
+                <input type="text" class="supabase-field" id="supabaseKey" placeholder="API Key de Supabase" value="https://egrepsiyopylqjoxocly.supabase.co">
+                <button class="btn-supabase" onclick="conectarSupabase()">
+                    <i class="fas fa-plug"></i> Conectar
+                </button>
+            </div>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span>No conectado a Supabase</span>
+            </div>
+        </div>
 
-// ── Init ──
-loadSession();
-updateNav();
+        <div class="page-header">
+            <h1 class="page-title">Mis Cursos</h1>
+            <p class="page-sub">Explora nuestro contenido educativo</p>
+        </div>
 
-// ── Login wall functions ──
-window.showLoginWall = function(){
-  document.getElementById('loginWall').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  setTimeout(()=>document.getElementById('lwUser').focus(), 100);
-};
+        <div id="contenidoPrincipal"></div>
+    </div>
 
-window.toggleLwPass = function(btn){
-  const input = document.getElementById('lwPass');
-  const show = input.type === 'password';
-  input.type = show ? 'text' : 'password';
-  btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
-};
+    <!-- Modal Login CON OJITO -->
+    <div class="modal" id="loginModal">
+        <div class="modal-card" style="max-width: 400px;">
+            <button class="modal-close" onclick="cerrarModal('loginModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="modal-title">Iniciar Sesión</h3>
+            
+            <input type="text" class="modal-field" id="loginUser" placeholder="Usuario">
+            
+            <div style="position: relative;">
+                <input type="password" class="modal-field" id="loginPass" placeholder="Contraseña" style="padding-right: 45px;">
+                <button type="button" onclick="togglePassword('loginPass', this)" style="position: absolute; right: 10px; top: 12px; background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer;">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            
+            <button class="modal-btn" onclick="iniciarSesion()">Ingresar</button>
+        </div>
+    </div>
 
-window.doLwLogin = async function(){
-  const login = document.getElementById('lwUser').value.trim();
-  const pass  = document.getElementById('lwPass').value;
-  const errDiv  = document.getElementById('lwError');
-  const errMsg  = document.getElementById('lwErrorMsg');
-  errDiv.style.display = 'none';
+    <!-- Modal Video Player CON BOTÓN X -->
+    <div class="modal" id="videoPlayerModal">
+        <div class="modal-card video-player-modal">
+            <button class="modal-close" onclick="cerrarVideoPlayer()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="video-player-container" id="videoPlayerContainer"></div>
+            <h3 id="currentVideoTitle" style="margin-top:20px; color:#BFFF00; text-align:center;"></h3>
+            <button class="btn-primary" onclick="marcarVideoComoVisto()" style="margin-top:15px; width:100%;">
+                <i class="fas fa-check"></i> Marcar como visto
+            </button>
+        </div>
+    </div>
 
-  if(!login || !pass){
-    errMsg.textContent = 'Ingresa usuario y contraseña';
-    errDiv.style.display = 'flex'; return;
-  }
+    <!-- Modal para agregar reseña -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-card" style="max-width: 500px;">
+            <button class="modal-close" onclick="cerrarModal('reviewModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="modal-title">Agregar Reseña</h3>
+            <input type="hidden" id="reviewPlaylistId">
+            
+            <div style="margin-bottom: 20px; text-align: center;">
+                <label style="display: block; margin-bottom: 10px; color:#BFFF00;">Tu calificación:</label>
+                <div class="star-rating" style="font-size: 30px; color: #FFD700;">
+                    <i class="far fa-star" onclick="setRating(1)"></i>
+                    <i class="far fa-star" onclick="setRating(2)"></i>
+                    <i class="far fa-star" onclick="setRating(3)"></i>
+                    <i class="far fa-star" onclick="setRating(4)"></i>
+                    <i class="far fa-star" onclick="setRating(5)"></i>
+                </div>
+                <input type="hidden" id="reviewRating" value="0">
+            </div>
+            
+            <textarea class="modal-field" id="reviewText" placeholder="Escribe tu comentario..." rows="4"></textarea>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-secondary" onclick="cerrarModal('reviewModal')" style="flex:1; background: transparent; border: 1px solid rgba(191,255,0,0.3); color: white; padding: 12px; border-radius: 12px; cursor: pointer;">Cancelar</button>
+                <button class="btn-primary" onclick="guardarResena()" style="flex:1; background: linear-gradient(135deg, #BFFF00, #00FFC2); color: #0A0A0F; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">Publicar</button>
+            </div>
+        </div>
+    </div>
 
-  try {
-    const snap = await getDocs(collection(db, 'users'));
-    const found = snap.docs.map(d=>({id:d.id,...d.data()})).find(u=>u.login===login && u.pass===pass);
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2026 Adrian Reyes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
-    if(!found){
-      errMsg.textContent = 'Usuario o contraseña incorrectos';
-      errDiv.style.display = 'flex'; return;
-    }
-    if(found.active === false){
-      errMsg.textContent = 'Tu cuenta está desactivada. Contacta al administrador.';
-      errDiv.style.display = 'flex'; return;
-    }
+    <script>
+        // ================================================
+        // VARIABLES GLOBALES
+        // ================================================
+        
+        // Configuración de Supabase
+        let supabase = null;
+        let supabaseConnected = false;
+        
+        // Datos
+        let playlists = [];
+        let videos = [];
+        let usuarios = [];
+        let progreso = {};
+        let reseñas = [];
 
-    currentUser = found;
-    saveSession(currentUser);
-    document.getElementById('loginWall').style.display = 'none';
-    document.body.style.overflow = '';
-    document.getElementById('lwUser').value = '';
-    document.getElementById('lwPass').value = '';
-    updateNav();
-    if(allCourses.length) renderCatalog(allCourses);
-  } catch(e) {
-    errMsg.textContent = 'Error de conexión. Intenta de nuevo.';
-    errDiv.style.display = 'flex';
-    console.error('Login error:', e);
-  }
-};
+        // Número de WhatsApp
+        const WHATSAPP_NUMBER = "50432513558";
+        const WHATSAPP_MESSAGE = "Hola! Me interesa comprar el curso: ";
 
-// Allow admin.html to pass session via redirect
-window.addEventListener('message', e=>{
-  if(e.data?.type==='ac_login' && e.data.user){
-    currentUser = e.data.user;
-    saveSession(currentUser);
-    updateNav();
-    renderCatalog(allCourses);
-  }
-});
-</script>
+        // Usuario actual
+        let usuarioActual = null;
+        let videoActual = null;
+
+        // ================================================
+        // FUNCIONES DE SUPABASE
+        // ================================================
+        
+        function conectarSupabase() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+            
+            if (!url || !key) {
+                mostrarToast('❌ Ingresa URL y Key de Supabase', 'error');
+                return;
+            }
+            
+            try {
+                supabase = supabaseJs.createClient(url, key);
+                supabaseConnected = true;
+                
+                // Actualizar UI
+                document.querySelector('.status-dot').classList.add('connected');
+                document.querySelector('.connection-status span:last-child').textContent = 'Conectado a Supabase';
+                
+                mostrarToast('✅ Conectado a Supabase');
+                
+                // Cargar datos desde Supabase
+                cargarDesdeSupabase();
+                
+            } catch(e) {
+                mostrarToast('❌ Error al conectar: ' + e.message, 'error');
+            }
+        }
+
+        async function cargarDesdeSupabase() {
+            if (!supabaseConnected) return;
+            
+            try {
+                // Cargar playlists
+                const { data: playlistsData, error: playlistsError } = await supabase
+                    .from('playlists')
+                    .select('*');
+                
+                if (!playlistsError && playlistsData) {
+                    playlists = playlistsData;
+                }
+                
+                // Cargar videos
+                const { data: videosData, error: videosError } = await supabase
+                    .from('videos')
+                    .select('*');
+                
+                if (!videosError && videosData) {
+                    videos = videosData;
+                }
+                
+                // Cargar usuarios
+                const { data: usuariosData, error: usuariosError } = await supabase
+                    .from('usuarios')
+                    .select('*');
+                
+                if (!usuariosError && usuariosData) {
+                    usuarios = usuariosData;
+                }
+                
+                renderizarContenido();
+                mostrarToast('✅ Datos cargados desde Supabase');
+                
+            } catch(e) {
+                console.error('Error cargando datos:', e);
+                mostrarToast('❌ Error cargando datos', 'error');
+            }
+        }
+
+        // ================================================
+        // FUNCIONES GENERALES
+        // ================================================
+        
+        function mostrarToast(mensaje, tipo = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const icono = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.innerHTML = `<i class="fas ${icono}"></i> ${mensaje}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // ================================================
+        // LOGIN
+        // ================================================
+        
+        function abrirModalLogin() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function iniciarSesion() {
+            const login = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            
+            const usuario = usuarios.find(u => u.login === login && u.pass === pass);
+            
+            if (usuario) {
+                usuarioActual = usuario;
+                sessionStorage.setItem('usuario_actual', JSON.stringify(usuario));
+                cerrarModal('loginModal');
+                actualizarBoton();
+                renderizarContenido();
+                mostrarToast(`✅ Bienvenido ${usuario.nombre}`);
+            } else {
+                alert('❌ Usuario o contraseña incorrectos');
+            }
+        }
+
+        function cerrarSesion() {
+            usuarioActual = null;
+            sessionStorage.removeItem('usuario_actual');
+            actualizarBoton();
+            renderizarContenido();
+            mostrarToast('👋 Sesión cerrada');
+        }
+
+        function actualizarBoton() {
+            const btn = document.getElementById('loginBtn');
+            if (usuarioActual) {
+                btn.innerHTML = `<i class="fas fa-user-check"></i> ${usuarioActual.nombre}`;
+                btn.onclick = mostrarMenu;
+            } else {
+                btn.innerHTML = '<i class="fas fa-user"></i> Iniciar sesión';
+                btn.onclick = abrirModalLogin;
+            }
+        }
+
+        function mostrarMenu() {
+            const menuExistente = document.querySelector('.user-menu');
+            if (menuExistente) menuExistente.remove();
+
+            const menu = document.createElement('div');
+            menu.className = 'user-menu';
+            menu.innerHTML = `
+                <p><strong>${usuarioActual.nombre}</strong></p>
+                <p style="color:rgba(255,255,255,0.5);">@${usuarioActual.login}</p>
+                ${usuarioActual.login === 'adrian' ? `
+                    <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesión</button>
+                ` : ''}
+            `;
+            document.body.appendChild(menu);
+
+            setTimeout(() => {
+                document.addEventListener('click', function cerrar(e) {
+                    if (!menu.contains(e.target) && !e.target.closest('#loginBtn')) {
+                        menu.remove();
+                        document.removeEventListener('click', cerrar);
+                    }
+                });
+            }, 100);
+        }
+
+        // ================================================
+        // SISTEMA DE PROGRESO
+        // ================================================
+        
+        function marcarVideoComoVisto() {
+            if (!usuarioActual || !videoActual) return;
+            
+            const userId = usuarioActual.id;
+            const videoId = videoActual.id;
+            
+            if (!progreso[userId]) {
+                progreso[userId] = {};
+            }
+            
+            if (!progreso[userId][videoId]) {
+                progreso[userId][videoId] = true;
+                localStorage.setItem('progreso', JSON.stringify(progreso));
+                
+                // Actualizar la interfaz
+                const videoItem = document.querySelector(`.video-item[data-video-id="${videoId}"]`);
+                if (videoItem) {
+                    videoItem.classList.add('watched');
+                }
+                
+                mostrarToast('✅ Video marcado como visto');
+                
+                // Actualizar progreso de la playlist
+                actualizarProgresoPlaylist(videoActual.playlistId);
+            }
+        }
+
+        function actualizarProgresoPlaylist(playlistId) {
+            if (!usuarioActual) return;
+            
+            const userId = usuarioActual.id;
+            const videosPlaylist = videos.filter(v => v.playlistId === playlistId);
+            const videosVistos = videosPlaylist.filter(v => progreso[userId]?.[v.id]).length;
+            const porcentaje = Math.round((videosVistos / videosPlaylist.length) * 100);
+            
+            const progressBar = document.querySelector(`.progress-fill[data-playlist="${playlistId}"]`);
+            const progressText = document.querySelector(`.progress-text[data-playlist="${playlistId}"]`);
+            
+            if (progressBar) {
+                progressBar.style.width = porcentaje + '%';
+            }
+            
+            if (progressText) {
+                progressText.innerHTML = `${videosVistos}/${videosPlaylist.length} videos`;
+            }
+            
+            // Verificar si completó el curso
+            if (porcentaje === 100) {
+                mostrarToast(`🎓 ¡Felicidades! Completaste el curso`);
+            }
+        }
+
+        // ================================================
+        // SISTEMA DE RESEÑAS
+        // ================================================
+        
+        let ratingTemporal = 0;
+
+        window.setRating = function(rating) {
+            ratingTemporal = rating;
+            document.getElementById('reviewRating').value = rating;
+            
+            const stars = document.querySelectorAll('.star-rating i');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.className = 'fas fa-star';
+                } else {
+                    star.className = 'far fa-star';
+                }
+            });
+        };
+
+        function abrirModalReview(playlistId) {
+            if (!usuarioActual) {
+                alert('Debes iniciar sesión para dejar una reseña');
+                return;
+            }
+            
+            document.getElementById('reviewPlaylistId').value = playlistId;
+            document.getElementById('reviewText').value = '';
+            setRating(0);
+            document.getElementById('reviewModal').classList.add('active');
+        }
+
+        async function guardarResena() {
+            const playlistId = document.getElementById('reviewPlaylistId').value;
+            const rating = document.getElementById('reviewRating').value;
+            const text = document.getElementById('reviewText').value.trim();
+            
+            if (rating === '0') {
+                alert('Por favor selecciona una calificación');
+                return;
+            }
+            
+            if (!text) {
+                alert('Por favor escribe un comentario');
+                return;
+            }
+            
+            const nuevaResena = {
+                id: Date.now(),
+                playlistId,
+                userId: usuarioActual.id,
+                userName: usuarioActual.nombre,
+                rating: parseInt(rating),
+                text,
+                date: new Date().toLocaleDateString('es-ES')
+            };
+            
+            reseñas.push(nuevaResena);
+            localStorage.setItem('reseñas', JSON.stringify(reseñas));
+            
+            cerrarModal('reviewModal');
+            renderizarContenido();
+            mostrarToast('✅ Reseña publicada');
+        }
+
+        function calcularPromedio(playlistId) {
+            const reseñasPlaylist = reseñas.filter(r => r.playlistId === playlistId);
+            if (reseñasPlaylist.length === 0) return 0;
+            
+            const suma = reseñasPlaylist.reduce((acc, r) => acc + r.rating, 0);
+            return (suma / reseñasPlaylist.length).toFixed(1);
+        }
+
+        // ================================================
+        // SISTEMA DE CERTIFICADOS
+        // ================================================
+        
+        function generarCertificado(playlistId, playlistNombre) {
+            if (!usuarioActual) return;
+            
+            const userId = usuarioActual.id;
+            const videosPlaylist = videos.filter(v => v.playlistId === playlistId);
+            const videosVistos = videosPlaylist.filter(v => progreso[userId]?.[v.id]).length;
+            const porcentaje = Math.round((videosVistos / videosPlaylist.length) * 100);
+            
+            if (porcentaje < 100) {
+                alert('Debes completar todos los videos para obtener el certificado');
+                return;
+            }
+            
+            // Crear certificado en HTML
+            const certificado = `
+                <div style="
+                    background: white;
+                    color: black;
+                    padding: 50px;
+                    text-align: center;
+                    border: 20px solid #BFFF00;
+                    border-radius: 20px;
+                    font-family: 'Rubik', sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                ">
+                    <h1 style="font-size: 48px; color: #0A0A0F; margin-bottom: 20px;">CERTIFICADO</h1>
+                    <p style="font-size: 20px; color: #666;">Otorgado a</p>
+                    <h2 style="font-size: 36px; color: #BFFF00; margin: 20px 0;">${usuarioActual.nombre}</h2>
+                    <p style="font-size: 18px; color: #666;">Por haber completado exitosamente el curso</p>
+                    <h3 style="font-size: 28px; color: #0A0A0F; margin: 20px 0;">${playlistNombre}</h3>
+                    <p style="font-size: 16px; color: #999; margin-top: 40px;">Fecha: ${new Date().toLocaleDateString('es-ES')}</p>
+                    <p style="font-size: 14px; color: #999; margin-top: 20px;">Adrian Reyes · Educación Creativa</p>
+                </div>
+            `;
+            
+            // Abrir en nueva ventana para imprimir
+            const ventana = window.open('', '_blank');
+            ventana.document.write(`
+                <html>
+                    <head>
+                        <title>Certificado - ${playlistNombre}</title>
+                        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+                    </head>
+                    <body style="margin: 0; padding: 20px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+                        ${certificado}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                            }
+                        <\/script>
+                    </body>
+                </html>
+            `);
+        }
+
+        // ================================================
+        // MOSTRAR CONTENIDO
+        // ================================================
+        
+        function renderizarContenido() {
+            const container = document.getElementById('contenidoPrincipal');
+            
+            // Cargar datos de localStorage como respaldo
+            if (playlists.length === 0) {
+                playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+                videos = JSON.parse(localStorage.getItem('videos')) || [];
+            }
+            
+            if (playlists.length === 0) {
+                container.innerHTML = `
+                    <div class="no-access">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Próximamente cursos disponibles</h3>
+                        <p>Estamos preparando contenido para ti</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let playlistsAMostrar = playlists;
+            
+            if (usuarioActual && usuarioActual.playlists) {
+                if (!usuarioActual.playlists.includes('all')) {
+                    playlistsAMostrar = playlists.filter(p => 
+                        usuarioActual.playlists.includes(p.id)
+                    );
+                }
+            }
+
+            if (playlistsAMostrar.length === 0) {
+                container.innerHTML = `
+                    <div class="no-access">
+                        <i class="fas fa-lock"></i>
+                        <h3>No tienes acceso a estos cursos</h3>
+                        <p>Adquiere un curso para obtener acceso</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="playlists-grid">';
+            
+            playlistsAMostrar.forEach(playlist => {
+                const videosPlaylist = videos.filter(v => v.playlistId == playlist.id);
+                const tieneAcceso = usuarioActual && (
+                    usuarioActual.playlists?.includes('all') || 
+                    usuarioActual.playlists?.includes(playlist.id)
+                );
+                
+                // Calcular progreso
+                let videosVistos = 0;
+                let porcentaje = 0;
+                if (usuarioActual && tieneAcceso) {
+                    videosVistos = videosPlaylist.filter(v => progreso[usuarioActual.id]?.[v.id]).length;
+                    porcentaje = Math.round((videosVistos / videosPlaylist.length) * 100) || 0;
+                }
+                
+                // Calcular promedio de reseñas
+                const promedio = calcularPromedio(playlist.id);
+                const reseñasPlaylist = reseñas.filter(r => r.playlistId === playlist.id);
+                
+                let videosHtml = '';
+                if (videosPlaylist.length === 0) {
+                    videosHtml = '<p style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">Próximamente videos</p>';
+                } else {
+                    videosPlaylist.forEach(video => {
+                        const visto = progreso[usuarioActual?.id]?.[video.id] ? 'watched' : '';
+                        
+                        let thumbnail = video.thumbnail;
+                        if (!thumbnail && video.tipo === 'youtube') {
+                            const match = video.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                            const videoId = match ? match[1] : '';
+                            thumbnail = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                        } else if (!thumbnail) {
+                            thumbnail = 'https://images.unsplash.com/photo-1574717024453-354056af4e7f?w=320&h=180&fit=crop';
+                        }
+                        
+                        videosHtml += `
+                            <div class="video-item ${visto}" data-video-id="${video.id}" onclick="${tieneAcceso ? `reproducirVideo('${video.id}')` : 'alert(\'🔒 Adquiere el curso para ver los videos\')'}">
+                                <div class="video-thumbnail">
+                                    <img src="${thumbnail}" alt="${video.titulo}">
+                                    <i class="fas fa-play-circle"></i>
+                                </div>
+                                <div class="video-info">
+                                    <h4>${video.titulo}</h4>
+                                    <div class="video-meta">
+                                        <span><i class="fas fa-clock"></i> ${video.duracion || '—'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `
+                    <div class="playlist-card">
+                        <div class="playlist-image">
+                            ${playlist.imagen ? 
+                                `<img src="${playlist.imagen}" alt="${playlist.nombre}">` : 
+                                `<i class="fas fa-image"></i>`
+                            }
+                        </div>
+                        <div class="playlist-header">
+                            <h3>${playlist.nombre || 'Sin nombre'}</h3>
+                            <p>${playlist.descripcion || ''}</p>
+                            <div class="playlist-meta">
+                                <span><i class="fas fa-video"></i> ${videosPlaylist.length} videos</span>
+                                <span><i class="fas fa-star"></i> ${promedio} (${reseñasPlaylist.length})</span>
+                            </div>
+                            <div class="playlist-price">
+                                ${playlist.precio || 'Gratis'}
+                                ${playlist.precio && playlist.precio !== 'Gratis' ? '<small>USD</small>' : ''}
+                            </div>
+                            
+                            ${tieneAcceso ? `
+                                <div class="progress-text" data-playlist="${playlist.id}">
+                                    ${videosVistos}/${videosPlaylist.length} videos
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" data-playlist="${playlist.id}" style="width: ${porcentaje}%"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="video-list">
+                            ${videosHtml}
+                        </div>
+                        
+                        ${!tieneAcceso && playlist.precio && playlist.precio !== 'Gratis' ? `
+                            <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE + playlist.nombre)}" 
+                               target="_blank" 
+                               class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i> Comprar por WhatsApp
+                            </a>
+                        ` : ''}
+                        
+                        ${tieneAcceso ? `
+                            <div class="action-buttons">
+                                <button class="btn-review" onclick="abrirModalReview('${playlist.id}')">
+                                    <i class="fas fa-star"></i> Reseñar
+                                </button>
+                                ${porcentaje === 100 ? `
+                                    <button class="btn-certificate" onclick="generarCertificado('${playlist.id}', '${playlist.nombre}')">
+                                        <i class="fas fa-certificate"></i> Certificado
+                                    </button>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Sección de reseñas -->
+                        ${reseñasPlaylist.length > 0 ? `
+                            <div class="reviews-section">
+                                <div class="reviews-header">
+                                    <h4>Reseñas</h4>
+                                    <div class="average-rating">
+                                        <div class="stars">
+                                            ${Array(5).fill().map((_, i) => 
+                                                i < Math.round(promedio) ? 
+                                                '<i class="fas fa-star"></i>' : 
+                                                '<i class="far fa-star"></i>'
+                                            ).join('')}
+                                        </div>
+                                        <span>${promedio}</span>
+                                    </div>
+                                </div>
+                                ${reseñasPlaylist.slice(0, 2).map(r => `
+                                    <div class="review-item">
+                                        <div class="review-header">
+                                            <span class="review-author">${r.userName}</span>
+                                            <span class="review-date">${r.date}</span>
+                                        </div>
+                                        <div class="review-stars">
+                                            ${Array(5).fill().map((_, i) => 
+                                                i < r.rating ? 
+                                                '<i class="fas fa-star"></i>' : 
+                                                '<i class="far fa-star"></i>'
+                                            ).join('')}
+                                        </div>
+                                        <div class="review-text">${r.text}</div>
+                                    </div>
+                                `).join('')}
+                                ${reseñasPlaylist.length > 2 ? `
+                                    <button class="btn-review" style="width:100%; margin-top:10px;" onclick="alert('Ver todas las reseñas (${reseñasPlaylist.length})')">
+                                        Ver todas las reseñas (${reseñasPlaylist.length})
+                                    </button>
+                                ` : ''}
+                            </div>
+                        ` : tieneAcceso ? `
+                            <div class="reviews-section" style="text-align:center; padding:15px;">
+                                <p style="color:rgba(255,255,255,0.4); margin-bottom:10px;">Sé el primero en reseñar</p>
+                                <button class="btn-review" onclick="abrirModalReview('${playlist.id}')">
+                                    <i class="fas fa-star"></i> Escribir reseña
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ================================================
+        // REPRODUCIR VIDEO (ACTUALIZADO)
+        // ================================================
+        
+        function reproducirVideo(videoId) {
+            const video = videos.find(v => v.id == videoId);
+            if (!video) return;
+            
+            videoActual = video;
+
+            const container = document.getElementById('videoPlayerContainer');
+            const titleEl = document.getElementById('currentVideoTitle');
+
+            if (video.tipo === 'youtube') {
+                const match = video.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                const videoId = match ? match[1] : '';
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+            } else if (video.tipo === 'supabase') {
+                container.innerHTML = `<video src="${video.url}" controls autoplay style="width:100%;height:100%;"></video>`;
+            }
+
+            titleEl.textContent = video.titulo;
+            document.getElementById('videoPlayerModal').classList.add('active');
+        }
+
+        function cerrarVideoPlayer() {
+            document.getElementById('videoPlayerModal').classList.remove('active');
+            document.getElementById('videoPlayerContainer').innerHTML = '';
+        }
+
+        // ================================================
+        // INICIALIZACIÓN
+        // ================================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar datos de localStorage
+            playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+            videos = JSON.parse(localStorage.getItem('videos')) || [];
+            usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            progreso = JSON.parse(localStorage.getItem('progreso')) || {};
+            reseñas = JSON.parse(localStorage.getItem('reseñas')) || [];
+
+            // Verificar usuario actual
+            try {
+                const sesion = sessionStorage.getItem('usuario_actual');
+                if (sesion) {
+                    usuarioActual = JSON.parse(sesion);
+                }
+            } catch(e) {
+                sessionStorage.removeItem('usuario_actual');
+            }
+
+            actualizarBoton();
+            renderizarContenido();
+
+            // Cerrar modales con Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
+                }
+            });
+
+            // Exponer funciones globales
+            window.abrirModalLogin = abrirModalLogin;
+            window.iniciarSesion = iniciarSesion;
+            window.cerrarSesion = cerrarSesion;
+            window.reproducirVideo = reproducirVideo;
+            window.cerrarVideoPlayer = cerrarVideoPlayer;
+            window.cerrarModal = cerrarModal;
+            window.marcarVideoComoVisto = marcarVideoComoVisto;
+            window.guardarResena = guardarResena;
+            window.abrirModalReview = abrirModalReview;
+            window.generarCertificado = generarCertificado;
+            window.setRating = setRating;
+            window.togglePassword = togglePassword;
+            window.conectarSupabase = conectarSupabase;
+        });
+    </script>
 </body>
 </html>
