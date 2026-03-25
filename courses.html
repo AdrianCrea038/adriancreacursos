@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos | Adrián Reyes Crea</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#111111',
+                        accent: '#C5A059',
+                        secondary: '#F5F5F7',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-secondary text-primary font-sans antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-serif font-bold tracking-tighter hover:text-accent transition-colors">ADRIÁN REYES CREA</a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide">
+                <a href="index.html#home" class="hover:text-accent transition-colors">INICIO</a>
+                <a href="index.html#servicios" class="hover:text-accent transition-colors">SERVICIOS</a>
+                <a href="index.html#proyectos" class="hover:text-accent transition-colors">PROYECTOS</a>
+                <a href="index.html#contacto" class="hover:text-accent transition-colors">CONTACTO</a>
+                <a href="courses.html" class="bg-accent text-white px-5 py-2 rounded-sm hover:bg-primary transition-all duration-300">CURSOS</a>
+            </div>
+            <button class="md:hidden text-primary" id="menu-btn">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="pt-40 pb-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h1 class="text-5xl md:text-7xl font-serif mb-6">Academia Digital</h1>
+            <p class="text-gray-500 max-w-2xl mx-auto text-lg font-light">
+                Aprende las técnicas más avanzadas de diseño y desarrollo web para crear productos que destaquen.
+            </p>
+        </div>
+    </header>
+
+    <!-- Courses List -->
+    <main class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div id="courses-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Courses will be loaded here from DB_MOCK -->
+                <div class="animate-pulse bg-gray-200 h-96 rounded-sm"></div>
+                <div class="animate-pulse bg-gray-200 h-96 rounded-sm"></div>
+                <div class="animate-pulse bg-gray-200 h-96 rounded-sm"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Course Preview Modal (Hidden by default) -->
+    <div id="course-preview-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-primary/95 backdrop-blur-sm" id="modal-overlay"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl bg-white h-[90vh] overflow-hidden rounded-sm flex flex-col md:flex-row shadow-2xl">
+            <!-- Left: Course Details & Video Preview -->
+            <div class="flex-1 overflow-y-auto p-10 border-r border-gray-100 scrollbar-thin">
+                <button id="close-modal" class="absolute top-6 right-6 text-gray-400 hover:text-primary">
+                    <i data-lucide="x"></i>
+                </button>
+                <div id="modal-content">
+                    <!-- Dynamic Preview Content -->
+                </div>
+            </div>
+            
+            <!-- Right: Buy / Playlist Info -->
+            <div class="w-full md:w-80 bg-secondary p-10 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xs font-bold tracking-widest text-accent uppercase mb-6">Contenido del Curso</h3>
+                    <ul id="modal-playlist" class="space-y-4 text-sm">
+                        <!-- Playlist items here -->
+                    </ul>
+                </div>
+                
+                <div class="pt-10 border-t border-gray-200 mt-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-gray-500 text-sm">Precio del curso:</span>
+                        <span id="modal-price" class="text-2xl font-bold text-primary">$0.00</span>
+                    </div>
+                    <a id="buy-whatsapp-btn" href="#" class="w-full bg-green-500 text-white py-4 rounded-sm flex items-center justify-center space-x-3 hover:bg-green-600 transition-all font-bold">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        <span>Comprar por WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Floating Button (Global for purchase inquiries) -->
+    <div class="fixed bottom-10 right-10 z-50">
+        <a href="https://wa.me/yournumber" class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-green-600 transition-all duration-300 hover:scale-110">
+            <i data-lucide="message-circle" class="w-8 h-8"></i>
+        </a>
+    </div>
+
+    <script src="js/db-mock.js"></script>
+    <script src="js/courses.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

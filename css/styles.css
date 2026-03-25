@@ -1,0 +1,100 @@
+/* Gamer Pro Styles - Dark & Neon */
+:root {
+    --bg-dark: #050505;
+    --card-dark: #0a0a0a;
+    --neon-blue: #00f2ff;
+    --neon-purple: #7000ff;
+    --neon-gold: #C5A059;
+    --text-white: #ffffff;
+    --text-gray: #888888;
+}
+
+@keyframes neonPulse {
+    0% { box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); }
+    50% { box-shadow: 0 0 15px var(--neon-purple), 0 0 25px var(--neon-purple); }
+    100% { box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); }
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: 'Inter', sans-serif;
+}
+
+.gamer-card {
+    background: var(--card-dark);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.gamer-card:hover {
+    border-color: var(--neon-purple);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(112, 0, 255, 0.2);
+}
+
+.gamer-btn {
+    position: relative;
+    background: transparent;
+    border: 1px solid var(--neon-purple);
+    color: var(--text-white);
+    padding: 10px 25px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    overflow: hidden;
+    clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0% 30%);
+}
+
+.gamer-btn:hover {
+    background: var(--neon-purple);
+    box-shadow: 0 0 20px var(--neon-purple);
+    transform: scale(1.05);
+}
+
+.neon-text {
+    text-shadow: 0 0 10px var(--neon-purple);
+}
+
+.neon-border-bottom {
+    border-bottom: 2px solid var(--neon-purple);
+    box-shadow: 0 5px 15px -5px var(--neon-purple);
+}
+
+/* Custom Scrollbar Gamer */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--neon-purple);
+    border-radius: 0;
+}
+
+/* Reveal Animation */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}

@@ -1,846 +1,204 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adrian Reyes · Diseño & Creatividad</title>
-    
-    <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- CSS Principal -->
-    <link rel="stylesheet" href="css/style.css">
-    
-    <style>
-        /* Estilos específicos para index */
-        .admin-edit-btn {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #BFFF00, #00FFC2);
-            border: 2px solid white;
-            color: #0A0A0F;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 999999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
+    <title>Adrián Reyes Crea | Designer & Developer Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#050505',
+                        cardDark: '#0a0a0a',
+                        neonPurple: '#7000ff',
+                        neonBlue: '#00f2ff',
+                        neonPink: '#ff00aa',
+                        neonGreen: '#00ffaa',
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
-
-        .admin-logout-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #FF4444;
-            color: white;
-            border: 2px solid white;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            z-index: 999999;
-            display: none;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-        }
-
-        .admin-videos-btn {
-            position: fixed;
-            bottom: 140px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00FFC2, #BFFF00);
-            border: 2px solid white;
-            color: #0A0A0F;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 999999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-
-        .admin-edit-btn:hover,
-        .admin-videos-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .admin-logout-btn:hover {
-            background: #FF6666;
-            transform: translateY(-2px);
-        }
-
-        .admin-mode [data-editable] {
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .admin-mode [data-editable]:hover {
-            outline: 2px dashed #BFFF00;
-            outline-offset: 4px;
-            background: rgba(191, 255, 0, 0.05);
-            border-radius: 4px;
-        }
-
-        .edit-toolbar {
-            position: absolute;
-            top: -35px;
-            left: 0;
-            background: #1A1A1F;
-            border: 1px solid #BFFF00;
-            border-radius: 8px;
-            padding: 5px;
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s;
-            z-index: 10000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .admin-mode [data-editable]:hover .edit-toolbar {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .edit-toolbar button {
-            background: none;
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-            font-family: 'Rubik', sans-serif;
-        }
-
-        .edit-toolbar button:hover {
-            background: rgba(191, 255, 0, 0.2);
-            color: #BFFF00;
-        }
-
-        .admin-add-project-btn {
-            margin-bottom: 30px;
-            width: 100%;
-            display: none;
-        }
-
-        .portfolio-admin-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-
-        .portfolio-admin-actions button {
-            padding: 8px 16px;
-            background: rgba(191, 255, 0, 0.1);
-            border: 1px solid rgba(191, 255, 0, 0.3);
-            border-radius: 8px;
-            color: #BFFF00;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Rubik', sans-serif;
-            font-size: 13px;
-        }
-
-        .portfolio-admin-actions button:hover {
-            background: rgba(191, 255, 0, 0.2);
-        }
-
-        .portfolio-admin-actions button.delete-btn {
-            color: #FF6B6B;
-            border-color: rgba(255, 107, 107, 0.3);
-        }
-
-        .admin-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #1A1A1F;
-            border: 1px solid #BFFF00;
-            border-radius: 12px;
-            padding: 15px 25px;
-            color: white;
-            font-size: 14px;
-            z-index: 10002;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s;
-        }
-
-        .admin-toast i {
-            color: #BFFF00;
-        }
-
-        .admin-toast.error {
-            border-color: #FF6B6B;
-        }
-
-        .admin-toast.error i {
-            color: #FF6B6B;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .image-preview {
-            width: 100%;
-            height: 200px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 1px dashed rgba(191, 255, 0, 0.3);
-        }
-
-        .image-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo" onclick="window.location.href='index.html'">Adrian Reyes</div>
-            
-            <ul class="nav-links">
-                <li><a href="#inicio" class="active">Inicio</a></li>
-                <li><a href="#servicios">Servicios</a></li>
-                <li><a href="#portfolio">Proyectos</a></li>
-                <li><a href="#contacto">Contacto</a></li>
-                <li><a href="cursos.html">Cursos</a></li>
-            </ul>
-
-            <button class="btn-login" onclick="window.location.href='admin-login.html'">
-                <i class="fas fa-user"></i> Admin
+<body class="bg-bgDark text-white font-sans antialiased selection:bg-neonPurple/50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-bgDark/80 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="text-2xl font-orbitron font-black tracking-widest text-white group">
+                ADRIÁN <span class="text-neonPurple group-hover:text-neonBlue transition-colors">REYES</span> CREA
+            </a>
+            <div class="hidden md:flex items-center space-x-10 text-xs font-bold tracking-[0.2em]">
+                <a href="#home" class="hover:text-neonPurple transition-all">INICIO</a>
+                <a href="#servicios" class="hover:text-neonPurple transition-all">SERVICIOS</a>
+                <a href="#proyectos" class="hover:text-neonPurple transition-all">PROYECTOS</a>
+                <a href="#contacto" class="hover:text-neonPurple transition-all">CONTACTO</a>
+                <a href="courses.html" class="gamer-btn !px-6 !py-2 !text-[10px]">CURSOS</a>
+                <a href="login.html" class="flex items-center space-x-2 text-white/40 hover:text-white transition-all">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>LOGIN</span>
+                </a>
+            </div>
+            <button class="md:hidden text-white" id="menu-btn">
+                <i data-lucide="menu"></i>
             </button>
         </div>
     </nav>
 
-    <!-- Modal para proyectos -->
-    <div class="modal" id="proyectoModal">
-        <div class="modal-card">
-            <button class="modal-close" onclick="cerrarProyectoModal()"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title" id="proyectoModalTitle">Nuevo Proyecto</h3>
-            <input type="hidden" id="proyectoId">
-            <input type="text" class="modal-field" id="proyectoTitulo" placeholder="Título del proyecto *">
-            <select class="modal-field" id="proyectoCategoria">
-                <option value="ai">Inteligencia Artificial</option>
-                <option value="diseno">Diseño Gráfico</option>
-                <option value="video">Producción de Video</option>
-            </select>
-            <textarea class="modal-field" id="proyectoDescripcion" placeholder="Descripción del proyecto" rows="3"></textarea>
-            <input type="url" class="modal-field" id="proyectoImagen" placeholder="URL de la imagen">
-            <div class="image-preview" id="proyectoImagePreview">
-                <i class="fas fa-image"></i>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-secondary" onclick="cerrarProyectoModal()" style="flex:1">Cancelar</button>
-                <button class="btn-primary" onclick="guardarProyecto()" style="flex:1">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para editar imágenes -->
-    <div class="modal" id="imageEditorModal">
-        <div class="modal-card">
-            <button class="modal-close" onclick="cerrarImageEditor()"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title">Cambiar imagen</h3>
-            <div class="image-preview">
-                <img id="imagePreview" src="" alt="Preview" style="display: none;">
-                <i class="fas fa-image" id="imagePreviewIcon"></i>
-            </div>
-            <input type="text" class="modal-field" id="imageUrlInput" placeholder="URL de la imagen">
-            <input type="hidden" id="currentImageElement">
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-secondary" onclick="cerrarImageEditor()" style="flex:1">Cancelar</button>
-                <button class="btn-primary" onclick="guardarImagen()" style="flex:1">Guardar</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Hero Section -->
-    <section class="hero" id="inicio">
-        <div class="container">
-            <div class="hero-grid">
-                <div class="hero-content">
-                    <span class="hero-badge" data-editable="hero.eyebrow">Diseñador & Creador</span>
-                    
-                    <h1 class="hero-title">
-                        <span class="line1" data-editable="hero.line1">Adrian</span>
-                        <span class="line2" data-editable="hero.line2">Reyes</span>
-                        <span class="line3" data-editable="hero.line3">Creativo</span>
-                    </h1>
-                    
-                    <p class="hero-desc" data-editable="hero.desc">
-                        Especialista en diseño gráfico, inteligencia artificial y producción de video.
+    <section id="home" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-1/4 -left-20 w-96 h-96 bg-neonPurple/20 blur-[120px] rounded-full animate-pulse"></div>
+            <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-neonBlue/10 blur-[120px] rounded-full animate-pulse" style="animation-delay: 1s"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-10 reveal active">
+                <div class="inline-flex items-center space-x-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase">
+                    <span class="w-2 h-2 bg-neonPurple rounded-full animate-ping"></span>
+                    <span class="text-white/60">Designer & Developer Expert</span>
+                </div>
+                <h1 class="text-7xl md:text-9xl font-orbitron font-black leading-none uppercase tracking-tighter">
+                    LEVEL <br><span class="text-transparent" style="-webkit-text-stroke: 1px white">YOUR</span> <br><span class="text-neonPurple neon-text">BRAND.</span>
+                </h1>
+                <p class="text-white/40 max-w-md text-lg leading-relaxed font-light">
+                    Transformando visiones en realidades interactivas con estética de alto impacto y rendimiento de última generación.
+                </p>
+                <div class="flex items-center space-x-8 pt-4">
+                    <a href="#proyectos" class="gamer-btn !px-10 !py-5 !text-sm">PLAY PROJECTS</a>
+                    <a href="#contacto" class="text-white font-bold text-xs tracking-[0.2em] flex items-center group">
+                        CONNECT
+                        <i data-lucide="chevron-right" class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform text-neonPurple"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="hidden md:block relative reveal active" style="transition-delay: 0.3s">
+                <div class="relative w-full aspect-square gamer-card p-2">
+                    <div class="absolute inset-0 bg-gradient-to-br from-neonPurple/20 to-transparent z-10"></div>
+                    <img id="hero-banner" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Banner" class="w-full h-full object-cover">
+                    <div class="absolute top-8 left-8 z-20 font-orbitron text-[10px] text-neonPurple/60 space-y-2">
+                        <p>SYSTEM_LOAD: 100%</p>
+                        <p>RENDER_ENGINE: NEON_V1</p>
+                    </div>
+                </div>
+                <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-neonPurple/10 border border-neonPurple/20 -z-10 rotate-12"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services ACTUALIZADO: Diseño Gráfico (Offset, Flexo, Sublimado) + Edición Video + Motion Graphic -->
+    <section id="servicios" class="py-32 bg-bgDark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-20 space-y-4 reveal">
+                <h2 class="text-xs font-black tracking-[0.5em] text-neonPurple uppercase">Servicios</h2>
+                <h3 class="text-5xl font-orbitron font-black uppercase">Especialidades</h3>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Diseño Gráfico -->
+                <div class="gamer-card p-12 group reveal">
+                    <div class="w-14 h-14 bg-white/5 border border-white/10 flex items-center justify-center mb-8 group-hover:border-neonPurple group-hover:bg-neonPurple/10 transition-all">
+                        <i data-lucide="palette" class="w-6 h-6 text-neonPurple"></i>
+                    </div>
+                    <h4 class="text-xl font-orbitron font-bold mb-4 uppercase tracking-wider">Diseño Gráfico</h4>
+                    <p class="text-white/40 font-light leading-relaxed space-y-2">
+                        <span class="block">• Offset / Imprenta</span>
+                        <span class="block">• Flexografía</span>
+                        <span class="block">• Sublimado / Textil</span>
+                        <span class="block">• Packaging y etiquetas</span>
                     </p>
-                    
-                    <div class="hero-actions">
-                        <a href="cursos.html" class="btn-primary">
-                            <i class="fas fa-graduation-cap"></i> <span data-editable="hero.btn1">Ver Cursos</span>
-                        </a>
-                        <a href="#contacto" class="btn-secondary">
-                            <i class="fas fa-comment"></i> <span data-editable="hero.btn2">Contactar</span>
-                        </a>
-                    </div>
-                    
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" data-editable="stat.proyectos">50+</span>
-                            <span class="stat-label">Proyectos</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" data-editable="stat.cursos">3</span>
-                            <span class="stat-label">Cursos</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" data-editable="stat.creatividad">100%</span>
-                            <span class="stat-label">Creatividad</span>
-                        </div>
-                    </div>
                 </div>
-                
-                <div class="hero-image" data-editable="hero.image" data-type="image">
-                    <i class="fas fa-paint-brush"></i>
+                <!-- Edición de Video -->
+                <div class="gamer-card p-12 group reveal" style="transition-delay: 0.2s">
+                    <div class="w-14 h-14 bg-white/5 border border-white/10 flex items-center justify-center mb-8 group-hover:border-neonBlue group-hover:bg-neonBlue/10 transition-all">
+                        <i data-lucide="video" class="w-6 h-6 text-neonBlue"></i>
+                    </div>
+                    <h4 class="text-xl font-orbitron font-bold mb-4 uppercase tracking-wider">Edición de Video</h4>
+                    <p class="text-white/40 font-light leading-relaxed">
+                        Post-producción profesional, corrección de color, efectos visuales y montaje cinematográfico para contenido de alto impacto.
+                    </p>
+                </div>
+                <!-- Motion Graphics -->
+                <div class="gamer-card p-12 group reveal" style="transition-delay: 0.4s">
+                    <div class="w-14 h-14 bg-white/5 border border-white/10 flex items-center justify-center mb-8 group-hover:border-neonPink group-hover:bg-neonPink/10 transition-all">
+                        <i data-lucide="sparkles" class="w-6 h-6 text-neonPink"></i>
+                    </div>
+                    <h4 class="text-xl font-orbitron font-bold mb-4 uppercase tracking-wider">Motion Graphics</h4>
+                    <p class="text-white/40 font-light leading-relaxed">
+                        Animaciones 2D/3D, intros dinámicas, gráficos en movimiento y efectos visuales que capturan la atención al instante.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="services" id="servicios">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label" data-editable="services.label">MIS SERVICIOS</div>
-                <h2 class="section-title" data-editable="services.title">¿Qué necesitas crear?</h2>
-                <p class="section-sub" data-editable="services.sub">Selecciona el área que se adapte a tu proyecto</p>
+    <!-- Projects ACTUALIZADO: Diseño Gráfico, Edición Video, Motion Graphics, IA -->
+    <section id="proyectos" class="py-32 bg-cardDark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-end justify-between mb-20 reveal">
+                <h3 class="text-5xl font-orbitron font-black uppercase tracking-tighter">Proyectos <span class="text-neonPurple">Destacados</span></h3>
+                <a href="#" class="text-[10px] font-black tracking-widest uppercase text-neonPurple border-b border-neonPurple pb-2 hover:text-white hover:border-white transition-all">Ver Todos</a>
             </div>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-robot"></i></div>
-                    <h3 data-editable="service1.title">Diseño con AI</h3>
-                    <p data-editable="service1.desc">Exploramos las posibilidades creativas de la inteligencia artificial.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
-                    <h3 data-editable="service2.title">Diseño Gráfico</h3>
-                    <p data-editable="service2.desc">Identidad corporativa, branding y diseño editorial.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-video"></i></div>
-                    <h3 data-editable="service3.title">Producción de Video</h3>
-                    <p data-editable="service3.desc">Edición profesional y motion graphics.</p>
-                </div>
+            <div id="projects-grid" class="grid md:grid-cols-2 gap-10">
+                <!-- Proyectos Dinámicos desde DB_MOCK -->
             </div>
         </div>
     </section>
 
-    <!-- Portfolio Section -->
-    <section class="portfolio" id="portfolio">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label" data-editable="portfolio.label">PORTAFOLIO</div>
-                <h2 class="section-title" data-editable="portfolio.title">Mis Proyectos</h2>
-                <p class="section-sub" data-editable="portfolio.sub">Trabajos recientes en diseño, AI y video</p>
-            </div>
-
-            <div id="adminAddProjectBtn" class="admin-add-project-btn">
-                <button class="btn-primary" onclick="abrirFormNuevoProyecto()" style="width: 100%;">
-                    <i class="fas fa-plus"></i> Agregar nuevo proyecto
-                </button>
-            </div>
-
-            <div class="portfolio-grid" id="portfolioGrid"></div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contacto">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label" data-editable="contact.label">CONTACTO</div>
-                <h2 class="section-title" data-editable="contact.title">Hablemos de tu proyecto</h2>
-                <p class="section-sub" data-editable="contact.sub">Estoy aquí para ayudarte a hacer realidad tus ideas</p>
-            </div>
-
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
-                        <div class="contact-text">
-                            <h4>WhatsApp</h4>
-                            <p data-editable="contact.whatsapp">+504 3251-3558</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                        <div class="contact-text">
-                            <h4>Email</h4>
-                            <p data-editable="contact.email">adrian@adriancreativo.com</p>
-                        </div>
-                    </div>
-                </div>
-
-                <form class="contact-form">
-                    <input type="text" class="modal-field" placeholder="Tu nombre">
-                    <input type="email" class="modal-field" placeholder="Tu email">
-                    <textarea class="modal-field" placeholder="Tu mensaje" rows="4"></textarea>
-                    <button class="btn-primary">Enviar</button>
-                </form>
+    <!-- Contact ACTUALIZADO: Solo WhatsApp, Facebook, TikTok, YouTube -->
+    <section id="contacto" class="py-32 bg-bgDark relative overflow-hidden">
+        <div class="absolute inset-0 bg-neonPurple/5 opacity-30"></div>
+        <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <h2 class="text-7xl md:text-9xl font-orbitron font-black uppercase mb-20 opacity-10 tracking-tighter">CONNECT</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto reveal">
+                <a href="https://wa.me/yournumber" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonPurple transition-all duration-300">
+                    <i data-lucide="message-circle" class="w-8 h-8 mb-4 group-hover:text-neonPurple group-hover:scale-110 transition-all duration-300"></i>
+                    <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">WhatsApp</span>
+                </a>
+                <a href="#" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonBlue transition-all duration-300">
+                    <i data-lucide="facebook" class="w-8 h-8 mb-4 group-hover:text-neonBlue group-hover:scale-110 transition-all duration-300"></i>
+                    <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">Facebook</span>
+                </a>
+                <a href="#" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonPink transition-all duration-300">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 mb-4 group-hover:text-neonPink group-hover:scale-110 transition-all duration-300">
+                        <path d="M9 12a4 4 0 1 0 4 4V4a8 8 0 0 0 8 8"/>
+                    </svg>
+                    <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">TikTok</span>
+                </a>
+                <a href="#" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-red-600 transition-all duration-300">
+                    <i data-lucide="youtube" class="w-8 h-8 mb-4 group-hover:text-red-600 group-hover:scale-110 transition-all duration-300"></i>
+                    <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">YouTube</span>
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p data-editable="footer.copyright">© 2026 Adrian Reyes. Todos los derechos reservados.</p>
+    <footer class="py-12 border-t border-white/5 bg-bgDark">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
+            <p class="text-white/20 text-xs tracking-widest uppercase font-bold">&copy; 2024 ADRIÁN REYES CREA // LEVEL_UP</p>
+            <div class="flex space-x-10 mt-6 md:mt-0">
+                <a href="login.html" class="text-[10px] font-black tracking-widest uppercase text-white/40 hover:text-neonPurple">Admin Access</a>
+                <a href="#" class="text-[10px] font-black tracking-widest uppercase text-white/40 hover:text-white">Privacy_Protocol</a>
             </div>
         </div>
     </footer>
 
-    <!-- Botones de admin (ocultos por defecto) -->
-    <button id="adminEditBtn" class="admin-edit-btn" title="Editar textos" style="display: none;">
-        <i class="fas fa-pen"></i>
-    </button>
-
-    <a href="admin-videos.html" id="adminVideosBtn" class="admin-videos-btn" title="Administrar videos" style="display: none;">
-        <i class="fas fa-plus"></i>
-    </a>
-
-    <button id="adminLogoutBtn" class="admin-logout-btn" style="display: none;">
-        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-    </button>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/db-mock.js"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/main.js"></script>
     <script>
-        // ================================================
-        // VARIABLES GLOBALES
-        // ================================================
-        let adminMode = false;
-        
-        let proyectos = JSON.parse(localStorage.getItem('proyectos')) || [
-            {
-                id: 1,
-                titulo: "Arte con IA",
-                categoria: "ai",
-                descripcion: "Generación de imágenes con inteligencia artificial",
-                imagen: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=400&fit=crop"
-            },
-            {
-                id: 2,
-                titulo: "Identidad Corporativa",
-                categoria: "diseno",
-                descripcion: "Diseño de marca para startups",
-                imagen: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=400&fit=crop"
-            },
-            {
-                id: 3,
-                titulo: "Producción Audiovisual",
-                categoria: "video",
-                descripcion: "Edición de video profesional",
-                imagen: "https://images.unsplash.com/photo-1574717024453-354056af4e7f?w=400&h=400&fit=crop"
-            }
-        ];
-
-        let textosEditables = JSON.parse(localStorage.getItem('textosEditables')) || {};
-
-        // ================================================
-        // VERIFICAR MODO ADMIN
-        // ================================================
-        function verificarAdmin() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const adminParam = urlParams.get('admin');
-            const adminLogged = sessionStorage.getItem('admin_logged');
-            
-            if (adminParam === 'true' && adminLogged === 'true') {
-                adminMode = true;
-                document.body.classList.add('admin-mode');
-                
-                // Mostrar botones
-                document.getElementById('adminEditBtn').style.display = 'flex';
-                document.getElementById('adminVideosBtn').style.display = 'flex';
-                document.getElementById('adminLogoutBtn').style.display = 'flex';
-                
-                // Mostrar botón agregar proyecto
-                document.getElementById('adminAddProjectBtn').style.display = 'block';
-                
-                // Agregar toolbars de edición
-                agregarToolbarsEdicion();
-                
-                // Cargar textos guardados
-                cargarTextosGuardados();
-                
-                // Renderizar proyectos
-                renderizarProyectos();
-                
-                console.log('✅ Modo admin activado');
-            } else {
-                // Modo normal - ocultar botones
-                document.getElementById('adminEditBtn').style.display = 'none';
-                document.getElementById('adminVideosBtn').style.display = 'none';
-                document.getElementById('adminLogoutBtn').style.display = 'none';
-                document.getElementById('adminAddProjectBtn').style.display = 'none';
-                document.body.classList.remove('admin-mode');
-            }
-        }
-
-        function cerrarSesionAdmin() {
-            sessionStorage.removeItem('admin_logged');
-            window.location.href = 'index.html';
-        }
-
-        // ================================================
-        // EDICIÓN DE TEXTOS
-        // ================================================
-        function agregarToolbarsEdicion() {
-            document.querySelectorAll('[data-editable]').forEach(elemento => {
-                if (elemento.querySelector('.edit-toolbar')) return;
-                
-                const toolbar = document.createElement('div');
-                toolbar.className = 'edit-toolbar';
-                
-                const tipo = elemento.getAttribute('data-type') || 'text';
-                
-                if (tipo === 'image') {
-                    toolbar.innerHTML = `
-                        <button onclick="editarImagen(this)"><i class="fas fa-image"></i> Cambiar imagen</button>
-                    `;
-                } else {
-                    toolbar.innerHTML = `
-                        <button onclick="editarTexto(this)"><i class="fas fa-edit"></i> Editar</button>
-                    `;
-                }
-                
-                elemento.appendChild(toolbar);
-            });
-        }
-
-        window.editarTexto = function(btn) {
-            const elemento = btn.closest('[data-editable]');
-            const key = elemento.getAttribute('data-editable');
-            const textoActual = elemento.innerText.replace('Editar', '').trim();
-            
-            const nuevoTexto = prompt('Editar texto:', textoActual);
-            if (nuevoTexto && nuevoTexto.trim() !== '') {
-                elemento.innerText = nuevoTexto.trim();
-                textosEditables[key] = nuevoTexto.trim();
-                localStorage.setItem('textosEditables', JSON.stringify(textosEditables));
-                mostrarToast('✅ Texto actualizado');
-            }
-        };
-
-        window.editarImagen = function(btn) {
-            const elemento = btn.closest('[data-editable]');
-            const key = elemento.getAttribute('data-editable');
-            
-            document.getElementById('currentImageElement').value = key;
-            
-            const img = elemento.querySelector('img');
-            const preview = document.getElementById('imagePreview');
-            const icon = document.getElementById('imagePreviewIcon');
-            const input = document.getElementById('imageUrlInput');
-            
-            if (img) {
-                preview.src = img.src;
-                preview.style.display = 'block';
-                icon.style.display = 'none';
-                input.value = img.src;
-            } else {
-                preview.style.display = 'none';
-                icon.style.display = 'block';
-                input.value = '';
-            }
-            
-            document.getElementById('imageEditorModal').classList.add('active');
-        };
-
-        window.cerrarImageEditor = function() {
-            document.getElementById('imageEditorModal').classList.remove('active');
-        };
-
-        window.guardarImagen = function() {
-            const key = document.getElementById('currentImageElement').value;
-            const url = document.getElementById('imageUrlInput').value.trim();
-            
-            if (!url) {
-                mostrarToast('❌ Ingresa una URL válida', 'error');
-                return;
-            }
-            
-            const elemento = document.querySelector(`[data-editable="${key}"]`);
-            
-            elemento.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = url;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.position = 'absolute';
-            img.style.inset = '0';
-            elemento.appendChild(img);
-            
-            textosEditables[key] = url;
-            localStorage.setItem('textosEditables', JSON.stringify(textosEditables));
-            mostrarToast('✅ Imagen actualizada');
-            cerrarImageEditor();
-            agregarToolbarsEdicion();
-        };
-
-        function cargarTextosGuardados() {
-            for (const [key, valor] of Object.entries(textosEditables)) {
-                const elemento = document.querySelector(`[data-editable="${key}"]`);
-                if (elemento) {
-                    if (key.includes('image') || elemento.getAttribute('data-type') === 'image') {
-                        elemento.innerHTML = '';
-                        const img = document.createElement('img');
-                        img.src = valor;
-                        img.style.width = '100%';
-                        img.style.height = '100%';
-                        img.style.objectFit = 'cover';
-                        img.style.position = 'absolute';
-                        img.style.inset = '0';
-                        elemento.appendChild(img);
-                    } else {
-                        elemento.innerText = valor;
-                    }
-                }
-            }
-        }
-
-        // ================================================
-        // PROYECTOS
-        // ================================================
-        function renderizarProyectos() {
-            const grid = document.getElementById('portfolioGrid');
-            if (!grid) return;
-
-            if (proyectos.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">No hay proyectos aún.</div>';
-                return;
-            }
-
-            let html = '';
-            proyectos.forEach(proyecto => {
-                html += `
-                    <div class="portfolio-item" data-id="${proyecto.id}">
-                        <img src="${proyecto.imagen}" alt="${proyecto.titulo}" 
-                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=400&fit=crop';">
-                        <div class="portfolio-overlay">
-                            <h3>${proyecto.titulo}</h3>
-                            <p>${proyecto.descripcion}</p>
-                            ${adminMode ? `
-                                <div class="portfolio-admin-actions">
-                                    <button onclick="editarProyecto(${proyecto.id})"><i class="fas fa-edit"></i> Editar</button>
-                                    <button class="delete-btn" onclick="eliminarProyecto(${proyecto.id})"><i class="fas fa-trash"></i> Eliminar</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            grid.innerHTML = html;
-            localStorage.setItem('proyectos', JSON.stringify(proyectos));
-        }
-
-        window.abrirFormNuevoProyecto = function() {
-            document.getElementById('proyectoModalTitle').innerText = 'Nuevo Proyecto';
-            document.getElementById('proyectoId').value = '';
-            document.getElementById('proyectoTitulo').value = '';
-            document.getElementById('proyectoCategoria').value = 'ai';
-            document.getElementById('proyectoDescripcion').value = '';
-            document.getElementById('proyectoImagen').value = '';
-            
-            const preview = document.getElementById('proyectoImagePreview');
-            preview.innerHTML = '<i class="fas fa-image"></i>';
-            
-            document.getElementById('proyectoModal').classList.add('active');
-        };
-
-        window.editarProyecto = function(id) {
-            const proyecto = proyectos.find(p => p.id === id);
-            if (!proyecto) return;
-
-            document.getElementById('proyectoModalTitle').innerText = 'Editar Proyecto';
-            document.getElementById('proyectoId').value = proyecto.id;
-            document.getElementById('proyectoTitulo').value = proyecto.titulo;
-            document.getElementById('proyectoCategoria').value = proyecto.categoria;
-            document.getElementById('proyectoDescripcion').value = proyecto.descripcion;
-            document.getElementById('proyectoImagen').value = proyecto.imagen;
-
-            const preview = document.getElementById('proyectoImagePreview');
-            preview.innerHTML = `<img src="${proyecto.imagen}" alt="Preview">`;
-
-            document.getElementById('proyectoModal').classList.add('active');
-        };
-
-        window.cerrarProyectoModal = function() {
-            document.getElementById('proyectoModal').classList.remove('active');
-        };
-
-        window.guardarProyecto = function() {
-            const id = document.getElementById('proyectoId').value;
-            const titulo = document.getElementById('proyectoTitulo').value.trim();
-            const categoria = document.getElementById('proyectoCategoria').value;
-            const descripcion = document.getElementById('proyectoDescripcion').value.trim();
-            const imagen = document.getElementById('proyectoImagen').value.trim();
-
-            if (!titulo) {
-                mostrarToast('❌ El título es requerido', 'error');
-                return;
-            }
-
-            if (!imagen) {
-                mostrarToast('❌ La URL de la imagen es requerida', 'error');
-                return;
-            }
-
-            const proyectoData = {
-                titulo,
-                categoria,
-                descripcion: descripcion || 'Sin descripción',
-                imagen
-            };
-
-            if (id) {
-                const index = proyectos.findIndex(p => p.id == id);
-                proyectos[index] = { ...proyectos[index], ...proyectoData };
-                mostrarToast('✅ Proyecto actualizado');
-            } else {
-                const nuevoId = Date.now();
-                proyectos.push({ id: nuevoId, ...proyectoData });
-                mostrarToast('✅ Proyecto creado');
-            }
-
-            localStorage.setItem('proyectos', JSON.stringify(proyectos));
-            cerrarProyectoModal();
-            renderizarProyectos();
-        };
-
-        window.eliminarProyecto = function(id) {
-            if (!confirm('¿Estás seguro de eliminar este proyecto?')) return;
-            
-            proyectos = proyectos.filter(p => p.id !== id);
-            localStorage.setItem('proyectos', JSON.stringify(proyectos));
-            mostrarToast('✅ Proyecto eliminado');
-            renderizarProyectos();
-        };
-
-        // Preview de imagen en tiempo real
-        document.getElementById('proyectoImagen')?.addEventListener('input', function(e) {
-            const preview = document.getElementById('proyectoImagePreview');
-            const url = e.target.value.trim();
-            if (url) {
-                preview.innerHTML = `<img src="${url}" alt="Preview" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-image\'></i>';">`;
-            } else {
-                preview.innerHTML = '<i class="fas fa-image"></i>';
-            }
-        });
-
-        // ================================================
-        // UTILIDADES
-        // ================================================
-        function mostrarToast(mensaje, tipo = 'success') {
-            const toastExistente = document.querySelector('.admin-toast');
-            if (toastExistente) toastExistente.remove();
-            
-            const toast = document.createElement('div');
-            toast.className = `admin-toast ${tipo}`;
-            const icono = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            toast.innerHTML = `<i class="fas ${icono}"></i> ${mensaje}`;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                if (toast) toast.remove();
-            }, 3000);
-        }
-
-        // Cerrar modales con Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal.active').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-            }
-        });
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-
-        // Active nav link on scroll
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-links a');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                if (scrollY >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            renderizarProyectos();
-            verificarAdmin();
-            
-            // Botón cerrar sesión
-            document.getElementById('adminLogoutBtn').onclick = cerrarSesionAdmin;
-            
-            // Botón editar (solo mensaje)
-            document.getElementById('adminEditBtn').onclick = () => mostrarToast('✅ Modo edición - Haz clic en cualquier texto');
-        });
+        lucide.createIcons();
     </script>
 </body>
 </html>
