@@ -11,7 +11,6 @@ const DB_MOCK = {
             description: "Transformando visiones en realidades interactivas con estética de alto impacto y rendimiento de última generación.",
             imageUrl: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop"
         },
-        // PROYECTOS ACTUALIZADOS: Diseño Gráfico, Edición Video, Motion Graphics, IA
         projects: [
             {
                 id: 1,
