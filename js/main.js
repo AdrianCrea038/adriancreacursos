@@ -1,114 +1,151 @@
 /**
- * Main JS for "Adrián Reyes Crea"
- * Handles landing page interactions and dynamic content
+ * Supabase Configuration & Universal Database Service
  */
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Cargar banner con try/catch para no bloquear la navegación
-    try {
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getBanner) {
-            const bannerData = await DB_SERVICE.getBanner();
-            if (bannerData) {
-                const heroBanner = document.getElementById('hero-banner');
-                const heroTitle = document.querySelector('#home h1');
-                const heroBadgeText = document.querySelector('#home .inline-flex span:last-child');
-                const heroDescription = document.querySelector('#home .max-w-md.text-white\\/40.text-lg');
+const SUPABASE_CONFIG = {
+    url: 'https://egrepsiyopylqjoxocly.supabase.co',
+    anonKey: 'sb_publishable_KHQe-ID4GcXJWLBOKquzOg_0nvMuoj8'
+};
 
-                if (heroBanner) heroBanner.src = bannerData.imageUrl;
-                if (heroTitle && bannerData.title) {
-                    const words = bannerData.title.split(' ');
-                    if (words.length > 2) {
-                        heroTitle.innerHTML = `${words.slice(0, 2).join(' ')} <br><span class="text-transparent" style="-webkit-text-stroke: 1px white">${words.slice(2, 3)}</span> <br><span class="text-neonPurple neon-text">${words.slice(3).join(' ')}</span>`;
-                    } else {
-                        heroTitle.innerText = bannerData.title;
-                    }
+let supabaseClient = null;
+if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey && SUPABASE_CONFIG.anonKey !== 'AQUI_VA_TU_ANON_KEY') {
+    supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+}
+
+const DB_SERVICE = {
+    // --- Helpers Internos ---
+    async _useMock(method, ...args) {
+        if (typeof DB_MOCK !== 'undefined' && DB_MOCK[method]) {
+            return await DB_MOCK[method](...args);
+        }
+        console.error(`Mock method ${method} not found`);
+        return null;
+    },
+
+    // --- Banner ---
+    async getBanner() {
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient.from('banner').select('*').limit(1);
+                if (!error && data && data.length > 0) return data[0];
+                console.error('Error banner Supabase:', error);
+            } catch (err) {
+                console.error('Exception banner:', err);
+            }
+        }
+        return await this._useMock('getBanner');
+    },
+    async updateBanner(data) {
+        if (supabaseClient) {
+            try {
+                const { data: existing } = await supabaseClient.from('banner').select('id').limit(1);
+                if (existing && existing.length > 0) {
+                    const { error } = await supabaseClient.from('banner').update(data).eq('id', existing[0].id);
+                    if (!error) return true;
+                } else {
+                    const { error } = await supabaseClient.from('banner').insert(data);
+                    if (!error) return true;
                 }
-                if (heroBadgeText && bannerData.subtitle) heroBadgeText.innerText = bannerData.subtitle;
-                if (heroDescription && bannerData.description) heroDescription.innerText = bannerData.description;
+            } catch (err) {
+                console.error('Exception update banner:', err);
             }
         }
-    } catch (err) {
-        console.error("Error loading banner:", err);
-    }
+        return await this._useMock('updateBanner', data);
+    },
 
-    // Cargar proyectos con try/catch
-    try {
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getProjects) {
-            const projects = await DB_SERVICE.getProjects();
-            const projectsGrid = document.getElementById('projects-grid');
-            if (projectsGrid && projects.length > 0) {
-                projectsGrid.innerHTML = projects.map((project, index) => {
-                    const gradient = project.gradient || "from-neonPurple/40 to-transparent";
-                    const iconColor = project.category === "Diseño Gráfico" ? "text-neonPurple" :
-                                      project.category === "Edición de Video" ? "text-neonBlue" :
-                                      project.category === "Motion Graphics" ? "text-neonPink" : "text-neonGreen";
-                    return `
-                        <div class="gamer-card group relative overflow-hidden aspect-video reveal" style="transition-delay: ${index * 0.1}s;">
-                            <img src="${project.imageUrl}" alt="${project.title}" class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1">
-                            <div class="absolute inset-0 bg-gradient-to-t ${gradient} via-bgDark/60 to-bgDark opacity-80 group-hover:opacity-100 transition-all duration-700 flex flex-col justify-end p-8">
-                                <div class="flex items-center space-x-3 mb-3 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-100">
-                                    <i data-lucide="${project.icon || 'folder'}" class="w-6 h-6 ${iconColor} group-hover:scale-125 transition-all duration-300"></i>
-                                    <span class="text-neonBlue text-[10px] font-black tracking-widest uppercase">${project.category}</span>
-                                </div>
-                                <h4 class="text-2xl font-orbitron font-black uppercase mb-4 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-200 neon-text">${project.title}</h4>
-                                <p class="text-xs text-white/70 font-light max-w-xs mb-6 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-300 opacity-0 group-hover:opacity-100 leading-relaxed">${project.description}</p>
-                                <a href="${project.link}" class="gamer-btn !px-6 !py-2 !text-[10px] w-max transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-400 opacity-0 group-hover:opacity-100">EXPLORE MISSION</a>
-                            </div>
-                            <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-neonPurple via-neonBlue to-neonPink transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
-                        </div>
-                    `;
-                }).join('');
-                lucide.createIcons();
+    // --- Projects ---
+    async getProjects() {
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient.from('projects').select('*');
+                if (!error && data) return data;
+                console.error('Error projects Supabase:', error);
+            } catch (err) {
+                console.error('Exception projects:', err);
             }
         }
-    } catch (err) {
-        console.error("Error loading projects:", err);
-    }
-
-    // Animaciones al hacer scroll
-    const reveal = () => {
-        const reveals = document.querySelectorAll('.reveal');
-        reveals.forEach(el => {
-            const windowHeight = window.innerHeight;
-            const elementTop = el.getBoundingClientRect().top;
-            const elementVisible = 150;
-            if (elementTop < windowHeight - elementVisible) {
-                el.classList.add('active');
+        return await this._useMock('getProjects');
+    },
+    async addProject(project) {
+        if (supabaseClient) {
+            try {
+                const { error } = await supabaseClient.from('projects').insert(project);
+                if (!error) return true;
+            } catch (err) {
+                console.error('Exception add project:', err);
             }
-        });
-    };
-    window.addEventListener('scroll', reveal);
-    reveal();
-
-    // Menú móvil
-    const menuBtn = document.getElementById('menu-btn');
-    if (menuBtn) {
-        menuBtn.addEventListener('click', () => {
-            console.log('Mobile menu clicked');
-        });
-    }
-
-    // Atajo para admin (Alt + A)
-    document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 'a') {
-            window.location.href = 'login.html';
         }
-    });
-});
+        return await this._useMock('addProject', project);
+    },
 
-// Estilo adicional para animación de brillo
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes glowPulse {
-        0% { box-shadow: 0 0 5px rgba(112, 0, 255, 0.3); }
-        50% { box-shadow: 0 0 20px rgba(112, 0, 255, 0.6); }
-        100% { box-shadow: 0 0 5px rgba(112, 0, 255, 0.3); }
+    // --- Courses ---
+    async getCourses() {
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient.from('courses').select('*');
+                if (!error && data) return data;
+                console.error('Error courses Supabase:', error);
+            } catch (err) {
+                console.error('Exception courses:', err);
+            }
+        }
+        return await this._useMock('getCourses');
+    },
+    async addCourse(course) {
+        if (supabaseClient) {
+            try {
+                const { error } = await supabaseClient.from('courses').insert(course);
+                if (!error) return true;
+            } catch (err) {
+                console.error('Exception add course:', err);
+            }
+        }
+        return await this._useMock('addCourse', course);
+    },
+    async updateCoursePlaylist(courseId, playlist) {
+        if (supabaseClient) {
+            try {
+                const { error } = await supabaseClient.from('courses').update({ playlist }).eq('id', courseId);
+                if (!error) return true;
+            } catch (err) {
+                console.error('Exception update playlist:', err);
+            }
+        }
+        return await this._useMock('updateCoursePlaylist', courseId, playlist);
+    },
+
+    // --- Users & Auth ---
+    async getUsers() {
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient.from('users').select('*');
+                if (!error && data) return data;
+            } catch (err) {
+                console.error('Exception users:', err);
+            }
+        }
+        return await this._useMock('getUsers');
+    },
+    async authenticate(username, password) {
+        const users = await this.getUsers();
+        const mockUser = users.find(u => u.username === username && u.password === password);
+        if (mockUser) return mockUser;
+        
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: username,
+                    password: password,
+                });
+                if (!error) return data.user;
+            } catch (err) {
+                console.error('Exception auth:', err);
+            }
+        }
+        return null;
     }
-    .gamer-card {
-        animation: glowPulse 4s infinite;
-    }
-    .gamer-card:hover {
-        animation: none;
-    }
-`;
-document.head.appendChild(style);
+};
+
+if (typeof DB_MOCK !== 'undefined' && DB_MOCK.init) {
+    DB_MOCK.init();
+}
