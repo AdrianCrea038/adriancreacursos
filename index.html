@@ -38,16 +38,13 @@
             <a href="#" class="text-2xl font-orbitron font-black tracking-widest text-white group">
                 ADRIÁN <span class="text-neonPurple group-hover:text-neonBlue transition-colors">REYES</span> CREA
             </a>
-            <div class="hidden md:flex items-center space-x-10 text-xs font-bold tracking-[0.2em]">
-                <a href="#home" class="hover:text-neonPurple transition-all">INICIO</a>
-                <a href="#servicios" class="hover:text-neonPurple transition-all">SERVICIOS</a>
-                <a href="#proyectos" class="hover:text-neonPurple transition-all">PROYECTOS</a>
-                <a href="#contacto" class="hover:text-neonPurple transition-all">CONTACTO</a>
+            <div class="hidden md:flex items-center space-x-6 text-xs font-bold tracking-[0.2em]">
+                <a href="#home" class="gamer-btn !px-5 !py-2 !text-[10px]">INICIO</a>
+                <a href="#servicios" class="gamer-btn !px-5 !py-2 !text-[10px]">SERVICIOS</a>
+                <a href="#proyectos" class="gamer-btn !px-5 !py-2 !text-[10px]">PROYECTOS</a>
+                <a href="#contacto" class="gamer-btn !px-5 !py-2 !text-[10px]">CONTACTO</a>
                 <a href="courses.html" class="gamer-btn !px-6 !py-2 !text-[10px]">CURSOS</a>
-                <a href="login.html" class="flex items-center space-x-2 text-white/40 hover:text-white transition-all">
-                    <i data-lucide="user" class="w-4 h-4"></i>
-                    <span>LOGIN</span>
-                </a>
+                <a href="login.html" class="gamer-btn !px-5 !py-2 !text-[10px]">LOGIN</a>
             </div>
             <button class="md:hidden text-white" id="menu-btn">
                 <i data-lucide="menu"></i>
@@ -57,6 +54,12 @@
 
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <!-- Imagen de fondo que abarca toda la sección -->
+        <div class="absolute inset-0 z-0">
+            <img id="hero-banner" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Background" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-bgDark via-bgDark/70 to-transparent"></div>
+        </div>
+        
         <div class="absolute inset-0 z-0">
             <div class="absolute top-1/4 -left-20 w-96 h-96 bg-neonPurple/20 blur-[120px] rounded-full animate-pulse"></div>
             <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-neonBlue/10 blur-[120px] rounded-full animate-pulse" style="animation-delay: 1s"></div>
@@ -83,20 +86,12 @@
                 </div>
             </div>
             <div class="hidden md:block relative reveal active" style="transition-delay: 0.3s">
-                <div class="relative w-full aspect-square gamer-card p-2">
-                    <div class="absolute inset-0 bg-gradient-to-br from-neonPurple/20 to-transparent z-10"></div>
-                    <img id="hero-banner" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Banner" class="w-full h-full object-cover">
-                    <div class="absolute top-8 left-8 z-20 font-orbitron text-[10px] text-neonPurple/60 space-y-2">
-                        <p>SYSTEM_LOAD: 100%</p>
-                        <p>RENDER_ENGINE: NEON_V1</p>
-                    </div>
-                </div>
-                <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-neonPurple/10 border border-neonPurple/20 -z-10 rotate-12"></div>
+                <!-- Espacio vacío -->
             </div>
         </div>
     </section>
 
-    <!-- Services ACTUALIZADO -->
+    <!-- Services -->
     <section id="servicios" class="py-32 bg-bgDark">
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-20 space-y-4 reveal">
@@ -154,25 +149,25 @@
         </div>
     </section>
 
-    <!-- Contact ACTUALIZADO: Solo WhatsApp, Facebook, TikTok, YouTube con iconos válidos -->
+    <!-- Contact -->
     <section id="contacto" class="py-32 bg-bgDark relative overflow-hidden">
         <div class="absolute inset-0 bg-neonPurple/5 opacity-30"></div>
         <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
             <h2 class="text-7xl md:text-9xl font-orbitron font-black uppercase mb-20 opacity-10 tracking-tighter">CONNECT</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto reveal">
-                <a href="https://wa.me/yournumber" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonPurple transition-all duration-300">
-                    <i data-lucide="message-circle" class="w-8 h-8 mb-4 group-hover:text-neonPurple group-hover:scale-110 transition-all duration-300"></i>
+                <a href="https://wa.me/50432513558" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-green-500 transition-all duration-300">
+                    <i data-lucide="message-circle" class="w-8 h-8 mb-4 text-green-500 group-hover:scale-110 transition-all duration-300"></i>
                     <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">WhatsApp</span>
                 </a>
-                <a href="#" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonBlue transition-all duration-300">
-                    <i data-lucide="facebook" class="w-8 h-8 mb-4 group-hover:text-neonBlue group-hover:scale-110 transition-all duration-300"></i>
+                <a href="https://www.facebook.com/Adrian.creativo038" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-blue-600 transition-all duration-300">
+                    <span class="text-3xl font-bold mb-4 text-blue-500 group-hover:scale-110 transition-all duration-300">F</span>
                     <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">Facebook</span>
                 </a>
-                <a href="#" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonPink transition-all duration-300">
+                <a href="https://www.tiktok.com/@adrian.creativo038?lang=es-419" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-neonPink transition-all duration-300">
                     <i data-lucide="music" class="w-8 h-8 mb-4 group-hover:text-neonPink group-hover:scale-110 transition-all duration-300"></i>
                     <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">TikTok</span>
                 </a>
-                <a href="#" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-red-600 transition-all duration-300">
+                <a href="https://www.youtube.com/@adrian.creativo038" target="_blank" class="gamer-card p-8 flex flex-col items-center group hover:border-red-600 transition-all duration-300">
                     <i data-lucide="play" class="w-8 h-8 mb-4 group-hover:text-red-600 group-hover:scale-110 transition-all duration-300"></i>
                     <span class="text-[10px] font-black tracking-widest uppercase text-white/40 group-hover:text-white">YouTube</span>
                 </a>

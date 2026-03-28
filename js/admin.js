@@ -6,6 +6,8 @@
 let currentCourseId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const refreshIcons = () => lucide.createIcons();
+    
     await actualizarEstadisticas();
     await cargarBannerAdmin();
     await cargarProyectosAdmin();
@@ -22,7 +24,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 description: document.getElementById('banner-description').value,
                 imageUrl: document.getElementById('banner-url').value
             };
-            await DB_SERVICE.updateBanner(data);
+            if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.updateBanner) {
+                await DB_SERVICE.updateBanner(data);
+            } else if (typeof DB_MOCK !== 'undefined') {
+                await DB_MOCK.updateBanner(data);
+            }
             alert("✅ Banner actualizado correctamente");
         });
     }
@@ -40,7 +46,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 icon: document.getElementById('proj-icon').value || 'folder',
                 link: "#"
             };
-            await DB_SERVICE.addProject(project);
+            if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.addProject) {
+                await DB_SERVICE.addProject(project);
+            } else if (typeof DB_MOCK !== 'undefined') {
+                await DB_MOCK.addProject(project);
+            }
             await cargarProyectosAdmin();
             await actualizarEstadisticas();
             toggleModal('project-modal');
@@ -63,7 +73,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 playlist: [],
                 materials: []
             };
-            await DB_SERVICE.addCourse(course);
+            if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.addCourse) {
+                await DB_SERVICE.addCourse(course);
+            } else if (typeof DB_MOCK !== 'undefined') {
+                await DB_MOCK.addCourse(course);
+            }
             await cargarCursosAdmin();
             await actualizarEstadisticas();
             toggleModal('course-modal');
@@ -71,6 +85,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('course-form').reset();
         });
     }
+    
+    refreshIcons();
 });
 
 // Navegación
@@ -99,9 +115,17 @@ window.toggleModal = (modalId) => {
 // Estadísticas
 async function actualizarEstadisticas() {
     try {
-        const courses = await DB_SERVICE.getCourses();
-        const projects = await DB_SERVICE.getProjects();
-        const users = await DB_SERVICE.getUsers();
+        let courses = [], projects = [], users = [];
+        
+        if (typeof DB_SERVICE !== 'undefined') {
+            courses = await DB_SERVICE.getCourses() || [];
+            projects = await DB_SERVICE.getProjects() || [];
+            users = await DB_SERVICE.getUsers() || [];
+        } else if (typeof DB_MOCK !== 'undefined') {
+            courses = await DB_MOCK.getCourses() || [];
+            projects = await DB_MOCK.getProjects() || [];
+            users = await DB_MOCK.getUsers() || [];
+        }
         
         if (document.getElementById('stat-courses')) document.getElementById('stat-courses').innerText = courses.length;
         if (document.getElementById('stat-projects')) document.getElementById('stat-projects').innerText = projects.length;
@@ -113,83 +137,131 @@ async function actualizarEstadisticas() {
 
 // Banner
 async function cargarBannerAdmin() {
-    const banner = await DB_SERVICE.getBanner();
-    if (banner) {
-        if (document.getElementById('banner-title')) document.getElementById('banner-title').value = banner.title || '';
-        if (document.getElementById('banner-subtitle')) document.getElementById('banner-subtitle').value = banner.subtitle || '';
-        if (document.getElementById('banner-description')) document.getElementById('banner-description').value = banner.description || '';
-        if (document.getElementById('banner-url')) document.getElementById('banner-url').value = banner.imageUrl || '';
+    try {
+        let banner = null;
+        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getBanner) {
+            banner = await DB_SERVICE.getBanner();
+        } else if (typeof DB_MOCK !== 'undefined') {
+            banner = await DB_MOCK.getBanner();
+        }
+        
+        if (banner) {
+            if (document.getElementById('banner-title')) document.getElementById('banner-title').value = banner.title || '';
+            if (document.getElementById('banner-subtitle')) document.getElementById('banner-subtitle').value = banner.subtitle || '';
+            if (document.getElementById('banner-description')) document.getElementById('banner-description').value = banner.description || '';
+            if (document.getElementById('banner-url')) document.getElementById('banner-url').value = banner.imageUrl || '';
+        }
+    } catch (err) {
+        console.error("Error cargando banner:", err);
     }
 }
 
 // Proyectos
 async function cargarProyectosAdmin() {
-    const projects = await DB_SERVICE.getProjects();
-    const list = document.getElementById('admin-projects-list');
-    if (list) {
-        list.innerHTML = projects.map(p => `
-            <div class="gamer-card p-6 flex items-center justify-between group">
-                <div class="flex items-center space-x-4">
-                    <img src="${p.imageUrl}" class="w-12 h-12 object-cover border border-white/10 rounded">
-                    <div>
-                        <h4 class="text-sm font-orbitron font-bold uppercase tracking-wider">${p.title}</h4>
-                        <p class="text-[10px] text-white/40 uppercase tracking-widest">${p.category}</p>
+    try {
+        let projects = [];
+        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getProjects) {
+            projects = await DB_SERVICE.getProjects();
+        } else if (typeof DB_MOCK !== 'undefined') {
+            projects = await DB_MOCK.getProjects();
+        }
+        
+        const list = document.getElementById('admin-projects-list');
+        if (list) {
+            list.innerHTML = projects.map(p => `
+                <div class="gamer-card p-6 flex items-center justify-between group">
+                    <div class="flex items-center space-x-4">
+                        <img src="${p.imageUrl}" class="w-12 h-12 object-cover border border-white/10 rounded">
+                        <div>
+                            <h4 class="text-sm font-orbitron font-bold uppercase tracking-wider">${p.title}</h4>
+                            <p class="text-[10px] text-white/40 uppercase tracking-widest">${p.category}</p>
+                        </div>
                     </div>
+                    <button class="text-white/20 hover:text-neonPurple transition-colors" onclick="alert('Edición de misión próximamente')">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                    </button>
                 </div>
-                <button class="text-white/20 hover:text-neonPurple transition-colors" onclick="alert('Edición de misión próximamente')">
-                    <i data-lucide="settings" class="w-4 h-4"></i>
-                </button>
-            </div>
-        `).join('');
-        lucide.createIcons();
+            `).join('');
+            lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error cargando proyectos:", err);
     }
 }
 
 // Cursos con botón para editar playlist
 async function cargarCursosAdmin() {
-    const courses = await DB_SERVICE.getCourses();
-    const list = document.getElementById('admin-courses-list');
-    if (list) {
-        list.innerHTML = courses.map(c => `
-            <div class="gamer-card p-6">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="flex items-center space-x-4">
-                        <img src="${c.previewUrl}" class="w-16 h-16 object-cover border border-white/10 rounded">
-                        <div>
-                            <h4 class="text-lg font-orbitron font-bold uppercase tracking-wider">${c.title}</h4>
-                            <p class="text-sm text-neonBlue">$${c.price} USD</p>
-                            <p class="text-xs text-white/40 mt-1">${c.playlist?.length || 0} lecciones en playlist</p>
+    try {
+        let courses = [];
+        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getCourses) {
+            courses = await DB_SERVICE.getCourses();
+        } else if (typeof DB_MOCK !== 'undefined') {
+            courses = await DB_MOCK.getCourses();
+        }
+        
+        const list = document.getElementById('admin-courses-list');
+        if (list) {
+            list.innerHTML = courses.map(c => `
+                <div class="gamer-card p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-4">
+                            <img src="${c.previewUrl}" class="w-16 h-16 object-cover border border-white/10 rounded">
+                            <div>
+                                <h4 class="text-lg font-orbitron font-bold uppercase tracking-wider">${c.title}</h4>
+                                <p class="text-sm text-neonBlue">$${c.price} USD</p>
+                                <p class="text-xs text-white/40 mt-1">${c.playlist?.length || 0} lecciones en playlist</p>
+                            </div>
                         </div>
                     </div>
+                    <p class="text-white/60 text-sm mb-4 line-clamp-2">${c.description}</p>
+                    <div class="flex space-x-3">
+                        <button onclick="abrirEditorPlaylist(${c.id}, '${c.title.replace(/'/g, "\\'")}')" class="gamer-btn !py-2 !px-4 text-xs flex items-center space-x-2">
+                            <i data-lucide="list-video" class="w-3 h-3"></i>
+                            <span>Editar Playlist</span>
+                        </button>
+                        <button class="text-white/40 hover:text-neonPurple text-xs" onclick="alert('Edición de curso próximamente')">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>
-                <p class="text-white/60 text-sm mb-4 line-clamp-2">${c.description}</p>
-                <div class="flex space-x-3">
-                    <button onclick="abrirEditorPlaylist(${c.id}, '${c.title.replace(/'/g, "\\'")}')" class="gamer-btn !py-2 !px-4 text-xs flex items-center space-x-2">
-                        <i data-lucide="list-video" class="w-3 h-3"></i>
-                        <span>Editar Playlist</span>
-                    </button>
-                    <button class="text-white/40 hover:text-neonPurple text-xs" onclick="alert('Edición de curso próximamente')">
-                        <i data-lucide="edit-3" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            </div>
-        `).join('');
-        lucide.createIcons();
+            `).join('');
+            lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error cargando cursos:", err);
     }
 }
+
+// --- Funciones del Editor de Playlist ---
+let playlistMemoria = [];
 
 // Abrir editor de playlist
 window.abrirEditorPlaylist = async (courseId, courseTitle) => {
     currentCourseId = courseId;
-    const courses = await DB_SERVICE.getCourses();
+    let courses = [];
+    
+    try {
+        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getCourses) {
+            courses = await DB_SERVICE.getCourses();
+        } else if (typeof DB_MOCK !== 'undefined') {
+            courses = await DB_MOCK.getCourses();
+        }
+    } catch (err) {
+        console.error("Error loading courses for playlist:", err);
+        return;
+    }
+    
     const course = courses.find(c => c.id === courseId);
     
-    document.getElementById('playlist-course-title').innerHTML = `Editando: <span class="text-neonPurple">${courseTitle}</span>`;
+    const titleSpan = document.getElementById('playlist-course-title');
+    if (titleSpan) titleSpan.innerHTML = `Editando: <span class="text-neonPurple">${courseTitle}</span>`;
     
     const playlistContainer = document.getElementById('playlist-items');
-    if (course.playlist && course.playlist.length > 0) {
+    if (!playlistContainer) return;
+    
+    if (course && course.playlist && course.playlist.length > 0) {
         playlistContainer.innerHTML = course.playlist.map((item, idx) => `
-            <div class="bg-white/5 border border-white/10 p-4 rounded flex items-center justify-between group">
+            <div class="bg-white/5 border border-white/10 p-4 rounded flex items-center justify-between group" data-playlist-index="${idx}">
                 <div class="flex-1 space-y-2">
                     <input type="text" placeholder="Título del video" value="${item.title.replace(/"/g, '&quot;')}" 
                         class="playlist-title w-full bg-transparent border border-white/10 rounded p-2 text-sm focus:border-neonPurple outline-none"
@@ -219,16 +291,19 @@ window.abrirEditorPlaylist = async (courseId, courseTitle) => {
     toggleModal('playlist-modal');
     lucide.createIcons();
     
-    // Bindear eventos para actualizar datos
-    setTimeout(() => {
+    actualizarPlaylistEnMemoria();
+    
+    const bindEvents = () => {
         document.querySelectorAll('.playlist-title, .playlist-duration, .playlist-url, .playlist-free').forEach(el => {
-            el.addEventListener('change', () => actualizarPlaylistEnMemoria());
+            el.removeEventListener('change', actualizarPlaylistEnMemoria);
+            el.addEventListener('change', actualizarPlaylistEnMemoria);
         });
-    }, 100);
+    };
+    bindEvents();
+    
+    const observer = new MutationObserver(bindEvents);
+    observer.observe(playlistContainer, { childList: true, subtree: true });
 };
-
-// Actualizar playlist en memoria (se guarda al hacer clic en guardar)
-let playlistMemoria = [];
 
 function actualizarPlaylistEnMemoria() {
     const items = document.querySelectorAll('#playlist-items .bg-white\\/5');
@@ -244,10 +319,15 @@ function actualizarPlaylistEnMemoria() {
 // Agregar nuevo item a la playlist
 window.addPlaylistItem = () => {
     const container = document.getElementById('playlist-items');
-    const newIdx = playlistMemoria.length;
+    if (!container) return;
     
+    if (container.innerHTML.includes('No hay videos')) {
+        container.innerHTML = '';
+    }
+    
+    const newIdx = playlistMemoria.length;
     const newItemHtml = `
-        <div class="bg-white/5 border border-white/10 p-4 rounded flex items-center justify-between group">
+        <div class="bg-white/5 border border-white/10 p-4 rounded flex items-center justify-between group" data-playlist-index="${newIdx}">
             <div class="flex-1 space-y-2">
                 <input type="text" placeholder="Título del video" value="" 
                     class="playlist-title w-full bg-transparent border border-white/10 rounded p-2 text-sm focus:border-neonPurple outline-none"
@@ -271,15 +351,9 @@ window.addPlaylistItem = () => {
         </div>
     `;
     
-    if (container.innerHTML.includes('No hay videos')) {
-        container.innerHTML = newItemHtml;
-    } else {
-        container.insertAdjacentHTML('beforeend', newItemHtml);
-    }
-    
+    container.insertAdjacentHTML('beforeend', newItemHtml);
     playlistMemoria.push({ id: newIdx + 1, title: '', duration: '', videoUrl: '', free: false });
     
-    // Bindear eventos a los nuevos inputs
     document.querySelectorAll('.playlist-title, .playlist-duration, .playlist-url, .playlist-free').forEach(el => {
         el.removeEventListener('change', actualizarPlaylistEnMemoria);
         el.addEventListener('change', actualizarPlaylistEnMemoria);
@@ -307,12 +381,19 @@ window.savePlaylist = async () => {
         free: item.free
     }));
     
-    const courses = await DB_SERVICE.getCourses();
-    const courseIndex = courses.findIndex(c => c.id === currentCourseId);
+    let success = false;
     
-    if (courseIndex !== -1) {
-        courses[courseIndex].playlist = playlistParaGuardar;
-        localStorage.setItem('arc_courses', JSON.stringify(courses));
+    try {
+        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.updateCoursePlaylist) {
+            success = await DB_SERVICE.updateCoursePlaylist(currentCourseId, playlistParaGuardar);
+        } else if (typeof DB_MOCK !== 'undefined') {
+            success = await DB_MOCK.updateCoursePlaylist(currentCourseId, playlistParaGuardar);
+        }
+    } catch (err) {
+        console.error("Error saving playlist:", err);
+    }
+    
+    if (success) {
         alert("✅ Playlist guardada correctamente");
         toggleModal('playlist-modal');
         await cargarCursosAdmin();

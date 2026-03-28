@@ -6,6 +6,7 @@
     <title>Login | Adrián Reyes Crea</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <script>
@@ -16,6 +17,7 @@
                         bgDark: '#050505',
                         cardDark: '#0a0a0a',
                         neonPurple: '#7000ff',
+                        neonBlue: '#00f2ff',
                     },
                     fontFamily: {
                         orbitron: ['Orbitron', 'sans-serif'],
@@ -66,6 +68,7 @@
     </div>
 
     <script src="js/db-mock.js"></script>
+    <script src="js/supabase-service.js"></script>
     <script>
         lucide.createIcons();
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -73,9 +76,8 @@
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
             
-            const users = await DB_MOCK.getUsers();
-            const user = users.find(user => user.username === u && user.password === p);
-
+            const user = await DB_SERVICE.authenticate(u, p);
+            
             if (user) {
                 localStorage.setItem('arc_current_user', JSON.stringify(user));
                 window.location.href = 'admin.html';

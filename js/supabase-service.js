@@ -1,84 +1,94 @@
 /**
  * Supabase Configuration & Universal Database Service
- * Si configuras Supabase, se usará; de lo contrario, fallback a DB_MOCK.
  */
 
-// Cargar la librería de Supabase (ya está en el HTML)
-// const supabase = window.supabase;
-
 const SUPABASE_CONFIG = {
-    url: 'YOUR_SUPABASE_PROJECT_URL', // Ej: https://xyz.supabase.co
-    anonKey: 'YOUR_SUPABASE_ANON_KEY'
+    url: 'https://egrepsiyopylqjoxocly.supabase.co',
+    anonKey: 'sb_publishable_KHQe-ID4GcXJWLBOKquzOg_0nvMuoj8'
 };
 
 let supabaseClient = null;
-if (SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_PROJECT_URL') {
+if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey && SUPABASE_CONFIG.anonKey !== 'AQUI_VA_TU_ANON_KEY') {
     supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
 }
 
 const DB_SERVICE = {
-    // Helper para obtener datos de Supabase o mock
-    async _fetchData(table, mockMethod, ...args) {
-        if (supabaseClient) {
-            const { data, error } = await supabaseClient.from(table).select('*');
-            if (!error && data) return data;
+    // --- Helpers Internos ---
+    async _useMock(method, ...args) {
+        if (typeof DB_MOCK !== 'undefined' && DB_MOCK[method]) {
+            return await DB_MOCK[method](...args);
         }
-        return await DB_MOCK[mockMethod](...args);
+        console.error(`Mock method ${method} not found`);
+        return null;
     },
 
+    // --- Banner ---
     async getBanner() {
         if (supabaseClient) {
             const { data, error } = await supabaseClient.from('banner').select('*').single();
-            if (!error) return data;
+            if (!error && data) return data;
         }
-        return await DB_MOCK.getBanner();
+        return await this._useMock('getBanner');
     },
-
     async updateBanner(data) {
         if (supabaseClient) {
             const { error } = await supabaseClient.from('banner').upsert(data);
             if (!error) return true;
         }
-        return await DB_MOCK.updateBanner(data);
+        return await this._useMock('updateBanner', data);
     },
 
+    // --- Projects ---
     async getProjects() {
-        return await this._fetchData('projects', 'getProjects');
+        if (supabaseClient) {
+            const { data, error } = await supabaseClient.from('projects').select('*');
+            if (!error && data) return data;
+        }
+        return await this._useMock('getProjects');
     },
-
     async addProject(project) {
         if (supabaseClient) {
             const { error } = await supabaseClient.from('projects').insert(project);
             if (!error) return true;
         }
-        return await DB_MOCK.addProject(project);
+        return await this._useMock('addProject', project);
     },
 
+    // --- Courses ---
     async getCourses() {
-        return await this._fetchData('courses', 'getCourses');
+        if (supabaseClient) {
+            const { data, error } = await supabaseClient.from('courses').select('*');
+            if (!error && data) return data;
+        }
+        return await this._useMock('getCourses');
     },
-
     async addCourse(course) {
         if (supabaseClient) {
             const { error } = await supabaseClient.from('courses').insert(course);
             if (!error) return true;
         }
-        return await DB_MOCK.addCourse(course);
+        return await this._useMock('addCourse', course);
     },
-
-    async getUsers() {
-        return await this._fetchData('users', 'getUsers');
-    },
-
-    async authenticate(username, password) {
+    async updateCoursePlaylist(courseId, playlist) {
         if (supabaseClient) {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: username,
-                password: password,
-            });
-            if (!error) return data.user;
+            const { error } = await supabaseClient.from('courses').update({ playlist }).eq('id', courseId);
+            if (!error) return true;
         }
-        const users = await DB_MOCK.getUsers();
+        return await this._useMock('updateCoursePlaylist', courseId, playlist);
+    },
+
+    // --- Users & Auth ---
+    async getUsers() {
+        // Siempre usar mock para usuarios
+        return await this._useMock('getUsers');
+    },
+    async authenticate(username, password) {
+        // Siempre usar mock para autenticación
+        const users = await this.getUsers();
         return users.find(u => u.username === username && u.password === password);
     }
 };
+
+if (typeof DB_MOCK !== 'undefined' && DB_MOCK.init) {
+    DB_MOCK.init();
+}
