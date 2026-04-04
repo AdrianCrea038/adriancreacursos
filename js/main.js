@@ -1,110 +1,350 @@
-/**
- * Main JS for "Adrián Reyes Crea"
- * Handles landing page interactions and dynamic content
- */
+/* ============================================================
+   /js/main.js - COMPLETO CON SECCIONES ETIQUETADAS
+   ============================================================ */
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Cargar banner con try/catch para no bloquear la navegación
-    try {
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getBanner) {
-            const bannerData = await DB_SERVICE.getBanner();
-            console.log("Banner data:", bannerData);
-            if (bannerData) {
-                const heroBanner = document.getElementById('hero-banner');
-                const heroTitle = document.querySelector('#home h1');
-                const heroBadge = document.querySelector('#home .inline-flex span:last-child');
-                const heroDescription = document.querySelector('#home .max-w-md.text-white\\/40.text-lg');
+document.addEventListener('DOMContentLoaded', () => {
 
-                if (heroBanner && bannerData.imageUrl) heroBanner.src = bannerData.imageUrl;
-                if (heroTitle && bannerData.title) {
-                    heroTitle.innerHTML = bannerData.title;
-                }
-                if (heroBadge && bannerData.subtitle) heroBadge.innerText = bannerData.subtitle;
-                if (heroDescription && bannerData.description) heroDescription.innerText = bannerData.description;
-            }
+    // ============================================================
+    // ===== FUNCIONES DE CONFIGURACIÓN (WHATSAPP / EMAIL) =====
+    // ============================================================
+
+    function getCurrentConfig() {
+        try {
+            const cfg = localStorage.getItem('ar_config');
+            return cfg ? JSON.parse(cfg) : { whatsapp: '50432513558', email: 'contacto@adrianreyescrea.com' };
+        } catch(e) {
+            return { whatsapp: '50432513558', email: 'contacto@adrianreyescrea.com' };
         }
-    } catch (err) {
-        console.error("Error loading banner:", err);
     }
 
-    // Cargar proyectos con try/catch
-    try {
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getProjects) {
-            const projects = await DB_SERVICE.getProjects();
-            const projectsGrid = document.getElementById('projects-grid');
-            if (projectsGrid && projects.length > 0) {
-                projectsGrid.innerHTML = projects.map((project, index) => {
-                    const gradient = project.gradient || "from-neonPurple/40 to-transparent";
-                    const iconColor = project.category === "Diseño Gráfico" ? "text-neonPurple" :
-                                      project.category === "Edición de Video" ? "text-neonBlue" :
-                                      project.category === "Motion Graphics" ? "text-neonPink" : "text-neonGreen";
-                    return `
-                        <div class="gamer-card group relative overflow-hidden aspect-video reveal" style="transition-delay: ${index * 0.1}s;">
-                            <img src="${project.imageUrl}" alt="${project.title}" class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1">
-                            <div class="absolute inset-0 bg-gradient-to-t ${gradient} via-bgDark/60 to-bgDark opacity-80 group-hover:opacity-100 transition-all duration-700 flex flex-col justify-end p-8">
-                                <div class="flex items-center space-x-3 mb-3 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-100">
-                                    <i data-lucide="${project.icon || 'folder'}" class="w-6 h-6 ${iconColor} group-hover:scale-125 transition-all duration-300"></i>
-                                    <span class="text-neonBlue text-[10px] font-black tracking-widest uppercase">${project.category}</span>
-                                </div>
-                                <h4 class="text-2xl font-orbitron font-black uppercase mb-4 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-200 neon-text">${project.title}</h4>
-                                <p class="text-xs text-white/70 font-light max-w-xs mb-6 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-300 opacity-0 group-hover:opacity-100 leading-relaxed">${project.description}</p>
-                                <a href="${project.link}" class="gamer-btn !px-6 !py-2 !text-[10px] w-max transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-400 opacity-0 group-hover:opacity-100">EXPLORE MISSION</a>
-                            </div>
-                            <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-neonPurple via-neonBlue to-neonPink transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
-                        </div>
-                    `;
-                }).join('');
-                lucide.createIcons();
-            }
+    function formatWhatsAppNumber(num) {
+        let clean = String(num).replace(/\D/g, '');
+        if (clean.startsWith('504') && clean.length === 12) {
+            return `+504 ${clean.slice(3,7)}-${clean.slice(7,11)}`;
         }
-    } catch (err) {
-        console.error("Error loading projects:", err);
+        return `+${clean}`;
     }
 
-    // Animaciones al hacer scroll
-    const reveal = () => {
-        const reveals = document.querySelectorAll('.reveal');
-        reveals.forEach(el => {
-            const windowHeight = window.innerHeight;
-            const elementTop = el.getBoundingClientRect().top;
-            const elementVisible = 150;
-            if (elementTop < windowHeight - elementVisible) {
-                el.classList.add('active');
-            }
-        });
-    };
-    window.addEventListener('scroll', reveal);
-    reveal();
-
-    // Menú móvil
-    const menuBtn = document.getElementById('menu-btn');
-    if (menuBtn) {
-        menuBtn.addEventListener('click', () => {
-            console.log('Mobile menu clicked');
-        });
+    function updateWhatsAppLinks() {
+        const config = getCurrentConfig();
+        const whatsappNumber = config.whatsapp;
+        const email = config.email;
+        
+        const heroBtn = document.getElementById('heroWhatsAppBtn');
+        if (heroBtn) {
+            heroBtn.href = `https://wa.me/${whatsappNumber}`;
+        }
+        
+        const chatLink = document.getElementById('whatsappChatLink');
+        if (chatLink) {
+            chatLink.href = `https://wa.me/${whatsappNumber}`;
+        }
+        
+        const whatsappText = document.getElementById('whatsappText');
+        if (whatsappText) {
+            whatsappText.textContent = formatWhatsAppNumber(whatsappNumber);
+        }
+        
+        const emailText = document.getElementById('emailText');
+        if (emailText) {
+            emailText.textContent = email;
+        }
+        
+        window._currentWhatsapp = whatsappNumber;
     }
 
-    // Atajo para admin (Alt + A)
-    document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.key === 'a') {
-            window.location.href = 'login.html';
+    updateWhatsAppLinks();
+
+    // ============================================================
+    // ===== STORAGE LISTENER (SINCRONIZACIÓN CON ADMIN) =====
+    // ============================================================
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'ar_config' || e.key === 'ar_config_updated') {
+            updateWhatsAppLinks();
+            const notif = document.createElement('div');
+            notif.textContent = 'Configuración actualizada';
+            notif.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#00f3ff;color:#000;padding:10px 20px;border-radius:5px;z-index:9999;font-size:0.8rem;animation:fadeOut 2s ease forwards';
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
         }
     });
-});
 
-// Estilo adicional para animación de brillo
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes glowPulse {
-        0% { box-shadow: 0 0 5px rgba(112, 0, 255, 0.3); }
-        50% { box-shadow: 0 0 20px rgba(112, 0, 255, 0.6); }
-        100% { box-shadow: 0 0 5px rgba(112, 0, 255, 0.3); }
+    if (!document.querySelector('#fadeOutStyle')) {
+        const style = document.createElement('style');
+        style.id = 'fadeOutStyle';
+        style.textContent = '@keyframes fadeOut {0%{opacity:1}70%{opacity:1}100%{opacity:0;display:none}}';
+        document.head.appendChild(style);
     }
-    .gamer-card {
-        animation: glowPulse 4s infinite;
+
+    // ============================================================
+    // ===== HAMBURGUESA MENU (MOBILE) =====
+    // ============================================================
+
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    if(hamburger && navMenu) {
+        hamburger.addEventListener('click', () => { 
+            navMenu.classList.toggle('active'); 
+            hamburger.classList.toggle('active'); 
+        });
+        document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => { 
+            navMenu.classList.remove('active'); 
+            hamburger.classList.remove('active'); 
+        }));
     }
-    .gamer-card:hover {
-        animation: none;
+
+    // ============================================================
+    // ===== NAVBAR SCROLL EFFECT =====
+    // ============================================================
+
+    const navbar = document.querySelector('.navbar');
+    if(navbar) {
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 50) { 
+                navbar.style.background = 'rgba(10,10,10,0.98)'; 
+                navbar.style.boxShadow = '0 2px 20px rgba(0,243,255,0.1)'; 
+            } else { 
+                navbar.style.background = 'rgba(10,10,10,0.95)'; 
+                navbar.style.boxShadow = 'none'; 
+            }
+        });
     }
-`;
-document.head.appendChild(style);
+
+    // ============================================================
+    // ===== SMOOTH SCROLL (ANCLAS) =====
+    // ============================================================
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if(href !== '#' && href.length > 1 && !href.includes('cursos.html')) { 
+                e.preventDefault(); 
+                const target = document.querySelector(href); 
+                if(target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' }); 
+            }
+        });
+    });
+
+    // ============================================================
+    // ===== PORTFOLIO (FILTRADO + RENDER) - CORREGIDO =====
+    // ============================================================
+
+    const portfolioGrid = document.getElementById('portfolioGrid');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    if (portfolioGrid && filterBtns.length > 0) {
+        const projects = db.getProjects();
+        
+        console.log('Proyectos cargados:', projects.length);
+        
+        const renderProjects = (filter = 'all') => {
+            portfolioGrid.innerHTML = '';
+            const filtered = filter === 'all' ? projects : projects.filter(p => p.category === filter);
+            
+            if(filtered.length === 0) { 
+                portfolioGrid.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;padding:20px">No hay proyectos en esta categoría</p>'; 
+                return; 
+            }
+            
+            filtered.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'portfolio-item';
+                
+                let imgSrc = p.image;
+                if (!imgSrc || imgSrc === '') {
+                    imgSrc = db.makeSVG(p.title || 'Proyecto', '#00f3ff', p.category);
+                }
+                
+                item.innerHTML = `
+                    <img src="${imgSrc}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">
+                    <div class="portfolio-overlay">
+                        <h3>${p.title}</h3>
+                        <p style="color:var(--primary-color);text-transform:uppercase;font-size:0.9rem">${p.category}</p>
+                    </div>
+                `;
+                portfolioGrid.appendChild(item);
+            });
+        };
+        
+        renderProjects();
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => { 
+                filterBtns.forEach(b=>b.classList.remove('active')); 
+                btn.classList.add('active'); 
+                renderProjects(btn.dataset.filter); 
+            });
+        });
+    }
+
+    // ============================================================
+    // ===== STATS ANIMATION (INTERSECTION OBSERVER) =====
+    // ============================================================
+
+    const statNumbers = document.querySelectorAll('.stat-number');
+    if(statNumbers.length > 0) {
+        const animateStats = () => {
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                const update = () => { 
+                    current += increment; 
+                    if(current < target) { 
+                        stat.innerText = Math.ceil(current); 
+                        requestAnimationFrame(update); 
+                    } else stat.innerText = target+'+'; 
+                };
+                update();
+            });
+        };
+        
+        const statsSection = document.querySelector('.stats');
+        if(statsSection) { 
+            let animated = false; 
+            new IntersectionObserver(entries => { 
+                entries.forEach(e => { 
+                    if(e.isIntersecting && !animated) { 
+                        animateStats(); 
+                        animated = true; 
+                    } 
+                }); 
+            }, {threshold:0.5}).observe(statsSection); 
+        }
+    }
+
+    // ============================================================
+    // ===== CONTACTO - WHATSAPP MODAL =====
+    // ============================================================
+
+    const contactForm = document.getElementById('contactForm');
+    const whatsappModal = document.getElementById('whatsappModal');
+    const closeModal = document.querySelector('.close-modal');
+    const confirmWhatsapp = document.getElementById('confirmWhatsapp');
+    const modalMessage = document.getElementById('modalMessage');
+    
+    if(contactForm) {
+        contactForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const config = getCurrentConfig();
+            const whatsappNumber = config.whatsapp;
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const service = document.getElementById('contactService').value;
+            const message = document.getElementById('contactMessage').value;
+            
+            const services = {
+                logo:'Diseño de Logo',
+                video:'Edición de Video',
+                motion:'Motion Graphics',
+                ia:'IA Generativa',
+                impresion:'Diseño para Impresión',
+                curso:'Cursos',
+                otro:'Otro'
+            };
+            
+            const fullMsg = `*Nuevo mensaje desde la web*%0A%0A*Nombre:* ${name}%0A*Email:* ${email}%0A*Servicio:* ${services[service]||service}%0A%0A*Mensaje:*%0A${message}`;
+            
+            if(whatsappModal && modalMessage) {
+                modalMessage.innerHTML = `<div style="margin-bottom:15px"><strong style="color:var(--primary-color)">Destinatario:</strong><br><span style="color:var(--text-muted)">+${whatsappNumber}</span></div>
+                                          <div><strong style="color:var(--primary-color)">Tu mensaje:</strong><br><br><span style="color:var(--text-muted)"><strong>Nombre:</strong> ${name}<br>
+                                          <strong>Email:</strong> ${email}<br>
+                                          <strong>Servicio:</strong> ${services[service]||service}<br><br>
+                                          <strong>Mensaje:</strong><br>${message}</span></div>`;
+                whatsappModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                if(confirmWhatsapp) {
+                    confirmWhatsapp.onclick = () => {
+                        window.open(`https://wa.me/${whatsappNumber}?text=${fullMsg}`, '_blank');
+                        whatsappModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                        contactForm.reset();
+                    };
+                }
+            } else {
+                window.open(`https://wa.me/${whatsappNumber}?text=${fullMsg}`, '_blank');
+            }
+        });
+    }
+
+    // ============================================================
+    // ===== MODAL CLOSE HANDLERS =====
+    // ============================================================
+
+    if(closeModal && whatsappModal) {
+        closeModal.addEventListener('click', () => {
+            whatsappModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    }
+    
+    if(whatsappModal) {
+        window.addEventListener('click', e => {
+            if(e.target === whatsappModal) {
+                whatsappModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        document.addEventListener('keydown', e => {
+            if(e.key === 'Escape' && whatsappModal.style.display === 'block') {
+                whatsappModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+
+    // ============================================================
+    // ===== TYPING EFFECT (HERO) =====
+    // ============================================================
+
+    const typing = document.querySelector('.typing-effect');
+    if(typing) {
+        const texts = ['DISEÑADOR GRÁFICO','MOTION ARTIST','EDITOR DE VIDEO','ESPECIALISTA EN IA'];
+        let ti=0, ci=0, del=false;
+        const type = () => {
+            const t = texts[ti];
+            if(del) { 
+                typing.textContent = t.substring(0,--ci); 
+            } else { 
+                typing.textContent = t.substring(0,++ci); 
+            }
+            let speed = del ? 50 : 100;
+            if(!del && ci===t.length) { 
+                speed=2000; 
+                del=true; 
+            } else if(del && ci===0) { 
+                del=false; 
+                ti=(ti+1)%texts.length; 
+                speed=500; 
+            }
+            setTimeout(type,speed);
+        };
+        type();
+    }
+
+    // ============================================================
+    // ===== ACTIVE NAV LINK ON SCROLL =====
+    // ============================================================
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    if(sections.length && navLinks.length) {
+        window.addEventListener('scroll', () => {
+            let cur = '';
+            sections.forEach(s => { 
+                if(pageYOffset >= s.offsetTop - 100 && pageYOffset < s.offsetTop + s.clientHeight - 100) cur = s.id; 
+            });
+            navLinks.forEach(l => { 
+                l.classList.remove('active'); 
+                if(l.getAttribute('href') === '#' + cur) l.classList.add('active'); 
+            });
+        });
+    }
+
+});

@@ -1,403 +1,419 @@
-/**
- * Admin JS - Panel de Administración
- * Gestión completa de proyectos, cursos y playlists de videos
- */
+/* ============================================================
+   /js/admin.js - COMPLETO CON ASIGNACIÓN Y CARRUSEL
+   ============================================================ */
 
-let currentCourseId = null;
+document.addEventListener('DOMContentLoaded', () => {
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const refreshIcons = () => lucide.createIcons();
+    // ============================================================
+    // ===== VERIFICACIÓN DE AUTENTICACIÓN =====
+    // ============================================================
+
+    if(!auth.checkAuth(true)) return;
+    const user = auth.getCurrentUser(); 
+    if(user) document.getElementById('userName').textContent = `${user.username} (${user.role})`;
+
+    // ============================================================
+    // ===== MENÚ LATERAL =====
+    // ============================================================
+
+    const menuBtns = document.querySelectorAll('.admin-menu button');
+    const sections = document.querySelectorAll('.admin-section');
     
-    await actualizarEstadisticas();
-    await cargarBannerAdmin();
-    await cargarProyectosAdmin();
-    await cargarCursosAdmin();
-
-    // Banner Form
-    const bannerForm = document.getElementById('banner-form');
-    if (bannerForm) {
-        bannerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = {
-                title: document.getElementById('banner-title').value,
-                subtitle: document.getElementById('banner-subtitle').value,
-                description: document.getElementById('banner-description').value,
-                imageUrl: document.getElementById('banner-url').value
-            };
-            if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.updateBanner) {
-                await DB_SERVICE.updateBanner(data);
-            } else if (typeof DB_MOCK !== 'undefined') {
-                await DB_MOCK.updateBanner(data);
-            }
-            alert("✅ Banner actualizado correctamente");
+    menuBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            menuBtns.forEach(b=>b.classList.remove('active'));
+            sections.forEach(s=>s.style.display='none');
+            btn.classList.add('active');
+            document.getElementById(`section-${btn.dataset.section}`).style.display='block';
+            loadSection(btn.dataset.section);
         });
-    }
-
-    // Project Form
-    const projectForm = document.getElementById('project-form');
-    if (projectForm) {
-        projectForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const project = {
-                title: document.getElementById('proj-title').value,
-                category: document.getElementById('proj-category').value,
-                imageUrl: document.getElementById('proj-url').value,
-                description: document.getElementById('proj-desc').value,
-                icon: document.getElementById('proj-icon').value || 'folder',
-                link: "#"
-            };
-            if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.addProject) {
-                await DB_SERVICE.addProject(project);
-            } else if (typeof DB_MOCK !== 'undefined') {
-                await DB_MOCK.addProject(project);
-            }
-            await cargarProyectosAdmin();
-            await actualizarEstadisticas();
-            toggleModal('project-modal');
-            alert("✅ Misión desplegada correctamente");
-            document.getElementById('project-form').reset();
-        });
-    }
-
-    // Course Form
-    const courseForm = document.getElementById('course-form');
-    if (courseForm) {
-        courseForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const course = {
-                title: document.getElementById('course-title').value,
-                price: parseFloat(document.getElementById('course-price').value),
-                description: document.getElementById('course-desc').value,
-                previewUrl: document.getElementById('course-preview-url').value,
-                creatorComment: "Curso creado desde el panel admin",
-                playlist: [],
-                materials: []
-            };
-            if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.addCourse) {
-                await DB_SERVICE.addCourse(course);
-            } else if (typeof DB_MOCK !== 'undefined') {
-                await DB_MOCK.addCourse(course);
-            }
-            await cargarCursosAdmin();
-            await actualizarEstadisticas();
-            toggleModal('course-modal');
-            alert("✅ Curso agregado correctamente");
-            document.getElementById('course-form').reset();
-        });
-    }
-    
-    refreshIcons();
-});
-
-// Navegación
-window.showSection = (sectionId) => {
-    document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
-    document.getElementById(`section-${sectionId}`).classList.remove('hidden');
-    
-    document.querySelectorAll('.nav-link').forEach(l => {
-        l.classList.remove('bg-neonPurple/10', 'text-neonPurple');
-        l.classList.add('text-white/40');
     });
-    const activeNav = document.getElementById(`nav-${sectionId}`);
-    if (activeNav) {
-        activeNav.classList.add('bg-neonPurple/10', 'text-neonPurple');
-        activeNav.classList.remove('text-white/40');
+    
+    loadSection('projects');
+    
+    function loadSection(sec) {
+        if(sec==='projects') loadProjects();
+        if(sec==='courses') loadCourses();
+        if(sec==='users') loadUsers();
+        if(sec==='settings') loadSettings();
+        if(sec==='assign') loadAssignSection();
+        if(sec==='carousel') loadCarouselSection();
     }
-    lucide.createIcons();
-};
 
-// Modal Toggle
-window.toggleModal = (modalId) => {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.toggle('hidden');
-};
+    // ============================================================
+    // ===== CRUD - PROYECTOS =====
+    // ============================================================
 
-// Estadísticas
-async function actualizarEstadisticas() {
-    try {
-        let courses = [], projects = [], users = [];
-        
-        if (typeof DB_SERVICE !== 'undefined') {
-            courses = await DB_SERVICE.getCourses() || [];
-            projects = await DB_SERVICE.getProjects() || [];
-            users = await DB_SERVICE.getUsers() || [];
-        } else if (typeof DB_MOCK !== 'undefined') {
-            courses = await DB_MOCK.getCourses() || [];
-            projects = await DB_MOCK.getProjects() || [];
-            users = await DB_MOCK.getUsers() || [];
-        }
-        
-        if (document.getElementById('stat-courses')) document.getElementById('stat-courses').innerText = courses.length;
-        if (document.getElementById('stat-projects')) document.getElementById('stat-projects').innerText = projects.length;
-        if (document.getElementById('stat-users')) document.getElementById('stat-users').innerText = users.length;
-    } catch (err) {
-        console.error("Error actualizando estadísticas:", err);
-    }
-}
-
-// Banner
-async function cargarBannerAdmin() {
-    try {
-        let banner = null;
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getBanner) {
-            banner = await DB_SERVICE.getBanner();
-        } else if (typeof DB_MOCK !== 'undefined') {
-            banner = await DB_MOCK.getBanner();
-        }
-        
-        if (banner) {
-            if (document.getElementById('banner-title')) document.getElementById('banner-title').value = banner.title || '';
-            if (document.getElementById('banner-subtitle')) document.getElementById('banner-subtitle').value = banner.subtitle || '';
-            if (document.getElementById('banner-description')) document.getElementById('banner-description').value = banner.description || '';
-            if (document.getElementById('banner-url')) document.getElementById('banner-url').value = banner.imageUrl || '';
-        }
-    } catch (err) {
-        console.error("Error cargando banner:", err);
-    }
-}
-
-// Proyectos
-async function cargarProyectosAdmin() {
-    try {
-        let projects = [];
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getProjects) {
-            projects = await DB_SERVICE.getProjects();
-        } else if (typeof DB_MOCK !== 'undefined') {
-            projects = await DB_MOCK.getProjects();
-        }
-        
-        const list = document.getElementById('admin-projects-list');
-        if (list) {
-            list.innerHTML = projects.map(p => `
-                <div class="gamer-card p-6 flex items-center justify-between group">
-                    <div class="flex items-center space-x-4">
-                        <img src="${p.imageUrl}" class="w-12 h-12 object-cover border border-white/10 rounded">
-                        <div>
-                            <h4 class="text-sm font-orbitron font-bold uppercase tracking-wider">${p.title}</h4>
-                            <p class="text-[10px] text-white/40 uppercase tracking-widest">${p.category}</p>
-                        </div>
-                    </div>
-                    <button class="text-white/20 hover:text-neonPurple transition-colors" onclick="alert('Edición de misión próximamente')">
-                        <i data-lucide="settings" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-    } catch (err) {
-        console.error("Error cargando proyectos:", err);
-    }
-}
-
-// Cursos con botón para editar playlist
-async function cargarCursosAdmin() {
-    try {
-        let courses = [];
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getCourses) {
-            courses = await DB_SERVICE.getCourses();
-        } else if (typeof DB_MOCK !== 'undefined') {
-            courses = await DB_MOCK.getCourses();
-        }
-        
-        const list = document.getElementById('admin-courses-list');
-        if (list) {
-            list.innerHTML = courses.map(c => `
-                <div class="gamer-card p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center space-x-4">
-                            <img src="${c.previewUrl}" class="w-16 h-16 object-cover border border-white/10 rounded">
-                            <div>
-                                <h4 class="text-lg font-orbitron font-bold uppercase tracking-wider">${c.title}</h4>
-                                <p class="text-sm text-neonBlue">$${c.price} USD</p>
-                                <p class="text-xs text-white/40 mt-1">${c.playlist?.length || 0} lecciones en playlist</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-white/60 text-sm mb-4 line-clamp-2">${c.description}</p>
-                    <div class="flex space-x-3">
-                        <button onclick="abrirEditorPlaylist(${c.id}, '${c.title.replace(/'/g, "\\'")}')" class="gamer-btn !py-2 !px-4 text-xs flex items-center space-x-2">
-                            <i data-lucide="list-video" class="w-3 h-3"></i>
-                            <span>Editar Playlist</span>
-                        </button>
-                        <button class="text-white/40 hover:text-neonPurple text-xs" onclick="alert('Edición de curso próximamente')">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-    } catch (err) {
-        console.error("Error cargando cursos:", err);
-    }
-}
-
-// --- Funciones del Editor de Playlist ---
-let playlistMemoria = [];
-
-// Abrir editor de playlist
-window.abrirEditorPlaylist = async (courseId, courseTitle) => {
-    currentCourseId = courseId;
-    let courses = [];
-    
-    try {
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.getCourses) {
-            courses = await DB_SERVICE.getCourses();
-        } else if (typeof DB_MOCK !== 'undefined') {
-            courses = await DB_MOCK.getCourses();
-        }
-    } catch (err) {
-        console.error("Error loading courses for playlist:", err);
-        return;
-    }
-    
-    const course = courses.find(c => c.id === courseId);
-    
-    const titleSpan = document.getElementById('playlist-course-title');
-    if (titleSpan) titleSpan.innerHTML = `Editando: <span class="text-neonPurple">${courseTitle}</span>`;
-    
-    const playlistContainer = document.getElementById('playlist-items');
-    if (!playlistContainer) return;
-    
-    if (course && course.playlist && course.playlist.length > 0) {
-        playlistContainer.innerHTML = course.playlist.map((item, idx) => `
-            <div class="bg-white/5 border border-white/10 p-4 rounded flex items-center justify-between group" data-playlist-index="${idx}">
-                <div class="flex-1 space-y-2">
-                    <input type="text" placeholder="Título del video" value="${item.title.replace(/"/g, '&quot;')}" 
-                        class="playlist-title w-full bg-transparent border border-white/10 rounded p-2 text-sm focus:border-neonPurple outline-none"
-                        data-idx="${idx}">
-                    <div class="flex space-x-2">
-                        <input type="text" placeholder="Duración (ej: 15:30)" value="${item.duration}" 
-                            class="playlist-duration w-24 bg-transparent border border-white/10 rounded p-2 text-xs focus:border-neonPurple outline-none"
-                            data-idx="${idx}">
-                        <input type="text" placeholder="URL del video" value="${item.videoUrl}" 
-                            class="playlist-url flex-1 bg-transparent border border-white/10 rounded p-2 text-xs focus:border-neonPurple outline-none"
-                            data-idx="${idx}">
-                        <label class="flex items-center space-x-2 text-xs">
-                            <input type="checkbox" class="playlist-free" data-idx="${idx}" ${item.free ? 'checked' : ''}>
-                            <span>Gratis</span>
-                        </label>
-                    </div>
-                </div>
-                <button onclick="eliminarItemPlaylist(${idx})" class="ml-3 text-red-500/60 hover:text-red-500">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            </div>
-        `).join('');
-    } else {
-        playlistContainer.innerHTML = '<p class="text-white/40 text-center py-8">No hay videos en esta playlist. Haz clic en "Agregar Video" para comenzar.</p>';
-    }
-    
-    toggleModal('playlist-modal');
-    lucide.createIcons();
-    
-    actualizarPlaylistEnMemoria();
-    
-    const bindEvents = () => {
-        document.querySelectorAll('.playlist-title, .playlist-duration, .playlist-url, .playlist-free').forEach(el => {
-            el.removeEventListener('change', actualizarPlaylistEnMemoria);
-            el.addEventListener('change', actualizarPlaylistEnMemoria);
+    const addProjForm = document.getElementById('addProjectForm');
+    if(addProjForm) {
+        addProjForm.addEventListener('submit', e => { 
+            e.preventDefault(); 
+            db.addProject({
+                title: document.getElementById('projTitle').value,
+                category: document.getElementById('projCategory').value.toLowerCase(),
+                image: document.getElementById('projImage').value
+            }); 
+            loadProjects(); 
+            addProjForm.reset(); 
+            showNotif('Proyecto agregado','success'); 
         });
+    }
+    
+    function loadProjects() { 
+        const p = db.getProjects();
+        const c = document.getElementById('projectsList'); 
+        if(!c) return; 
+        let h = `<div class="table-responsive"><table><thead><tr><th>ID</th><th>Título</th><th>Cat</th><th>Imagen</th><th>Acciones</th></tr></thead><tbody>`;
+        p.forEach(x => {
+            h += `<tr><td>${x.id}</td><td>${x.title}</td><td style="color:var(--primary-color)">${x.category}</td><td><img src="${x.image}" style="width:50px;height:50px;object-fit:cover;border-radius:3px"></td><td><button class="btn-delete" onclick="deleteProject(${x.id})"><i class="fas fa-trash"></i> Eliminar</button></td></tr>`;
+        });
+        h += '</tbody></table></div>';
+        c.innerHTML = h;
+    }
+    
+    window.deleteProject = id => { 
+        if(confirm('¿Eliminar este proyecto?')) { 
+            db.deleteProject(id); 
+            loadProjects(); 
+            showNotif('Proyecto eliminado','info'); 
+        } 
     };
-    bindEvents();
-    
-    const observer = new MutationObserver(bindEvents);
-    observer.observe(playlistContainer, { childList: true, subtree: true });
-};
 
-function actualizarPlaylistEnMemoria() {
-    const items = document.querySelectorAll('#playlist-items .bg-white\\/5');
-    playlistMemoria = Array.from(items).map((item, idx) => ({
-        id: idx + 1,
-        title: item.querySelector('.playlist-title')?.value || '',
-        duration: item.querySelector('.playlist-duration')?.value || '',
-        videoUrl: item.querySelector('.playlist-url')?.value || '',
-        free: item.querySelector('.playlist-free')?.checked || false
-    }));
-}
+    // ============================================================
+    // ===== CRUD - CURSOS =====
+    // ============================================================
 
-// Agregar nuevo item a la playlist
-window.addPlaylistItem = () => {
-    const container = document.getElementById('playlist-items');
-    if (!container) return;
+    const addCourseForm = document.getElementById('addCourseForm');
+    if(addCourseForm) {
+        addCourseForm.addEventListener('submit', e => { 
+            e.preventDefault(); 
+            db.addCourse({
+                title: document.getElementById('courseTitle').value,
+                description: document.getElementById('courseDesc').value,
+                price: document.getElementById('coursePrice').value,
+                image: document.getElementById('courseImage').value
+            }); 
+            loadCourses(); 
+            addCourseForm.reset(); 
+            showNotif('Curso agregado','success'); 
+        });
+    }
     
-    if (container.innerHTML.includes('No hay videos')) {
+    function loadCourses() { 
+        const c = db.getCourses();
+        const ct = document.getElementById('coursesList'); 
+        if(!ct) return; 
+        let h = `<div class="table-responsive"><table><thead><tr><th>ID</th><th>Título</th><th>Precio</th><th>Acciones</th></tr></thead><tbody>`;
+        c.forEach(x => {
+            h += `<tr><td>${x.id}</td><td>${x.title}</td><td style="color:var(--primary-color);font-weight:bold">$${x.price}</td><td><button class="btn-delete" onclick="deleteCourse(${x.id})"><i class="fas fa-trash"></i> Eliminar</button></td></tr>`;
+        });
+        h += '</tbody></table></div>';
+        ct.innerHTML = h;
+    }
+    
+    window.deleteCourse = id => { 
+        if(confirm('¿Eliminar este curso?')) { 
+            db.deleteCourse(id); 
+            loadCourses(); 
+            showNotif('Curso eliminado','info'); 
+        } 
+    };
+
+    // ============================================================
+    // ===== CRUD - USUARIOS (CON ASIGNACIÓN DE CURSOS) =====
+    // ============================================================
+
+    function loadCoursesChecklist(containerId, selectedCourses = []) {
+        const courses = db.getCourses();
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
         container.innerHTML = '';
+        courses.forEach(course => {
+            const isChecked = selectedCourses.includes(course.id);
+            container.innerHTML += `
+                <label style="display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer">
+                    <input type="checkbox" value="${course.id}" ${isChecked ? 'checked' : ''} class="course-checkbox">
+                    <span style="color:#fff">${course.title}</span>
+                    <span style="color:var(--text-muted);font-size:0.75rem">($${course.price})</span>
+                </label>
+            `;
+        });
     }
     
-    const newIdx = playlistMemoria.length;
-    const newItemHtml = `
-        <div class="bg-white/5 border border-white/10 p-4 rounded flex items-center justify-between group" data-playlist-index="${newIdx}">
-            <div class="flex-1 space-y-2">
-                <input type="text" placeholder="Título del video" value="" 
-                    class="playlist-title w-full bg-transparent border border-white/10 rounded p-2 text-sm focus:border-neonPurple outline-none"
-                    data-idx="${newIdx}">
-                <div class="flex space-x-2">
-                    <input type="text" placeholder="Duración (ej: 15:30)" value="" 
-                        class="playlist-duration w-24 bg-transparent border border-white/10 rounded p-2 text-xs focus:border-neonPurple outline-none"
-                        data-idx="${newIdx}">
-                    <input type="text" placeholder="URL del video" value="" 
-                        class="playlist-url flex-1 bg-transparent border border-white/10 rounded p-2 text-xs focus:border-neonPurple outline-none"
-                        data-idx="${newIdx}">
-                    <label class="flex items-center space-x-2 text-xs">
-                        <input type="checkbox" class="playlist-free" data-idx="${newIdx}">
-                        <span>Gratis</span>
-                    </label>
-                </div>
-            </div>
-            <button onclick="eliminarItemPlaylist(${newIdx})" class="ml-3 text-red-500/60 hover:text-red-500">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-        </div>
-    `;
+    function getSelectedCoursesFromChecklist(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return [];
+        const checkboxes = container.querySelectorAll('.course-checkbox:checked');
+        return Array.from(checkboxes).map(cb => parseInt(cb.value));
+    }
     
-    container.insertAdjacentHTML('beforeend', newItemHtml);
-    playlistMemoria.push({ id: newIdx + 1, title: '', duration: '', videoUrl: '', free: false });
+    // Cargar checklist para nuevo usuario
+    loadCoursesChecklist('newUserCoursesChecklist', []);
     
-    document.querySelectorAll('.playlist-title, .playlist-duration, .playlist-url, .playlist-free').forEach(el => {
-        el.removeEventListener('change', actualizarPlaylistEnMemoria);
-        el.addEventListener('change', actualizarPlaylistEnMemoria);
-    });
+    const addUserForm = document.getElementById('addUserForm');
+    if(addUserForm) {
+        addUserForm.addEventListener('submit', e => { 
+            e.preventDefault(); 
+            const newUser = {
+                username: document.getElementById('newUsername').value,
+                password: document.getElementById('newPassword').value,
+                role: document.getElementById('newRole').value
+            };
+            db.addUser(newUser);
+            
+            // Obtener el usuario recién creado
+            const users = db.getUsers();
+            const createdUser = users.find(u => u.username === newUser.username);
+            
+            // Asignar cursos seleccionados
+            const selectedCourses = getSelectedCoursesFromChecklist('newUserCoursesChecklist');
+            selectedCourses.forEach(courseId => {
+                db.assignCourseToUser(createdUser.id, courseId);
+            });
+            
+            loadUsers();
+            addUserForm.reset();
+            loadCoursesChecklist('newUserCoursesChecklist', []);
+            showNotif('Usuario creado con cursos asignados','success');
+        });
+    }
     
-    lucide.createIcons();
-};
+    function loadUsers() { 
+        const u = db.getUsers();
+        const ct = document.getElementById('usersList'); 
+        if(!ct) return; 
+        let h = `<div class="table-responsive"><table><thead><tr><th>ID</th><th>Usuario</th><th>Rol</th><th>Acciones</th></tr></thead><tbody>`;
+        u.forEach(x => {
+            const rc = x.role==='master' ? 'color:#ff0055' : 'color:var(--primary-color)';
+            h += `<tr><td>${x.id}</td><td>${x.username}</td><td style="${rc};font-weight:bold">${x.role.toUpperCase()}</td><td><button class="btn-delete" onclick="deleteUser(${x.id})" ${x.role==='master' ? 'disabled style="opacity:0.5"' : ''}><i class="fas fa-trash"></i> Eliminar</button></td></tr>`;
+        });
+        h += '</tbody></table></div>';
+        ct.innerHTML = h;
+    }
+    
+    window.deleteUser = id => { 
+        const cu = auth.getCurrentUser(); 
+        if(cu && cu.id === id) { 
+            showNotif('No puedes eliminarte a ti mismo','error'); 
+            return; 
+        } 
+        if(confirm('¿Eliminar este usuario?')) { 
+            db.deleteUser(id); 
+            loadUsers(); 
+            showNotif('Usuario eliminado','info'); 
+        } 
+    };
 
-// Eliminar item de playlist
-window.eliminarItemPlaylist = (idx) => {
-    const items = document.querySelectorAll('#playlist-items .bg-white\\/5');
-    if (items[idx]) items[idx].remove();
-    actualizarPlaylistEnMemoria();
-};
-
-// Guardar playlist
-window.savePlaylist = async () => {
-    actualizarPlaylistEnMemoria();
+    // ============================================================
+    // ===== ASIGNACIÓN DE CURSOS A USUARIO EXISTENTE =====
+    // ============================================================
     
-    const playlistParaGuardar = playlistMemoria.map((item, i) => ({
-        id: i + 1,
-        title: item.title,
-        duration: item.duration,
-        videoUrl: item.videoUrl,
-        free: item.free
-    }));
+    let currentAssignUserId = null;
     
-    let success = false;
-    
-    try {
-        if (typeof DB_SERVICE !== 'undefined' && DB_SERVICE.updateCoursePlaylist) {
-            success = await DB_SERVICE.updateCoursePlaylist(currentCourseId, playlistParaGuardar);
-        } else if (typeof DB_MOCK !== 'undefined') {
-            success = await DB_MOCK.updateCoursePlaylist(currentCourseId, playlistParaGuardar);
+    function loadAssignSection() {
+        const users = db.getUsers();
+        const userSelect = document.getElementById('assignUserId');
+        if (userSelect) {
+            userSelect.innerHTML = '<option value="">Seleccionar Usuario</option>';
+            users.forEach(u => {
+                userSelect.innerHTML += `<option value="${u.id}">${u.username} (${u.role})</option>`;
+            });
         }
-    } catch (err) {
-        console.error("Error saving playlist:", err);
+        
+        document.getElementById('assignUserId').addEventListener('change', (e) => {
+            currentAssignUserId = parseInt(e.target.value);
+            if (currentAssignUserId) {
+                const userCourses = db.getUserCourses(currentAssignUserId);
+                loadCoursesChecklist('assignCoursesChecklist', userCourses);
+            } else {
+                document.getElementById('assignCoursesChecklist').innerHTML = '<p style="color:var(--text-muted)">Selecciona un usuario</p>';
+            }
+        });
+        
+        document.getElementById('saveAssignmentsBtn').addEventListener('click', () => {
+            if (!currentAssignUserId) {
+                showNotif('Selecciona un usuario primero', 'error');
+                return;
+            }
+            
+            // Obtener todas las asignaciones actuales
+            const allAssignments = db.getAllAssignments();
+            const selectedCourses = getSelectedCoursesFromChecklist('assignCoursesChecklist');
+            
+            // Reemplazar asignaciones del usuario
+            allAssignments[currentAssignUserId] = selectedCourses;
+            localStorage.setItem('ar_user_courses', JSON.stringify(allAssignments));
+            
+            showNotif('Asignaciones guardadas', 'success');
+            loadAssignmentsList();
+        });
+        
+        loadAssignmentsList();
     }
     
-    if (success) {
-        alert("✅ Playlist guardada correctamente");
-        toggleModal('playlist-modal');
-        await cargarCursosAdmin();
-    } else {
-        alert("❌ Error al guardar la playlist");
+    function loadAssignmentsList() {
+        const assignments = db.getAllAssignments();
+        const users = db.getUsers();
+        const courses = db.getCourses();
+        const container = document.getElementById('assignmentsList');
+        if (!container) return;
+        
+        let html = `<div class="table-responsive"><table><thead><tr><th>Usuario</th><th>Cursos Asignados</th><th>Acciones</th></tr></thead><tbody>`;
+        
+        users.forEach(user => {
+            const userCourses = assignments[user.id] || [];
+            const courseNames = userCourses.map(cid => {
+                const course = courses.find(c => c.id == cid);
+                return course ? course.title : 'Desconocido';
+            }).join(', ');
+            
+            html += `<tr>
+                        <td>${user.username} <span style="color:var(--primary-color)">(${user.role})</span></td>
+                        <td>${courseNames || 'Ninguno'}</td>
+                        <td><button class="btn-delete" onclick="removerTodasAsignaciones(${user.id})"><i class="fas fa-trash"></i> Limpiar</button></td>
+                     </tr>`;
+        });
+        
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
     }
-};
+    
+    window.removerTodasAsignaciones = (userId) => {
+        if (confirm('¿Eliminar TODOS los cursos asignados a este usuario?')) {
+            const assignments = db.getAllAssignments();
+            assignments[userId] = [];
+            localStorage.setItem('ar_user_courses', JSON.stringify(assignments));
+            loadAssignmentsList();
+            if (currentAssignUserId === userId) {
+                loadCoursesChecklist('assignCoursesChecklist', []);
+            }
+            showNotif('Cursos removidos del usuario', 'info');
+        }
+    };
+
+    // ============================================================
+    // ===== CONFIGURACIÓN DEL CARRUSEL HERO =====
+    // ============================================================
+    
+    function loadCarouselSection() {
+        const allCourses = db.getCourses();
+        const carouselConfig = db.getCarouselConfig();
+        const enabledCourses = carouselConfig.enabledCourses || [];
+        
+        const container = document.getElementById('carouselCoursesChecklist');
+        container.innerHTML = '';
+        
+        allCourses.forEach(course => {
+            const isChecked = enabledCourses.includes(course.id);
+            container.innerHTML += `
+                <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;padding:8px;border-radius:5px;background:rgba(255,255,255,0.03)">
+                    <input type="checkbox" value="${course.id}" ${isChecked ? 'checked' : ''} class="carousel-course-checkbox">
+                    <img src="${course.image}" style="width:50px;height:50px;object-fit:cover;border-radius:5px">
+                    <div style="flex:1">
+                        <div style="color:#fff;font-weight:bold">${course.title}</div>
+                        <div style="color:var(--text-muted);font-size:0.75rem">${course.description.substring(0,60)}...</div>
+                    </div>
+                    <span style="color:var(--primary-color);font-weight:bold">$${course.price}</span>
+                </label>
+            `;
+        });
+        
+        // Vista previa
+        updateCarouselPreview(enabledCourses);
+        
+        document.getElementById('saveCarouselBtn').onclick = () => {
+            const checkboxes = document.querySelectorAll('#carouselCoursesChecklist .carousel-course-checkbox:checked');
+            const selectedCourses = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            db.saveCarouselConfig({ enabledCourses: selectedCourses });
+            updateCarouselPreview(selectedCourses);
+            showNotif('Configuración del carrusel guardada', 'success');
+            
+            // Notificar a index.html que cambió el carrusel
+            localStorage.setItem('ar_carousel_updated', Date.now().toString());
+        };
+    }
+    
+    function updateCarouselPreview(enabledCourses) {
+        const previewContainer = document.getElementById('carouselPreviewList');
+        const allCourses = db.getCourses();
+        const carouselCourses = allCourses.filter(c => enabledCourses.includes(c.id));
+        
+        if (carouselCourses.length === 0) {
+            previewContainer.innerHTML = '<p style="color:var(--text-muted)">No hay cursos seleccionados para el carrusel</p>';
+            return;
+        }
+        
+        previewContainer.innerHTML = '';
+        carouselCourses.forEach(course => {
+            previewContainer.innerHTML += `
+                <div style="width:200px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;border:1px solid rgba(255,0,51,0.3)">
+                    <img src="${course.image}" style="width:100%;height:120px;object-fit:cover">
+                    <div style="padding:10px">
+                        <div style="font-size:0.8rem;color:#fff">${course.title}</div>
+                        <div style="font-size:0.7rem;color:var(--primary-color)">$${course.price}</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // ============================================================
+    // ===== CONFIGURACIÓN GENERAL =====
+    // ============================================================
+
+    function loadSettings() { 
+        const s = db.getProjects().length;
+        const c = db.getCourses().length;
+        const u = db.getUsers().length;
+        document.getElementById('statProjects').textContent = s;
+        document.getElementById('statCourses').textContent = c;
+        document.getElementById('statUsers').textContent = u;
+        const cfg = db.getConfig(); 
+        if(cfg) { 
+            document.getElementById('whatsappNumber').value = cfg.whatsapp || '50432513558'; 
+            document.getElementById('contactEmail').value = cfg.email || 'contacto@adrianreyescrea.com'; 
+        } 
+    }
+
+    document.getElementById('saveSettings')?.addEventListener('click', () => { 
+        db.saveConfig({
+            whatsapp: document.getElementById('whatsappNumber').value,
+            email: document.getElementById('contactEmail').value
+        });
+        localStorage.setItem('ar_config_updated', Date.now().toString());
+        showNotif('Configuración guardada y sincronizada', 'success');
+    });
+
+    // ============================================================
+    // ===== RESET =====
+    // ============================================================
+
+    document.getElementById('resetDataBtn')?.addEventListener('click', () => { 
+        if(confirm('¿ESTÁS SEGURO? Esto borrará TODOS tus datos locales.')) { 
+            db.resetAll(); 
+            alert('✅ Datos reiniciados. Recargando...'); 
+            location.reload(); 
+        } 
+    });
+
+    // ============================================================
+    // ===== NOTIFICACIONES =====
+    // ============================================================
+
+    function showNotif(msg, type='info') { 
+        const colors = { success:'#00ff88', error:'#ff0055', info:'#00f3ff' };
+        const n = document.createElement('div');
+        n.style.cssText = `position:fixed;top:100px;right:20px;background:${colors[type]};color:#000;padding:15px 25px;border-radius:5px;font-weight:bold;z-index:10000;animation:si 0.3s ease;box-shadow:0 0 20px ${colors[type]}40`;
+        n.textContent = msg;
+        document.body.appendChild(n);
+        setTimeout(() => {
+            n.style.animation = 'so 0.3s ease';
+            setTimeout(() => n.remove(), 300);
+        }, 3000);
+        const st = document.createElement('style');
+        st.textContent = `@keyframes si{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes so{from{transform:translateX(0);opacity:1}to{transform:translateX(400px);opacity:0}}`;
+        document.head.appendChild(st);
+    }
+
+});

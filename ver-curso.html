@@ -1,0 +1,246 @@
+<!-- ============================================================ -->
+<!-- ===== VER-CURSO.HTML - REPRODUCTOR DE VIDEOS DEL CURSO ===== -->
+<!-- ============================================================ -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Ver Curso | Adrian Reyes Crea</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/gamer-effects.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .course-player {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        .video-container {
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            aspect-ratio: 16/9;
+        }
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .playlist-sidebar {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0,243,255,0.2);
+        }
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+        .playlist-item:hover {
+            background: rgba(0,243,255,0.1);
+            transform: translateX(5px);
+        }
+        .playlist-item.active {
+            background: rgba(0,243,255,0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+        .playlist-item .video-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .playlist-item .video-info {
+            flex: 1;
+        }
+        .playlist-item .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .playlist-item .video-duration {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+        .course-header {
+            margin-bottom: 30px;
+        }
+        .access-denied {
+            text-align: center;
+            padding: 80px 20px;
+        }
+    </style>
+</head>
+<body class="gamer-theme">
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar gamer-nav">
+        <div class="container nav-container">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" class="logo-img" style="height:50px" onerror="this.style.display='none'">
+                <span class="logo-text">ADRIAN REYES <span class="neon-cyan">CREA</span></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="index.html#servicios" class="nav-link">Servicios</a></li>
+                <li><a href="index.html#portafolio" class="nav-link">Portafolio</a></li>
+                <li><a href="cursos.html" class="nav-link btn-cursos active">Mis Cursos</a></li>
+                <li><a href="index.html#contacto" class="nav-link">Contacto</a></li>
+                <li><a href="login.html" class="nav-link btn-login"><i class="fas fa-user"></i></a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <div class="container course-player" id="coursePlayer">
+        <!-- Aquí se renderiza dinámicamente -->
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // ============================================================
+        // ===== RENDER CURSO Y PLAYLIST =====
+        // ============================================================
+        
+        function getCourseIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return parseInt(params.get('id'));
+        }
+        
+        function renderCoursePlayer() {
+            const container = document.getElementById('coursePlayer');
+            const user = auth.getCurrentUser();
+            const courseId = getCourseIdFromUrl();
+            
+            // Verificar autenticación
+            if (!user) {
+                container.innerHTML = `
+                    <div class="access-denied">
+                        <i class="fas fa-lock" style="font-size: 4rem; color: #ff0055;"></i>
+                        <h2 style="color: #ff0055;">Acceso Denegado</h2>
+                        <p>Debes iniciar sesión para ver este curso.</p>
+                        <a href="login.html" class="btn btn-primary" style="margin-top: 20px;">Iniciar Sesión</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Verificar acceso al curso
+            if (!auth.hasCourseAccess(courseId)) {
+                container.innerHTML = `
+                    <div class="access-denied">
+                        <i class="fas fa-ban" style="font-size: 4rem; color: #ff0055;"></i>
+                        <h2 style="color: #ff0055;">Sin Acceso</h2>
+                        <p>No tienes acceso a este curso. Contacta al administrador.</p>
+                        <a href="cursos.html" class="btn btn-primary" style="margin-top: 20px;">Ver Mis Cursos</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Obtener datos del curso
+            const course = db.getCourseById(courseId);
+            if (!course) {
+                container.innerHTML = `<div class="access-denied"><h2>Curso no encontrado</h2><a href="cursos.html">Volver</a></div>`;
+                return;
+            }
+            
+            const videos = course.videos || [];
+            const currentVideoId = localStorage.getItem('current_video_' + courseId) || (videos[0] ? videos[0].id : null);
+            const currentVideo = videos.find(v => v.id == currentVideoId) || videos[0];
+            
+            let html = `
+                <button class="back-button" onclick="window.location.href='cursos.html'">
+                    <i class="fas fa-arrow-left"></i> Volver a Mis Cursos
+                </button>
+                
+                <div class="course-header">
+                    <h1 style="color: var(--primary-color);">${course.title}</h1>
+                    <p style="color: var(--text-muted);">${course.description}</p>
+                </div>
+                
+                <div class="row" style="display: grid; grid-template-columns: 1fr 350px; gap: 30px;">
+                    <div>
+                        <div class="video-container">
+                            ${currentVideo ? `<iframe src="${currentVideo.url}" frameborder="0" allowfullscreen></iframe>` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff">Próximamente más videos</div>'}
+                        </div>
+                        ${currentVideo ? `
+                            <div style="margin-top: 20px;">
+                                <h3 style="color: var(--primary-color);">${currentVideo.title}</h3>
+                                <p style="color: var(--text-muted);">Duración: ${currentVideo.duration}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="playlist-sidebar">
+                        <h3 style="color: var(--primary-color); margin-bottom: 20px;">
+                            <i class="fas fa-list"></i> Playlist
+                        </h3>
+                        <div class="playlist-items">
+            `;
+            
+            videos.forEach(video => {
+                const isActive = currentVideo && video.id == currentVideo.id;
+                html += `
+                    <div class="playlist-item ${isActive ? 'active' : ''}" onclick="cambiarVideo(${courseId}, ${video.id})">
+                        <div class="video-icon">
+                            <i class="fas fa-${isActive ? 'play-circle' : 'film'}"></i>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">${video.title}</div>
+                            <div class="video-duration"><i class="fas fa-clock"></i> ${video.duration}</div>
+                        </div>
+                        ${isActive ? '<i class="fas fa-play" style="color: var(--primary-color);"></i>' : ''}
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function cambiarVideo(courseId, videoId) {
+            localStorage.setItem('current_video_' + courseId, videoId);
+            renderCoursePlayer();
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderCoursePlayer);
+    </script>
+</body>
+</html>

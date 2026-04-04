@@ -1,0 +1,138 @@
+<!-- ============================================================ -->
+<!-- ===== CURSOS.HTML - SOLO ACCESIBLE CON LOGIN ===== -->
+<!-- ============================================================ -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Mis Cursos | Adrian Reyes Crea</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/gamer-effects.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="gamer-theme">
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar gamer-nav">
+        <div class="container nav-container">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" class="logo-img" style="height:50px" onerror="this.style.display='none'">
+                <span class="logo-text">ADRIAN REYES <span class="neon-red">CREA</span></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="index.html#cursos" class="nav-link">Cursos</a></li>
+                <li><a href="index.html#servicios" class="nav-link">Servicios</a></li>
+                <li><a href="index.html#portafolio" class="nav-link">Portafolio</a></li>
+                <li><a href="index.html#contacto" class="nav-link">Contacto</a></li>
+                <li><a href="login.html" class="nav-link btn-login"><i class="fas fa-user"></i></a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" style="height:40vh;margin-top:80px">
+        <div class="hero-bg-effects"><div class="neon-grid"></div></div>
+        <div class="container hero-content" style="text-align:center;justify-content:center">
+            <div class="hero-text">
+                <h1 class="glitch" data-text="MIS CURSOS">MIS CURSOS</h1>
+                <h2 class="neon-red">CONTENIDO EXCLUSIVO PARA ALUMNOS</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTENIDO ===== -->
+    <section class="section-padding">
+        <div class="container">
+            <div id="coursesContent"></div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer gamer-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Adrian Reyes Crea. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // ============================================================
+        // ===== VERIFICAR LOGIN - SI NO, REDIRIGIR A LOGIN =====
+        // ============================================================
+        
+        const user = auth.getCurrentUser();
+        
+        if (!user) {
+            // Guardar la página a la que quería acceder
+            sessionStorage.setItem('redirectAfterLogin', 'cursos.html');
+            window.location.href = 'login.html';
+        } else {
+            // Mostrar cursos asignados
+            const container = document.getElementById('coursesContent');
+            const accessibleCourses = auth.getAccessibleCourses();
+            
+            if (accessibleCourses.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:60px 20px;background:rgba(255,0,51,0.1);border-radius:15px;border:1px solid #ff0033;">
+                        <i class="fas fa-book-open" style="font-size:4rem;color:#ff0033;margin-bottom:20px"></i>
+                        <h2 style="color:#ff0033;">Sin Cursos Asignados</h2>
+                        <p style="color:var(--text-muted);margin-top:15px">Aún no tienes cursos asignados. Contacta al administrador.</p>
+                        <a href="index.html#contacto" class="btn btn-primary" style="margin-top:20px">Contactar Soporte</a>
+                    </div>
+                `;
+            } else {
+                let html = `
+                    <div style="background:rgba(255,0,51,0.1);padding:15px 20px;border-radius:10px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
+                        <div><i class="fas fa-user-graduate"></i> Bienvenido, <strong>${user.username}</strong> | Tienes <strong>${accessibleCourses.length}</strong> cursos asignados</div>
+                        <button onclick="auth.logout()" style="background:transparent;border:1px solid #ff0033;color:#ff0033;padding:8px 20px;border-radius:5px;cursor:pointer"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                    </div>
+                    <div class="services-grid" id="coursesGrid">
+                `;
+                
+                accessibleCourses.forEach(course => {
+                    const videoCount = course.videos ? course.videos.length : 0;
+                    html += `
+                        <div class="service-card gamer-card" style="cursor:pointer" onclick="verCurso(${course.id})">
+                            <div class="card-glow"></div>
+                            <img src="${course.image}" alt="${course.title}" style="width:100%;height:200px;object-fit:cover;border-radius:5px;margin-bottom:15px">
+                            <h3>${course.title}</h3>
+                            <p>${course.description.substring(0, 100)}...</p>
+                            <div style="margin:15px 0;display:flex;justify-content:space-between;align-items:center">
+                                <span style="color:var(--primary-color)"><i class="fas fa-video"></i> ${videoCount} videos</span>
+                                <span style="color:#25D366"><i class="fas fa-clock"></i> A tu ritmo</span>
+                            </div>
+                            <div class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px">
+                                <i class="fas fa-play-circle"></i> Ver Curso
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+                container.innerHTML = html;
+            }
+        }
+        
+        function verCurso(courseId) {
+            if (auth.hasCourseAccess(courseId)) {
+                window.location.href = `ver-curso.html?id=${courseId}`;
+            } else {
+                alert('No tienes acceso a este curso.');
+            }
+        }
+    </script>
+</body>
+</html>

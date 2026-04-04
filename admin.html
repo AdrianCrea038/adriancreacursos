@@ -1,230 +1,164 @@
+<!-- ============================================================ -->
+<!-- ===== ADMIN.HTML - PANEL CON ASIGNACIÓN Y CARRUSEL ===== -->
+<!-- ============================================================ -->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Adrián Reyes Crea</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bgDark: '#050505',
-                        cardDark: '#0a0a0a',
-                        neonPurple: '#7000ff',
-                        neonBlue: '#00f2ff',
-                    },
-                    fontFamily: {
-                        orbitron: ['Orbitron', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Admin Panel | Adrian Reyes Crea</title>
+    
+    <!-- ===== CSS ===== -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/gamer-effects.css">
+    
+    <!-- ===== FONTS ===== -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- ===== FONT AWESOME ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-bgDark text-white font-sans antialiased flex h-screen overflow-hidden">
-    <!-- Sidebar -->
-    <aside class="w-72 bg-cardDark border-r border-white/5 flex flex-col shrink-0">
-        <div class="p-8 border-b border-white/5">
-            <h1 class="text-xl font-orbitron font-black tracking-widest uppercase">CORE_<span class="text-neonPurple">ADMIN</span></h1>
-            <p class="text-[8px] font-bold text-white/20 tracking-[0.4em] uppercase mt-2">Operational System v2.0</p>
+<body>
+
+<!-- ============================================================ -->
+<!-- ===== NAVBAR ===== -->
+<!-- ============================================================ -->
+
+<nav class="navbar gamer-nav">
+    <div class="container nav-container">
+        <div class="logo">
+            <span style="color:var(--primary-color)">ADMIN PANEL</span>
+        </div>
+        <div style="display:flex;gap:15px;align-items:center">
+            <span id="userName" style="color:var(--text-muted)"></span>
+            <a href="index.html" class="btn" style="background:transparent;border:1px solid var(--primary-color);color:var(--primary-color);padding:5px 15px;font-size:0.8rem;border-radius:5px;text-decoration:none">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <button id="logoutBtn" class="btn btn-primary" style="padding:5px 15px;font-size:0.8rem">Salir</button>
+        </div>
+    </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- ===== MAIN CONTENT ===== -->
+<!-- ============================================================ -->
+
+<div class="container admin-dashboard">
+    <h1 style="color:var(--primary-color);margin-bottom:10px">Panel de Control</h1>
+    <p style="color:var(--text-muted)">Gestiona tu contenido, usuarios y configuración</p>
+    
+    <div class="admin-grid">
+        
+        <!-- ===== SIDEBAR ===== -->
+        <div class="admin-sidebar">
+            <div class="admin-menu">
+                <button class="active" data-section="projects"><i class="fas fa-folder" style="margin-right:10px"></i>Proyectos</button>
+                <button data-section="courses"><i class="fas fa-graduation-cap" style="margin-right:10px"></i>Cursos</button>
+                <button data-section="users"><i class="fas fa-users" style="margin-right:10px"></i>Usuarios</button>
+                <button data-section="assign"><i class="fas fa-link" style="margin-right:10px"></i>Asignar Cursos</button>
+                <button data-section="carousel"><i class="fas fa-images" style="margin-right:10px"></i>Carrusel Hero</button>
+                <button data-section="settings"><i class="fas fa-cog" style="margin-right:10px"></i>Configuración</button>
+            </div>
         </div>
         
-        <nav class="flex-1 p-6 space-y-2">
-            <button onclick="showSection('dashboard')" class="nav-link w-full flex items-center space-x-3 p-4 bg-neonPurple/10 text-neonPurple font-bold uppercase text-[10px] tracking-widest transition-all" id="nav-dashboard">
-                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                <span>Status</span>
-            </button>
-            <button onclick="showSection('home-editor')" class="nav-link w-full flex items-center space-x-3 p-4 text-white/40 hover:text-white font-bold uppercase text-[10px] tracking-widest transition-all" id="nav-home-editor">
-                <i data-lucide="home" class="w-4 h-4"></i>
-                <span>Hero Config</span>
-            </button>
-            <button onclick="showSection('projects')" class="nav-link w-full flex items-center space-x-3 p-4 text-white/40 hover:text-white font-bold uppercase text-[10px] tracking-widest transition-all" id="nav-projects">
-                <i data-lucide="folder-kanban" class="w-4 h-4"></i>
-                <span>Quests</span>
-            </button>
-            <button onclick="showSection('courses')" class="nav-link w-full flex items-center space-x-3 p-4 text-white/40 hover:text-white font-bold uppercase text-[10px] tracking-widest transition-all" id="nav-courses">
-                <i data-lucide="book-open" class="w-4 h-4"></i>
-                <span>Academy</span>
-            </button>
-        </nav>
-
-        <div class="p-6 border-t border-white/5">
-            <button onclick="logout()" class="w-full flex items-center space-x-3 p-4 text-red-500/60 hover:text-red-500 font-bold uppercase text-[10px] tracking-widest transition-all">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-                <span>Terminate session</span>
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto p-12 relative">
-        <div class="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-            <i data-lucide="shield-check" class="w-64 h-64"></i>
-        </div>
-
-        <!-- Dashboard -->
-        <section id="section-dashboard" class="admin-section space-y-12">
-            <header>
-                <h2 class="text-4xl font-orbitron font-black uppercase tracking-tighter">System <span class="text-neonPurple">Status</span></h2>
-                <p class="text-white/40 text-xs font-bold tracking-widest uppercase mt-2">Real-time platform metrics</p>
-            </header>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="gamer-card p-8">
-                    <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">Missions</p>
-                    <p class="text-5xl font-orbitron font-black text-neonPurple" id="stat-projects">0</p>
-                </div>
-                <div class="gamer-card p-8">
-                    <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">Skill Courses</p>
-                    <p class="text-5xl font-orbitron font-black text-neonBlue" id="stat-courses">0</p>
-                </div>
-                <div class="gamer-card p-8">
-                    <p class="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">Active Players</p>
-                    <p class="text-5xl font-orbitron font-black text-white" id="stat-users">0</p>
-                </div>
-                <div class="gamer-card p-8">
-                    <p class="text-[10px] font-black text-neonPurple uppercase tracking-widest mb-4">Security</p>
-                    <p class="text-2xl font-orbitron font-black text-green-500 uppercase">ENCRYPTED</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Hero Editor -->
-        <section id="section-home-editor" class="admin-section hidden space-y-12">
-            <header>
-                <h2 class="text-4xl font-orbitron font-black uppercase tracking-tighter">Hero <span class="text-neonPurple">Config</span></h2>
-            </header>
-            <div class="gamer-card p-10 max-w-2xl">
-                <form id="banner-form" class="space-y-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black tracking-widest uppercase text-white/40">Visual Asset (URL)</label>
-                        <input type="text" id="banner-url" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black tracking-widest uppercase text-white/40">Primary Heading</label>
-                        <input type="text" id="banner-title" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black tracking-widest uppercase text-white/40">Subheading</label>
-                        <input type="text" id="banner-subtitle" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black tracking-widest uppercase text-white/40">Description</label>
-                        <textarea id="banner-description" rows="3" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium"></textarea>
-                    </div>
-                    <button type="submit" class="gamer-btn !py-4 w-full">Apply Changes</button>
+        <!-- ===== CONTENT AREA ===== -->
+        <div class="admin-content" id="adminContent">
+            
+            <!-- ===== SECCIÓN PROYECTOS ===== -->
+            <div id="section-projects" class="admin-section">
+                <h2><i class="fas fa-folder" style="margin-right:10px"></i>Gestión de Proyectos</h2>
+                <form id="addProjectForm" style="margin-top:20px;border:1px solid #333;padding:20px;border-radius:5px">
+                    <div class="form-group"><input type="text" id="projTitle" class="gamer-input" required><label>Título del Proyecto</label></div>
+                    <div class="form-group"><input type="text" id="projCategory" class="gamer-input" required><label>Categoría (logo, video, motion, ia, impresion)</label></div>
+                    <div class="form-group"><input type="text" id="projImage" class="gamer-input" required><label>URL de la Imagen</label></div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Proyecto</button>
                 </form>
-            </div>
-        </section>
-
-        <!-- Projects -->
-        <section id="section-projects" class="admin-section hidden space-y-12">
-            <header class="flex items-center justify-between">
-                <h2 class="text-4xl font-orbitron font-black uppercase tracking-tighter">Mission <span class="text-neonPurple">Control</span></h2>
-                <button onclick="toggleModal('project-modal')" class="gamer-btn !py-3 flex items-center space-x-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>New Quest</span>
-                </button>
-            </header>
-            <div id="admin-projects-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Loaded via JS -->
-            </div>
-        </section>
-
-        <!-- Courses -->
-        <section id="section-courses" class="admin-section hidden space-y-12">
-            <header class="flex items-center justify-between">
-                <h2 class="text-4xl font-orbitron font-black uppercase tracking-tighter">Academy <span class="text-neonPurple">Courses</span></h2>
-                <button onclick="toggleModal('course-modal')" class="gamer-btn !py-3 flex items-center space-x-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>New Course</span>
-                </button>
-            </header>
-            <div id="admin-courses-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Loaded via JS -->
-            </div>
-        </section>
-    </main>
-
-    <!-- Project Modal -->
-    <div id="project-modal" class="fixed inset-0 z-50 hidden bg-bgDark/95 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="gamer-card w-full max-w-xl p-10">
-            <h3 class="text-2xl font-orbitron font-black uppercase mb-10 tracking-widest">Deploy <span class="text-neonPurple">Mission</span></h3>
-            <form id="project-form" class="space-y-6">
-                <input type="text" id="proj-title" placeholder="QUEST_NAME" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <input type="text" id="proj-category" placeholder="QUEST_TYPE" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <input type="text" id="proj-url" placeholder="ASSET_URL" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <textarea id="proj-desc" placeholder="MISSION_DESCRIPTION" rows="3" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium"></textarea>
-                <input type="text" id="proj-icon" placeholder="ICON_NAME (e.g., palette, video, brain-circuit)" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <div class="flex space-x-4 pt-4">
-                    <button type="submit" class="gamer-btn !py-4 flex-1">EXECUTE DEPLOY</button>
-                    <button type="button" onclick="toggleModal('project-modal')" class="text-white/20 font-black uppercase text-[10px] tracking-widest px-8">ABORT</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Course Modal -->
-    <div id="course-modal" class="fixed inset-0 z-50 hidden bg-bgDark/95 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="gamer-card w-full max-w-xl p-10">
-            <h3 class="text-2xl font-orbitron font-black uppercase mb-10 tracking-widest">Add <span class="text-neonPurple">Course</span></h3>
-            <form id="course-form" class="space-y-6">
-                <input type="text" id="course-title" placeholder="COURSE_TITLE" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <input type="number" id="course-price" placeholder="PRICE (USD)" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <textarea id="course-desc" placeholder="COURSE_DESCRIPTION" rows="3" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium"></textarea>
-                <input type="text" id="course-preview-url" placeholder="PREVIEW_IMAGE_URL" class="w-full bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-neonPurple transition-all text-sm font-medium">
-                <div class="flex space-x-4 pt-4">
-                    <button type="submit" class="gamer-btn !py-4 flex-1">ADD COURSE</button>
-                    <button type="button" onclick="toggleModal('course-modal')" class="text-white/20 font-black uppercase text-[10px] tracking-widest px-8">CANCEL</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Playlist Editor Modal -->
-    <div id="playlist-modal" class="fixed inset-0 z-50 hidden bg-bgDark/95 backdrop-blur-md flex items-center justify-center p-6 overflow-y-auto">
-        <div class="gamer-card w-full max-w-4xl p-8 my-10">
-            <div class="flex items-center justify-between mb-8">
-                <h3 class="text-2xl font-orbitron font-black uppercase tracking-widest">Editor de <span class="text-neonPurple">Playlist</span></h3>
-                <button onclick="toggleModal('playlist-modal')" class="text-white/40 hover:text-neonPurple">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            <div id="playlist-course-title" class="text-sm text-white/60 mb-6 font-mono"></div>
-            
-            <div id="playlist-items" class="space-y-4 mb-8 max-h-[60vh] overflow-y-auto pr-2">
-                <!-- Items de playlist se cargarán aquí -->
+                <div id="projectsList" style="margin-top:30px"></div>
             </div>
             
-            <div class="flex justify-between items-center pt-4 border-t border-white/10">
-                <button onclick="addPlaylistItem()" class="flex items-center space-x-2 text-white/60 hover:text-neonPurple text-sm">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                    <span>Agregar Video</span>
-                </button>
-                <div class="flex space-x-4">
-                    <button onclick="savePlaylist()" class="gamer-btn !py-3 !px-8">GUARDAR PLAYLIST</button>
-                    <button onclick="toggleModal('playlist-modal')" class="text-white/40 hover:text-white text-sm uppercase tracking-widest">Cancelar</button>
+            <!-- ===== SECCIÓN CURSOS ===== -->
+            <div id="section-courses" class="admin-section" style="display:none">
+                <h2><i class="fas fa-graduation-cap" style="margin-right:10px"></i>Gestión de Cursos</h2>
+                <form id="addCourseForm" style="margin-top:20px;border:1px solid #333;padding:20px;border-radius:5px">
+                    <div class="form-group"><input type="text" id="courseTitle" class="gamer-input" required><label>Título del Curso</label></div>
+                    <div class="form-group"><textarea id="courseDesc" class="gamer-input" rows="3" required style="resize:vertical"></textarea><label>Descripción</label></div>
+                    <div class="form-group"><input type="number" id="coursePrice" class="gamer-input" required min="0"><label>Precio (USD)</label></div>
+                    <div class="form-group"><input type="text" id="courseImage" class="gamer-input" required><label>URL de la Imagen de Portada</label></div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Curso</button>
+                </form>
+                <div id="coursesList" style="margin-top:30px"></div>
+            </div>
+            
+            <!-- ===== SECCIÓN USUARIOS (CON ASIGNACIÓN AL CREAR) ===== -->
+            <div id="section-users" class="admin-section" style="display:none">
+                <h2><i class="fas fa-users" style="margin-right:10px"></i>Gestión de Usuarios</h2>
+                <form id="addUserForm" style="margin-top:20px;border:1px solid #333;padding:20px;border-radius:5px">
+                    <div class="form-group"><input type="text" id="newUsername" class="gamer-input" required><label>Nombre de Usuario</label></div>
+                    <div class="form-group"><input type="password" id="newPassword" class="gamer-input" required><label>Contraseña</label></div>
+                    <div class="form-group"><select id="newRole" class="gamer-input" required><option value="user">Usuario</option><option value="master">Master</option></select><label>Rol</label></div>
+                    <div class="form-group"><label style="position:relative;top:0;margin-bottom:10px">Cursos a Asignar:</label>
+                        <div id="newUserCoursesChecklist" style="max-height:150px;overflow-y:auto;border:1px solid #333;border-radius:5px;padding:10px"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Crear Usuario</button>
+                </form>
+                <div id="usersList" style="margin-top:30px"></div>
+            </div>
+            
+            <!-- ===== SECCIÓN ASIGNAR CURSOS A USUARIO EXISTENTE ===== -->
+            <div id="section-assign" class="admin-section" style="display:none">
+                <h2><i class="fas fa-link" style="margin-right:10px"></i>Asignar Cursos a Usuarios</h2>
+                <div style="border:1px solid #333;padding:20px;border-radius:5px;margin-top:20px">
+                    <div class="form-group"><select id="assignUserId" class="gamer-input"><option value="">Seleccionar Usuario</option></select><label>Usuario</label></div>
+                    <div class="form-group"><div id="assignCoursesChecklist" style="max-height:200px;overflow-y:auto;border:1px solid #333;border-radius:5px;padding:10px;margin-top:20px"></div></div>
+                    <button id="saveAssignmentsBtn" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Asignaciones</button>
+                </div>
+                <div id="assignmentsList" style="margin-top:30px"></div>
+            </div>
+            
+            <!-- ===== SECCIÓN CARRUSEL HERO ===== -->
+            <div id="section-carousel" class="admin-section" style="display:none">
+                <h2><i class="fas fa-images" style="margin-right:10px"></i>Control del Carrusel Hero</h2>
+                <p style="color:var(--text-muted);margin-bottom:20px">Selecciona qué cursos aparecerán en el carrusel principal de la página de inicio.</p>
+                <div style="border:1px solid #333;padding:20px;border-radius:5px;margin-top:20px">
+                    <div id="carouselCoursesChecklist" style="max-height:300px;overflow-y:auto;border:1px solid #333;border-radius:5px;padding:15px"></div>
+                    <button id="saveCarouselBtn" class="btn btn-primary" style="margin-top:20px"><i class="fas fa-save"></i> Guardar Carrusel</button>
+                </div>
+                <div id="carouselPreview" style="margin-top:30px;border:1px solid #333;padding:20px;border-radius:5px">
+                    <h3 style="color:var(--primary-color);margin-bottom:15px">Vista Previa del Carrusel</h3>
+                    <div id="carouselPreviewList" style="display:flex;gap:15px;flex-wrap:wrap"></div>
                 </div>
             </div>
+            
+            <!-- ===== SECCIÓN CONFIGURACIÓN ===== -->
+            <div id="section-settings" class="admin-section" style="display:none">
+                <h2><i class="fas fa-cog" style="margin-right:10px"></i>Configuración</h2>
+                <div style="border:1px solid #333;padding:20px;border-radius:5px;margin-top:20px">
+                    <h3 style="color:var(--primary-color);margin-bottom:20px">Información de Contacto</h3>
+                    <div class="form-group"><input type="text" id="whatsappNumber" class="gamer-input" value="50432513558"><label>Número de WhatsApp</label></div>
+                    <div class="form-group"><input type="email" id="contactEmail" class="gamer-input" value="contacto@adrianreyescrea.com"><label>Email de Contacto</label></div>
+                    <button id="saveSettings" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Configuración</button>
+                </div>
+                <div style="border:1px solid #333;padding:20px;border-radius:5px;margin-top:20px">
+                    <h3 style="color:var(--primary-color);margin-bottom:20px">Estadísticas</h3>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px">
+                        <div class="gamer-card"><div style="font-size:2rem;color:var(--primary-color)" id="statProjects">0</div><div>Proyectos</div></div>
+                        <div class="gamer-card"><div style="font-size:2rem;color:var(--primary-color)" id="statCourses">0</div><div>Cursos</div></div>
+                        <div class="gamer-card"><div style="font-size:2rem;color:var(--primary-color)" id="statUsers">0</div><div>Usuarios</div></div>
+                    </div>
+                </div>
+                <div style="border:1px solid #ff0055;padding:20px;border-radius:5px;margin-top:20px">
+                    <h3 style="color:#ff0055;margin-bottom:15px">⚠️ Zona de Peligro</h3>
+                    <button id="resetDataBtn" class="btn" style="background:#ff0055;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer">🗑️ Resetear Todos los Datos</button>
+                </div>
+            </div>
+            
         </div>
     </div>
+</div>
 
-    <script src="js/db-mock.js"></script>
-    <script src="js/supabase-service.js"></script>
-    <script src="js/admin.js"></script>
-    <script>
-        lucide.createIcons();
-        if (!localStorage.getItem('arc_current_user')) window.location.href = 'login.html';
-        function logout() {
-            localStorage.removeItem('arc_current_user');
-            window.location.href = 'login.html';
-        }
-    </script>
+<script src="js/database.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>
