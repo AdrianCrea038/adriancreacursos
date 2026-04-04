@@ -1,0 +1,26 @@
+# ============================================================
+# ROBOTS.TXT - INSTRUCCIONES PARA MOTORES DE BÚSQUEDA
+# ============================================================
+
+User-agent: *
+Allow: /
+
+# Permitir indexación de todas las páginas
+Allow: /index.html
+Allow: /cursos.html
+Allow: /login.html
+Allow: /admin.html
+Allow: /ver-curso.html
+
+# Permitir acceso a CSS y JS
+Allow: /css/
+Allow: /js/
+
+# Permitir acceso a imágenes
+Allow: /assets/
+
+# Tiempo de rastreo sugerido
+Crawl-delay: 5
+
+# Sitemap
+Sitemap: https://www.adrianreyescrea.com/sitemap.xml
